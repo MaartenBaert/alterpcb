@@ -174,13 +174,13 @@ void swap(ForwardPointer<T> &a, ForwardPointer<T> &b) noexcept {
 }
 
 template<typename T>
-bool IsInVector(std::vector<ForwardPointer<T>> &vec, T *ptr) {
+bool IsInVector(const std::vector<ForwardPointer<T>> &vec, T *ptr) {
 	size_t index = ptr->GetBackPointer() - vec.data();
 	return index < vec.size();
 }
 
 template<typename T>
-size_t IndexInVector(std::vector<ForwardPointer<T>> &vec, T *ptr) {
+size_t IndexInVector(const std::vector<ForwardPointer<T>> &vec, T *ptr) {
 	size_t index = ptr->GetBackPointer() - vec.data();
 	assert(index < vec.size()); // if this fails, it means that the object is not in this vector
 	return index;

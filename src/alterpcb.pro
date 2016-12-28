@@ -34,4 +34,5 @@ HEADERS += \
 	core/Shape.h \
 	gui/MainWindow.h \
     core/CoreBasics.h \
-    common/BackPointer.h
+    common/BackPointer.h \
+    core/LibraryTreeItem.h

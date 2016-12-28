@@ -107,6 +107,11 @@ void Examples1() {
 int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
 
+	#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+		QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+		QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+	#endif
+
 	StringRegistry string_registry;
 	UNUSED(string_registry);
 
@@ -131,7 +136,7 @@ int main(int argc, char *argv[]) {
 
 	Examples1();
 
-	MainWindow window;
+	MainWindow window(&library_manager);
 	UNUSED(window);
 	return app.exec();
 }

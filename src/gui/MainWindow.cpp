@@ -19,10 +19,11 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "MainWindow.h"
+#include "LibraryManager.h"
 
 const QString MainWindow::WINDOW_TITLE = "AlterPCB";
 
-MainWindow::MainWindow() {
+MainWindow::MainWindow(LibraryManager* library_manager) {
 
 	setWindowTitle(WINDOW_TITLE);
 
@@ -35,6 +36,7 @@ MainWindow::MainWindow() {
 
 			QTreeView *library_viewer = new QTreeView(splitter2);
 			library_viewer->setUniformRowHeights(true);
+			library_viewer->setModel(library_manager);
 
 			splitter2->addWidget(layer_viewer);
 			splitter2->addWidget(library_viewer);
@@ -67,6 +69,11 @@ MainWindow::MainWindow() {
 		menu_edit->addAction("Test");
 		menu_edit->addAction("Test");
 		menu_edit->addAction("Test");
+	}
+	{
+		QMenu *menu_help = menubar->addMenu("Help");
+		menu_help->addAction("Hotkeys");
+		menu_help->addAction("About AlterPCB");
 	}
 	setMenuBar(menubar);
 

@@ -20,11 +20,10 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Drawing.h"
 
-Drawing::Drawing(stringtag_t name, DrawingType type){
-
+Drawing::Drawing(Library *parent, stringtag_t name, DrawingType type) : LibraryTreeItem(LIBRARYTREEITEMTYPE_DRAWING){
+	m_parent = parent;
 	m_name = name;
 	m_type = type;
-
 }
 
 void Drawing::HistoryClear() {

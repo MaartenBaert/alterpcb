@@ -23,15 +23,18 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "BackPointer.h"
 #include "Basics.h"
 #include "CoreBasics.h"
+#include "LibraryTreeItem.h"
 
 #include <string>
 #include <vector>
 
+class LibraryManager;
 class Drawing;
 
-class Library : public BackPointer<Library> {
+class Library : public LibraryTreeItem, public BackPointer<Library> {
 
 private:
+	LibraryManager *m_parent;
 	std::string m_name, m_file_name;
 	LibraryType m_type;
 	std::vector<ForwardPointer<Drawing>> m_schematics;
@@ -39,7 +42,7 @@ private:
 	std::vector<ForwardPointer<Drawing>> m_layouts;
 
 public:
-	Library(const std::string &name, const std::string &filename, LibraryType type);
+	Library(LibraryManager *parent, const std::string &name, const std::string &filename, LibraryType type);
 	~Library();
 
 	// noncopyable
@@ -60,6 +63,7 @@ public:
 	inline Drawing* GetLayout(size_t index) { assert(index < m_layouts.size()); return m_layouts[index].Get(); }
 	inline size_t GetLayoutCount() { return m_layouts.size(); }
 
+	LibraryManager *GetParent();
 };
 
 struct LibraryCompare {

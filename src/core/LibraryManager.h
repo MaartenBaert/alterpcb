@@ -26,9 +26,12 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 
+#include <QtGui>
+
 class Library;
 
-class LibraryManager {
+class LibraryManager : public QAbstractItemModel {
+	Q_OBJECT
 
 private:
 	std::vector<ForwardPointer<Library>> m_libraries;
@@ -44,7 +47,14 @@ public:
 	Library* NewLibrary(const std::string &name, const std::string &filename, LibraryType type);
 	void DeleteLibrary(Library *library);
 
-	inline Library* GetLibrary(size_t index) { assert(index < m_libraries.size()); return m_libraries[index].Get(); }
-	inline size_t GetLibraryCount() { return m_libraries.size(); }
+	inline Library* GetLibrary(size_t index) const { assert(index < m_libraries.size()); return m_libraries[index].Get(); }
+	inline size_t GetLibraryCount() const { return m_libraries.size(); }
+
+	QVariant data(const QModelIndex &index, int role) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+	QModelIndex index(int row, int column,const QModelIndex &parent = QModelIndex()) const override;
+	QModelIndex parent(const QModelIndex &index) const override;
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
 };
