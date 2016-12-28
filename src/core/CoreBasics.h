@@ -1,0 +1,12 @@
+#pragma once
+
+enum LibraryType {
+	LIBRARYTYPE_JSON,
+	LIBRARYTYPE_PYTHON,
+};
+
+enum DrawingType {
+	DRAWINGTYPE_SCHEMATIC,
+	DRAWINGTYPE_SYMBOL,
+	DRAWINGTYPE_LAYOUT,
+};
