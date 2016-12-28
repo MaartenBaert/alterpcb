@@ -26,59 +26,99 @@ MainWindow::MainWindow() {
 
 	setWindowTitle(WINDOW_TITLE);
 
-	QSplitter *splitter1 = new QSplitter(Qt::Horizontal, this);
-	{
-		QSplitter *splitter2 = new QSplitter(Qt::Vertical, splitter1);
-		{
-			QTreeView *layer_viewer = new QTreeView(splitter2);
-			layer_viewer->setUniformRowHeights(true);
+	QWidget *drawing_viewer = new QWidget(this);
 
-			QTreeView *library_viewer = new QTreeView(splitter2);
-			library_viewer->setUniformRowHeights(true);
-
-			splitter2->addWidget(layer_viewer);
-			splitter2->addWidget(library_viewer);
-			splitter2->setStretchFactor(0, 1);
-			splitter2->setStretchFactor(1, 1);
-		}
-
-		QWidget *drawing_viewer = new QWidget(splitter1);
-
-		QTreeView *parameter_viewer = new QTreeView(splitter1);
-		parameter_viewer->setUniformRowHeights(true);
-
-		splitter1->addWidget(splitter2);
-		splitter1->addWidget(drawing_viewer);
-		splitter1->addWidget(parameter_viewer);
-		splitter1->setStretchFactor(0, 0);
-		splitter1->setStretchFactor(1, 1);
-		splitter1->setStretchFactor(2, 0);
-	}
-	setCentralWidget(splitter1);
 
 	QMenuBar *menubar = new QMenuBar(this);
 	{
-		QMenu *menu_file = menubar->addMenu("&File");
-		menu_file->addAction("Test");
-		menu_file->addAction("Test");
+		QMenu *menu_file = menubar->addMenu(tr("&File"));
+		menu_file->addAction(tr("&Open"));
+		menu_file->addAction(tr("&Save"));
+		menu_file->addAction(tr("S&ave as"));
+		menu_file->addSeparator();
+		menu_file->addAction(tr("E&xport"));
+		menu_file->addSeparator();
+		menu_file->addAction(tr("&Close"));
+		menu_file->addAction(tr("C&lose all"));
+		menu_file->addSeparator();
+		menu_file->addAction(tr("&Exit"));
 	}
 	{
-		QMenu *menu_edit = menubar->addMenu("&Edit");
+		QMenu *menu_edit = menubar->addMenu(tr("&Edit"));
 		menu_edit->addAction("Test");
 		menu_edit->addAction("Test");
 		menu_edit->addAction("Test");
 	}
+
+	QMenu *menu_view = menubar->addMenu(tr("&View"));
+	QMenu *menu_view_showhide = menu_view->addMenu(tr("Show/Hide"));
+	QAction *menu_view_restore = menu_view->addAction(tr("&Restore"));
+
 	setMenuBar(menubar);
+
+	QTreeView *parameter_viewer;
+	{
+		QDockWidget *dock = new QDockWidget(tr("Parameters"), this);
+		dock->setObjectName("dock_parameters");
+		parameter_viewer = new QTreeView(dock);
+		parameter_viewer->setUniformRowHeights(true);
+		dock->setWidget(parameter_viewer);
+		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+		addDockWidget(Qt::RightDockWidgetArea, dock);
+		menu_view_showhide->addAction(dock->toggleViewAction());
+	}
+
+	QTreeView *layer_viewer;
+	{
+		QDockWidget *dock = new QDockWidget(tr("Layers"), this);
+		dock->setObjectName("dock_layers");
+		layer_viewer = new QTreeView(dock);
+		layer_viewer->setUniformRowHeights(true);
+		dock->setWidget(layer_viewer);
+		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+		addDockWidget(Qt::LeftDockWidgetArea, dock);
+		menu_view_showhide->addAction(dock->toggleViewAction());
+	}
+
+	QTreeView *library_viewer;
+	{
+		QDockWidget *dock = new QDockWidget(tr("Libraries"), this);
+		dock->setObjectName("dock_libraries");
+		library_viewer = new QTreeView(dock);
+		library_viewer->setUniformRowHeights(true);
+		dock->setWidget(library_viewer);
+		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+		addDockWidget(Qt::LeftDockWidgetArea, dock);
+		menu_view_showhide->addAction(dock->toggleViewAction());
+	}
+
+	setCentralWidget(drawing_viewer);
 
 	QToolBar *toolbar = new QToolBar(this);
 	toolbar->setMovable(false);
-	toolbar->addAction("A");
-	toolbar->addAction("B");
-	toolbar->addAction("C");
+	toolbar->addAction(QIcon::fromTheme("document-open"), tr("Open"));
+	toolbar->addAction(QIcon::fromTheme("document-save"), tr("Save"));
+	toolbar->addAction(QIcon::fromTheme("document-save-as"), tr("Save as"));
+
+	toolbar->addSeparator();
+	toolbar->addAction(QIcon::fromTheme("edit-cut"), tr("Cut"));
+	toolbar->addAction(QIcon::fromTheme("edit-copy"), tr("Copy"));
+	toolbar->addAction(QIcon::fromTheme("edit-paste"), tr("Paste"));
+	toolbar->addAction(QIcon::fromTheme("edit-delete"), tr("Delete"));
+	toolbar->addAction(QIcon::fromTheme("edit-select-all"), tr("Select all"));
+
+	toolbar->addSeparator();
+	toolbar->addAction(QIcon::fromTheme("edit-undo"), tr("Undo"));
+	toolbar->addAction(QIcon::fromTheme("edit-redo"), tr("Redo"));
+
+	toolbar->addSeparator();
+	toolbar->addAction(QIcon::fromTheme("zoom-fit-best"), tr("Zoom fit"));
+	toolbar->addAction(QIcon::fromTheme("zoom-in"), tr("Zoom in"));
+	toolbar->addAction(QIcon::fromTheme("zoom-out"), tr("Zoom out"));
+
 	addToolBar(toolbar);
 
 	showMaximized();
-
 }
 
 MainWindow::~MainWindow() {
