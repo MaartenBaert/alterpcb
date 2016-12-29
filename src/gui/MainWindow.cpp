@@ -20,14 +20,15 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "MainWindow.h"
 
+#include "DrawingViewer.h"
+
 const QString MainWindow::WINDOW_TITLE = "AlterPCB";
 
 MainWindow::MainWindow() {
 
 	setWindowTitle(WINDOW_TITLE);
 
-	QWidget *drawing_viewer = new QWidget(this);
-
+	DrawingViewer *drawing_viewer = new DrawingViewer(this);
 
 	QMenuBar *menubar = new QMenuBar(this);
 	{
