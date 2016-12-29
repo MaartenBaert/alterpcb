@@ -23,6 +23,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "Library.h"
 #include "Drawing.h"
 #include "StringRegistry.h"
+#include <iostream>
 
 LibraryManager::LibraryManager() {
 
@@ -47,7 +48,7 @@ void LibraryManager::DeleteLibrary(Library *library) {
 
 
 QModelIndex LibraryManager::index(int row, int column, const QModelIndex &parent)
-			const
+const
 {
 	if (!hasIndex(row, column, parent))
 		return QModelIndex();
@@ -135,6 +136,113 @@ int LibraryManager::columnCount(const QModelIndex &parent) const
 {
 	UNUSED(parent);
 	return 1;
+}
+
+Qt::DropActions LibraryManager::supportedDropActions() const
+{
+	return Qt::MoveAction | Qt::MoveAction;
+}
+
+Qt::ItemFlags LibraryManager::flags(const QModelIndex &index) const
+{
+	Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
+
+	if (!index.isValid()){
+		return Qt::ItemIsDropEnabled| defaultFlags;
+	}
+	else {
+		return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled| defaultFlags;
+	}
+}
+
+QStringList LibraryManager::mimeTypes() const
+{
+	QStringList types;
+	types << "application/vnd.text.list";
+	return types;
+}
+
+QMimeData *LibraryManager::mimeData(const QModelIndexList &indexes) const
+{
+	QMimeData *mimeData = new QMimeData();
+	QByteArray encodedData;
+
+	QDataStream stream(&encodedData, QIODevice::WriteOnly);
+	QString text;
+	foreach (QModelIndex index, indexes) {
+		if (index.isValid()) {
+			// send the address of the dragged item + type (so that we know how to cast it later)
+			LibraryTreeItem *item = static_cast<LibraryTreeItem*>(index.internalPointer());
+			switch(item->GetTreeItemType()) {
+				case LIBRARYTREEITEMTYPE_LIBRARY : {
+					Library *libraryItem;
+					libraryItem = static_cast<Library*>(item);
+					text = "LIB_" + QString::number((qint64) libraryItem);
+					break;
+				}
+				case LIBRARYTREEITEMTYPE_DRAWING : {
+					Drawing *drawingItem;
+					drawingItem = static_cast<Drawing*>(item);
+					text = text = "DRA_" + QString::number((qint64) drawingItem);
+					break;
+				}
+				default : {
+					text = QString("ERR");
+					break;
+				}
+			}
+
+			stream << text;
+			//std::cerr << "DRAGGING: " << text.toStdString() << std::endl;
+		}
+	}
+
+	mimeData->setData("application/vnd.text.list", encodedData);
+	return mimeData;
+}
+
+bool LibraryManager::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+	if (action == Qt::IgnoreAction)
+		return true;
+
+	if (!data->hasFormat("application/vnd.text.list"))
+		return false;
+
+	if (column > 0)
+		return false;
+
+	QByteArray encodedData = data->data("application/vnd.text.list");
+	QDataStream stream(&encodedData, QIODevice::ReadOnly);
+	QStringList newItems;
+	while (!stream.atEnd()) {
+		QString text;
+		stream >> text;
+		newItems << text;
+		//std::cerr << "DROPPING: " << text.toStdString() << std::endl;
+	}
+
+	foreach (QString text, newItems) {
+		//RegExp rx("(\_)"); // RegEx for '_'
+		QStringList data =  text.split("_");
+		QString objecttype = data.at(0);
+		QString pointerstr = data.at(1);
+		long objectptr = pointerstr.toLong();
+
+		if(objecttype == QString("LIB")) {
+			Library * libraryItem;
+			libraryItem = reinterpret_cast<Library*>(objectptr);
+
+		}
+		else if(objecttype == QString("DRA")) {
+			Drawing *drawingItem;
+			drawingItem = reinterpret_cast<Drawing*>(objectptr);
+		}
+	}
+	std::cerr << "D: " << std::to_string(parent.row()) << std::endl;
+	this->NewLibrary("AAA", "basic.alterlib.json", LIBRARYTYPE_JSON);
+	layoutChanged();
+	return true;
 }
 
 QVariant LibraryManager::data(const QModelIndex &index, int role) const

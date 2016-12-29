@@ -56,5 +56,9 @@ public:
 	QModelIndex parent(const QModelIndex &index) const override;
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-
+	Qt::DropActions supportedDropActions() const override;
+	Qt::ItemFlags flags(const QModelIndex &index) const override;
+	QStringList mimeTypes() const override;
+	QMimeData* mimeData(const QModelIndexList &indexes) const;
+	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
 };

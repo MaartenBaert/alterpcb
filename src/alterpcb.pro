@@ -17,7 +17,8 @@ SOURCES += \
 	core/Shape.cpp \
 	gui/MainWindow.cpp \
 	Main.cpp \
-    common/VData.cpp
+    common/VData.cpp \
+    gui/LibraryViewer.cpp
 
 HEADERS += \
 	common/Basics.h \
@@ -35,4 +36,5 @@ HEADERS += \
 	gui/MainWindow.h \
     core/CoreBasics.h \
     common/BackPointer.h \
-    core/LibraryTreeItem.h
+    core/LibraryTreeItem.h \
+    gui/LibraryViewer.h
