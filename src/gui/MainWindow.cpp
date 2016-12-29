@@ -19,12 +19,13 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "MainWindow.h"
+#include "LibraryManager.h"
 
 #include "DrawingViewer.h"
 
 const QString MainWindow::WINDOW_TITLE = "AlterPCB";
 
-MainWindow::MainWindow() {
+MainWindow::MainWindow(LibraryManager* library_manager) {
 
 	setWindowTitle(WINDOW_TITLE);
 
@@ -87,6 +88,7 @@ MainWindow::MainWindow() {
 		dock->setObjectName("dock_libraries");
 		library_viewer = new QTreeView(dock);
 		library_viewer->setUniformRowHeights(true);
+		library_viewer->setModel(library_manager);
 		dock->setWidget(library_viewer);
 		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 		addDockWidget(Qt::LeftDockWidgetArea, dock);

@@ -31,6 +31,7 @@ HEADERS += \
 	common/EnumTranslator.h \
 	common/HashTable.h \
 	common/Json.h \
+	core/LibraryTreeItem.h \
 	common/MurmurHash.h \
 	common/StringRegistry.h \
 	common/VData.h \

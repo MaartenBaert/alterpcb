@@ -23,6 +23,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "Basics.h"
 
 #include <QtGui>
+#include <LibraryManager.h>
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -34,7 +35,7 @@ private:
 	// member variables here
 
 public:
-	MainWindow();
+	MainWindow(LibraryManager* library_manager);
 	~MainWindow();
 
 };

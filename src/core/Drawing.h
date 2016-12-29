@@ -24,11 +24,13 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "StringRegistry.h"
 #include "CoreBasics.h"
 #include "Cow.h"
+#include "LibraryTreeItem.h"
 
 #include <string>
 #include <vector>
 
 class Shape;
+class Library;
 
 class DrawingHistory {
 
@@ -52,16 +54,17 @@ public:
 
 };
 
-class Drawing : public BackPointer<Drawing> {
+class Drawing : public LibraryTreeItem, public BackPointer<Drawing> {
 
 private:
+	Library *m_parent;
 	stringtag_t m_name;
 	DrawingType m_type;
 	std::vector<DrawingHistory> m_history;
 	size_t m_history_position;
 
 public:
-	Drawing(stringtag_t name, DrawingType type);
+	Drawing(Library *parent, stringtag_t name, DrawingType type);
 
 	// noncopyable
 	Drawing(const Drawing&) = delete;
@@ -73,11 +76,13 @@ public:
 	void HistoryUndo();
 	void HistoryRedo();
 
+	inline Library* GetParent() const {return m_parent;}
 	inline stringtag_t GetName() const { return m_name; }
 	inline DrawingType GetType() const { return m_type; }
 
 	inline       std::vector<Cow<Shape>>& GetShapes()       { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
 	inline const std::vector<Cow<Shape>>& GetShapes() const { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
+
 
 };
 

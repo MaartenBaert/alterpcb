@@ -22,12 +22,11 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Drawing.h"
 
-Library::Library(const std::string &name, const std::string &filename, LibraryType type) {
-
+Library::Library(LibraryManager *parent,const std::string &name, const std::string &filename, LibraryType type) : LibraryTreeItem(LIBRARYTREEITEMTYPE_LIBRARY) {
+	m_parent = parent;
 	m_name = name;
 	m_file_name = filename;
 	m_type = type;
-
 }
 
 Library::~Library() {
@@ -35,7 +34,7 @@ Library::~Library() {
 }
 
 Drawing *Library::NewDrawing(stringtag_t name, DrawingType type) {
-	ForwardPointer<Drawing> drawing(new Drawing(name, type));
+	ForwardPointer<Drawing> drawing(new Drawing(this,name, type));
 	Drawing *ptr = drawing.Get();
 	switch(type) {
 		case DRAWINGTYPE_SCHEMATIC: m_schematics.emplace_back(std::move(drawing)); break;
@@ -52,3 +51,9 @@ void Library::DeleteDrawing(Drawing *drawing) {
 		case DRAWINGTYPE_LAYOUT: DeleteFromVector(m_layouts, drawing); break;
 	}
 }
+
+LibraryManager *Library::GetParent() {
+	return m_parent;
+}
+
+
