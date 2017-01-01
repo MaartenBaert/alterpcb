@@ -241,11 +241,16 @@ bool LibraryManager::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 			if(row<0 && parent.row()<0) {
 				// place at the end
 				std::cerr << std::to_string(m_libraries.size()) << std::endl;
-				moveInVector(m_libraries,IndexInVector(m_libraries,libraryItem),m_libraries.size());
+				MoveInVector(m_libraries, IndexInVector(m_libraries, libraryItem), m_libraries.size() - 1);
 			}
 			else {
 				// place in the middle
-				moveInVector(m_libraries,IndexInVector(m_libraries,libraryItem),row);
+				size_t current_index = IndexInVector(m_libraries, libraryItem);
+				size_t target_index = row;
+				if(target_index > current_index) {
+					--target_index; // Qt does not consider the fact that removing the item will change the target index
+				}
+				MoveInVector(m_libraries, current_index, target_index);
 			}
 		}
 		else if(objecttype == QString("DRA")) {

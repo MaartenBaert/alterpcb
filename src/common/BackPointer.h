@@ -209,21 +209,16 @@ ForwardPointer<T> MoveFromVector(std::vector<ForwardPointer<T>> &vec, T *ptr) {
 	return object;
 }
 
-
 template<typename T>
-void moveInVector(std::vector<ForwardPointer<T>> &vec, size_t current_index, size_t target_index){
-	if(current_index <= vec.size() && target_index <= vec.size()){
-		if(current_index < target_index){
-			while(current_index < target_index-1){
-				std::swap(vec[current_index],vec[current_index+1]);
-				current_index++;
-			}
-		}
-		if(current_index > target_index){
-			while(current_index > target_index){
-				std::swap(vec[current_index],vec[current_index-1]);
-				current_index--;
-			}
-		}
+void MoveInVector(std::vector<ForwardPointer<T>> &vec, size_t current_index, size_t target_index){
+	assert(current_index < vec.size());
+	assert(target_index < vec.size());
+	while(current_index < target_index) {
+		std::swap(vec[current_index], vec[current_index + 1]);
+		++current_index;
+	}
+	while(current_index > target_index){
+		std::swap(vec[current_index], vec[current_index - 1]);
+		--current_index;
 	}
 }

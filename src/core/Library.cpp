@@ -75,9 +75,12 @@ void Library::MoveInDrawing(ForwardPointer<Drawing> *ptr)
 	}
 }
 
-void Library::MovePositionDrawing(Drawing *drawing, size_t target_index)
-{
-	moveInVector(m_layouts,IndexInVector(m_layouts,drawing),target_index);
+void Library::MovePositionDrawing(Drawing *drawing, size_t target_index) {
+	size_t current_index = IndexInVector(m_layouts, drawing);
+	if(target_index > current_index) {
+		--target_index; // Qt does not consider the fact that removing the item will change the target index
+	}
+	MoveInVector(m_layouts, current_index, target_index);
 }
 
 LibraryManager *Library::GetParent() {
