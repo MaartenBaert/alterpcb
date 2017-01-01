@@ -51,6 +51,9 @@ public:
 
 	Drawing* NewDrawing(stringtag_t name, DrawingType type);
 	void DeleteDrawing(Drawing *drawing);
+	ForwardPointer<Drawing> MoveOutDrawing(Drawing *drawing);
+	void MoveInDrawing(ForwardPointer<Drawing> *ptr);
+	void MovePositionDrawing(Drawing *drawing,size_t target_index);
 
 	inline const std::string& GetName() const { return m_name; }
 	inline const std::string& GetFileName() const { return m_file_name; }
@@ -61,6 +64,7 @@ public:
 	inline Drawing* GetSymbol(size_t index) { assert(index < m_symbols.size()); return m_symbols[index].Get(); }
 	inline size_t GetSymbolCount() { return m_symbols.size(); }
 	inline Drawing* GetLayout(size_t index) { assert(index < m_layouts.size()); return m_layouts[index].Get(); }
+
 	inline size_t GetLayoutCount() { return m_layouts.size(); }
 
 	LibraryManager *GetParent();

@@ -79,6 +79,7 @@ public:
 	inline Library* GetParent() const {return m_parent;}
 	inline stringtag_t GetName() const { return m_name; }
 	inline DrawingType GetType() const { return m_type; }
+	inline void SetParent(Library *parent) {m_parent = parent;}
 
 	inline       std::vector<Cow<Shape>>& GetShapes()       { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
 	inline const std::vector<Cow<Shape>>& GetShapes() const { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }

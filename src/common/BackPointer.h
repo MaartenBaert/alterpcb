@@ -24,6 +24,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <memory>
 #include <vector>
+#include <iostream>
 
 /*
 ForwardPointer<T> behaves just like std::unique_ptr<T>, except the object being pointed to also points back to the smart
@@ -198,4 +199,31 @@ size_t DeleteFromVector(std::vector<ForwardPointer<T>> &vec, T *ptr) {
 	size_t index = IndexInVector(vec, ptr);
 	DeleteFromVector(vec, index);
 	return index;
+}
+
+template<typename T>
+ForwardPointer<T> MoveFromVector(std::vector<ForwardPointer<T>> &vec, T *ptr) {
+	size_t index = IndexInVector(vec, ptr);
+	ForwardPointer<T> object(std::move(vec[index]));
+	vec.erase(vec.begin() + index);
+	return object;
+}
+
+
+template<typename T>
+void moveInVector(std::vector<ForwardPointer<T>> &vec, size_t current_index, size_t target_index){
+	if(current_index <= vec.size() && target_index <= vec.size()){
+		if(current_index < target_index){
+			while(current_index < target_index-1){
+				std::swap(vec[current_index],vec[current_index+1]);
+				current_index++;
+			}
+		}
+		if(current_index > target_index){
+			while(current_index > target_index){
+				std::swap(vec[current_index],vec[current_index-1]);
+				current_index--;
+			}
+		}
+	}
 }

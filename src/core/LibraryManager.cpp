@@ -153,6 +153,8 @@ Qt::ItemFlags LibraryManager::flags(const QModelIndex &index) const
 	else {
 		return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled| defaultFlags;
 	}
+
+
 }
 
 QStringList LibraryManager::mimeTypes() const
@@ -193,7 +195,6 @@ QMimeData *LibraryManager::mimeData(const QModelIndexList &indexes) const
 			}
 
 			stream << text;
-			//std::cerr << "DRAGGING: " << text.toStdString() << std::endl;
 		}
 	}
 
@@ -219,11 +220,9 @@ bool LibraryManager::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 		QString text;
 		stream >> text;
 		newItems << text;
-		//std::cerr << "DROPPING: " << text.toStdString() << std::endl;
 	}
 
 	foreach (QString text, newItems) {
-		//RegExp rx("(\_)"); // RegEx for '_'
 		QStringList data =  text.split("_");
 		QString objecttype = data.at(0);
 		QString pointerstr = data.at(1);
@@ -233,14 +232,60 @@ bool LibraryManager::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 			Library * libraryItem;
 			libraryItem = reinterpret_cast<Library*>(objectptr);
 
+			// Library can only be placed between other library OR at the end
+			if(row<0 && parent.row()>0){
+				return false;
+			}
+
+			// move the lib
+			if(row<0 && parent.row()<0) {
+				// place at the end
+				std::cerr << std::to_string(m_libraries.size()) << std::endl;
+				moveInVector(m_libraries,IndexInVector(m_libraries,libraryItem),m_libraries.size());
+			}
+			else {
+				// place in the middle
+				moveInVector(m_libraries,IndexInVector(m_libraries,libraryItem),row);
+			}
 		}
 		else if(objecttype == QString("DRA")) {
 			Drawing *drawingItem;
 			drawingItem = reinterpret_cast<Drawing*>(objectptr);
+
+			// Drawing can only be placed between other drawings OR ontop of a library
+			if(parent.row()<0)
+			{
+				return false;
+			}
+			LibraryTreeItem *parentItem = static_cast<LibraryTreeItem*>(parent.internalPointer());
+			if(parentItem->GetTreeItemType() == LIBRARYTREEITEMTYPE_DRAWING){
+				return false;
+			}
+
+			// move the drawing
+			Library * targetlibraryItem;
+			targetlibraryItem = static_cast<Library*>(parentItem);
+
+			if(targetlibraryItem == drawingItem->GetParent()) {
+				// Move within the same library
+				targetlibraryItem->MovePositionDrawing(drawingItem , row);
+			}
+			else {
+				if(row < 0) {
+					// Move to other library (if dragged ontop of other lib)
+					ForwardPointer<Drawing> drawingItemPtr = drawingItem->GetParent()->MoveOutDrawing(drawingItem);
+					targetlibraryItem->MoveInDrawing(&drawingItemPtr);
+				}
+				else {
+					// Move to target index in other library
+					ForwardPointer<Drawing> drawingItemPtr = drawingItem->GetParent()->MoveOutDrawing(drawingItem);
+					targetlibraryItem->MoveInDrawing(&drawingItemPtr);
+					targetlibraryItem->MovePositionDrawing(drawingItem , row);
+				}
+			}
 		}
 	}
-	std::cerr << "D: " << std::to_string(parent.row()) << std::endl;
-	this->NewLibrary("AAA", "basic.alterlib.json", LIBRARYTYPE_JSON);
+
 	layoutChanged();
 	return true;
 }

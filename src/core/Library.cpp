@@ -52,6 +52,34 @@ void Library::DeleteDrawing(Drawing *drawing) {
 	}
 }
 
+ForwardPointer<Drawing> Library::MoveOutDrawing(Drawing *drawing)
+{
+	ForwardPointer<Drawing> ptr;
+	switch(drawing->GetType()) {
+		case DRAWINGTYPE_SCHEMATIC: ptr = MoveFromVector(m_schematics, drawing); break;
+		case DRAWINGTYPE_SYMBOL: ptr = MoveFromVector(m_symbols, drawing); break;
+		case DRAWINGTYPE_LAYOUT: ptr = MoveFromVector(m_layouts, drawing); break;
+	}
+	drawing->SetParent(nullptr);
+	return ptr;
+}
+
+void Library::MoveInDrawing(ForwardPointer<Drawing> *ptr)
+{
+	std::cerr << "A" << std::endl;
+	ptr->Get()->SetParent(this);
+	switch(ptr->Get()->GetType()) {
+		case DRAWINGTYPE_SCHEMATIC: m_schematics.push_back(std::move(*ptr)); break;
+		case DRAWINGTYPE_SYMBOL: m_symbols.push_back(std::move(*ptr)); break;
+		case DRAWINGTYPE_LAYOUT: m_layouts.push_back(std::move(*ptr)); break;
+	}
+}
+
+void Library::MovePositionDrawing(Drawing *drawing, size_t target_index)
+{
+	moveInVector(m_layouts,IndexInVector(m_layouts,drawing),target_index);
+}
+
 LibraryManager *Library::GetParent() {
 	return m_parent;
 }

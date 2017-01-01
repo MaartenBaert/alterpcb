@@ -94,6 +94,7 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 		library_viewer->setAcceptDrops(true);
 		library_viewer->setDropIndicatorShown(true);
 		library_viewer->setSelectionBehavior(QAbstractItemView::SelectRows);
+		library_viewer->setDragDropMode(QAbstractItemView::InternalMove);
 		dock->setWidget(library_viewer);
 		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 		addDockWidget(Qt::LeftDockWidgetArea, dock);
