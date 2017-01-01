@@ -21,12 +21,12 @@ SOURCES += \
 	core/Shape.cpp \
 	gui/DrawingViewer.cpp \
 	gui/GLHelper.cpp \
+	gui/LibraryViewer.cpp \
 	gui/MainWindow.cpp \
-	Main.cpp \
-    common/VData.cpp \
-    gui/LibraryViewer.cpp
+	Main.cpp
 
 HEADERS += \
+	common/BackPointer.h \
 	common/Basics.h \
 	common/Cow.h \
 	common/EnumTranslator.h \
@@ -35,14 +35,13 @@ HEADERS += \
 	common/MurmurHash.h \
 	common/StringRegistry.h \
 	common/VData.h \
+	core/CoreBasics.h \
 	core/Drawing.h \
 	core/Library.h \
 	core/LibraryManager.h \
+	core/LibraryTreeItem.h \
 	core/Shape.h \
-	gui/MainWindow.h \
-    core/CoreBasics.h \
-    common/BackPointer.h \
-    core/LibraryTreeItem.h \
-    gui/LibraryViewer.h
 	gui/DrawingViewer.h \
-	gui/GLHelper.h 
+	gui/GLHelper.h \
+	gui/LibraryViewer.h \
+	gui/MainWindow.h
