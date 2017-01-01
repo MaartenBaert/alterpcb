@@ -57,6 +57,8 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 	QMenu *menu_view_showhide = menu_view->addMenu(tr("Show/Hide"));
 	QAction *menu_view_restore = menu_view->addAction(tr("&Restore"));
 
+	UNUSED(menu_view_restore);
+
 	setMenuBar(menubar);
 
 	QTreeView *parameter_viewer;

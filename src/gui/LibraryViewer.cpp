@@ -16,11 +16,13 @@ LibraryViewer::~LibraryViewer()
 
 void LibraryViewer::OnDoubleClick(const QModelIndex &index)
 {
+	UNUSED(index);
 	std::cerr << "LIBVIEWER: TODO DoubleClick open file" << std::endl;
 }
 
 void LibraryViewer::OnRightClick(const QPoint &point)
 {
+	UNUSED(point);
 	 QMenu *menu = new QMenu;
 	 QModelIndex index = this->currentIndex();
 
