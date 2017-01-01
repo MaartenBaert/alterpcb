@@ -5,7 +5,8 @@
 #include <GL/glew.h>
 
 #include <QtGui>
-#include <QtOpenGL>
+#include <QtOpenGL/QGLFormat>
+#include <QtOpenGL/QGLWidget>
 
 #define CLASS_GLTHING(Thing, NewThing, DeleteThing) \
 	class Thing { \
