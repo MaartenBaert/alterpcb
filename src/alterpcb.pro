@@ -17,7 +17,9 @@ SOURCES += \
 	core/Shape.cpp \
 	gui/MainWindow.cpp \
 	Main.cpp \
-    common/VData.cpp
+        common/VData.cpp \
+        gui/Editor.cpp \
+    gui/components/TabbedDocumentViewer.cpp
 
 HEADERS += \
 	common/Basics.h \
@@ -33,5 +35,7 @@ HEADERS += \
 	core/LibraryManager.h \
 	core/Shape.h \
 	gui/MainWindow.h \
-    core/CoreBasics.h \
-    common/BackPointer.h
+        core/CoreBasics.h \
+        common/BackPointer.h \
+        gui/Editor.h \
+    gui/components/TabbedDocumentViewer.h

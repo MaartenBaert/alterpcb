@@ -26,8 +26,7 @@ MainWindow::MainWindow() {
 
 	setWindowTitle(WINDOW_TITLE);
 
-	QWidget *drawing_viewer = new QWidget(this);
-
+	Editor *editor = new Editor();
 
 	QMenuBar *menubar = new QMenuBar(this);
 	{
@@ -53,6 +52,7 @@ MainWindow::MainWindow() {
 	QMenu *menu_view = menubar->addMenu(tr("&View"));
 	QMenu *menu_view_showhide = menu_view->addMenu(tr("Show/Hide"));
 	QAction *menu_view_restore = menu_view->addAction(tr("&Restore"));
+	UNUSED(menu_view_restore);
 
 	setMenuBar(menubar);
 
@@ -92,7 +92,7 @@ MainWindow::MainWindow() {
 		menu_view_showhide->addAction(dock->toggleViewAction());
 	}
 
-	setCentralWidget(drawing_viewer);
+	setCentralWidget(editor);
 
 	QToolBar *toolbar = new QToolBar(this);
 	toolbar->setMovable(false);
