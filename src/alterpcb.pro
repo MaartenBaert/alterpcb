@@ -21,6 +21,7 @@ SOURCES += \
 	core/Shape.cpp \
 	gui/DrawingViewer.cpp \
 	gui/GLHelper.cpp \
+	gui/LibraryTreeItem.cpp \
 	gui/LibraryViewer.cpp \
 	gui/MainWindow.cpp \
 	Main.cpp
@@ -33,6 +34,7 @@ HEADERS += \
 	common/HashTable.h \
 	common/Json.h \
 	common/MurmurHash.h \
+	common/SafePointer.h \
 	common/StringRegistry.h \
 	common/VData.h \
 	core/CoreBasics.h \

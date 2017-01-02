@@ -47,7 +47,7 @@ public:
 	inline BackPointer() : m_ptr(NULL) {}
 
 	inline ForwardPointer<T>* GetBackPointer() const noexcept { return m_ptr; }
-	inline void SetBackPointer(ForwardPointer<T> *ptr) noexcept { m_ptr = ptr; }
+	inline void SetBackPointerInternal(ForwardPointer<T> *ptr) noexcept { m_ptr = ptr; }
 
 	// noncopyable
 	BackPointer(const BackPointer&) = delete;
@@ -68,15 +68,15 @@ public:
 	// only for construction
 	inline explicit ForwardPointer(T *ptr) noexcept : m_ptr(ptr) {
 		if(m_ptr)
-			m_ptr->SetBackPointer(this);
+			m_ptr->SetBackPointerInternal(this);
 	}
 
 	inline ForwardPointer(ForwardPointer &&other) noexcept {
 		if(other.m_ptr)
-			other.m_ptr->SetBackPointer(NULL);
+			other.m_ptr->SetBackPointerInternal(NULL);
 		m_ptr = std::move(other.m_ptr);
 		if(m_ptr)
-			m_ptr->SetBackPointer(this);
+			m_ptr->SetBackPointerInternal(this);
 	}
 
 	// noncopyable (move only)
@@ -85,21 +85,22 @@ public:
 
 	inline ~ForwardPointer() {
 		if(m_ptr)
-			m_ptr->SetBackPointer(NULL);
+			m_ptr->SetBackPointerInternal(NULL);
 	}
 
 	inline ForwardPointer& operator=(ForwardPointer &&ptr) noexcept {
+		// self-assignment ok
 		if(m_ptr)
-			m_ptr->SetBackPointer(NULL);
+			m_ptr->SetBackPointerInternal(NULL);
 		m_ptr = std::move(ptr.m_ptr);
 		if(m_ptr)
-			m_ptr->SetBackPointer(this);
+			m_ptr->SetBackPointerInternal(this);
 		return *this;
 	}
 
 	inline ForwardPointer& operator=(std::nullptr_t) noexcept {
 		if(m_ptr)
-			m_ptr->SetBackPointer(NULL);
+			m_ptr->SetBackPointerInternal(NULL);
 		m_ptr = nullptr;
 		return *this;
 	}
@@ -114,28 +115,29 @@ public:
 
 	inline T* Release() noexcept {
 		if(m_ptr)
-			m_ptr->SetBackPointer(NULL);
+			m_ptr->SetBackPointerInternal(NULL);
 		return m_ptr.release();
 	}
 
 	inline void Reset(T* ptr = NULL) noexcept {
 		if(m_ptr)
-			m_ptr->SetBackPointer(NULL);
+			m_ptr->SetBackPointerInternal(NULL);
 		m_ptr.reset(ptr);
 		if(m_ptr)
-			m_ptr->SetBackPointer(this);
+			m_ptr->SetBackPointerInternal(this);
 	}
 
 	inline void Swap(ForwardPointer& other) noexcept {
+		// self-assignment ok
 		if(m_ptr)
-			m_ptr->SetBackPointer(NULL);
+			m_ptr->SetBackPointerInternal(NULL);
 		if(other.m_ptr)
-			other.m_ptr->SetBackPointer(NULL);
+			other.m_ptr->SetBackPointerInternal(NULL);
 		m_ptr.swap(other.m_ptr);
 		if(m_ptr)
-			m_ptr->SetBackPointer(this);
+			m_ptr->SetBackPointerInternal(this);
 		if(other.m_ptr)
-			other.m_ptr->SetBackPointer(std::addressof(other));
+			other.m_ptr->SetBackPointerInternal(std::addressof(other));
 	}
 
 	inline T& operator*() const {
@@ -210,7 +212,7 @@ ForwardPointer<T> MoveFromVector(std::vector<ForwardPointer<T>> &vec, T *ptr) {
 }
 
 template<typename T>
-void MoveInVector(std::vector<ForwardPointer<T>> &vec, size_t current_index, size_t target_index){
+void MoveInVector(std::vector<ForwardPointer<T>> &vec, size_t current_index, size_t target_index) {
 	assert(current_index < vec.size());
 	assert(target_index < vec.size());
 	while(current_index < target_index) {
@@ -220,5 +222,29 @@ void MoveInVector(std::vector<ForwardPointer<T>> &vec, size_t current_index, siz
 	while(current_index > target_index){
 		std::swap(vec[current_index], vec[current_index - 1]);
 		--current_index;
+	}
+}
+
+template<typename T>
+void BulkInsertIntoVector(std::vector<ForwardPointer<T>> &vec, std::vector<ForwardPointer<T>> &ins, size_t target_index) {
+	size_t space_before = 0, space_after = 0;
+	for(size_t i = 0; i < target_index; ++i) {
+		if(vec[i] == nullptr) {
+			++space_before;
+		} else if(space_before != 0) {
+			vec[i - space_before] = std::move(vec[i]);
+		}
+	}
+	for(size_t i = vec.size(); i > target_index; ) {
+		--i;
+		if(vec[i] == nullptr) {
+			++space_after;
+		} else if(space_after != 0) {
+			vec[i + space_after] = std::move(vec[i]);
+		}
+	}
+	assert(space_before + space_after == ins.size());
+	for(size_t i = 0; i < ins.size(); ++i) {
+		vec[target_index - space_before + i] = std::move(ins[i]);
 	}
 }
