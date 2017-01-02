@@ -18,33 +18,33 @@ You should have received a copy of the GNU General Public License
 along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Drawing.h"
+#pragma once
 
-Drawing::Drawing(Library *parent, stringtag_t name, DrawingType type) : LibraryTreeItem(LIBRARYTREEITEMTYPE_DRAWING){
-	m_parent = parent;
-	m_name = name;
-	m_type = type;
-}
+#include "Basics.h"
 
-void Drawing::HistoryClear() {
-	m_history.clear();
-	m_history.emplace_back(false);
-}
+#include "GLHelper.h"
 
-void Drawing::HistoryRevert() {
-	//TODO//
-}
+class DrawingViewer : public QGLWidget {
+	Q_OBJECT
 
-void Drawing::HistoryPush(bool soft) {
-	UNUSED(soft);
-	//TODO//
-}
+private:
+	GLvao m_gl_vao_basic;
+	GLvbo m_gl_vbo_basic;
 
-void Drawing::HistoryUndo() {
-	//TODO//
-}
+	GLvs m_gl_vs_basic;
+	GLfs m_gl_fs_basic;
+	GLsp m_gl_sp_basic;
+	GLuint m_gl_uni_basic_center, m_gl_uni_basic_scale, m_gl_uni_basic_color;
 
-void Drawing::HistoryRedo() {
-	//TODO//
-}
+public:
+	DrawingViewer(QWidget *parent = NULL);
+	~DrawingViewer();
 
+	QSize sizeHint() const override;
+
+protected:
+	virtual void initializeGL() override;
+	virtual void resizeGL(int width, int height) override;
+	virtual void paintEvent(QPaintEvent* event) override;
+
+};

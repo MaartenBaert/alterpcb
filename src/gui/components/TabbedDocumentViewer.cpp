@@ -6,7 +6,7 @@ TabbedDocumentViewer::TabbedDocumentViewer(QWidget *parent) : QWidget(parent)
 	m_tabbar = new QTabBar(this);
 	connect(m_tabbar,SIGNAL(currentChanged(int)),this,SLOT(tabbarClicked(int)));
 	l=new QVBoxLayout(m_base);
-
+	l->setMargin(2);
 	updateLayout();
 }
 

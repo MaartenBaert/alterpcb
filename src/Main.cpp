@@ -107,6 +107,11 @@ void Examples1() {
 int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
 
+	#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+		QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+		QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+	#endif
+
 	StringRegistry string_registry;
 	UNUSED(string_registry);
 
@@ -115,6 +120,10 @@ int main(int argc, char *argv[]) {
 		Library *lib1 = library_manager.NewLibrary("Basic", "basic.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib2 = library_manager.NewLibrary("My PCB", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib3 = library_manager.NewLibrary("My Scripts", "myscripts.alterlib.py", LIBRARYTYPE_PYTHON);
+		Library *lib4 = library_manager.NewLibrary("Very small pcb", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
+		Library *lib5 = library_manager.NewLibrary("Random PCB", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
+		Library *lib6 = library_manager.NewLibrary("Ugly PCB", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
+		Library *lib7 = library_manager.NewLibrary("House shaped PCB", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
 		lib1->NewDrawing(StringRegistry::NewTag("resistor"), DRAWINGTYPE_SYMBOL);
 		lib1->NewDrawing(StringRegistry::NewTag("resistor"), DRAWINGTYPE_LAYOUT);
 		lib1->NewDrawing(StringRegistry::NewTag("via"), DRAWINGTYPE_LAYOUT);
@@ -127,11 +136,21 @@ int main(int argc, char *argv[]) {
 		lib3->NewDrawing(StringRegistry::NewTag("scriptpart2"), DRAWINGTYPE_LAYOUT);
 		lib3->NewDrawing(StringRegistry::NewTag("scriptpart3"), DRAWINGTYPE_LAYOUT);
 		lib3->NewDrawing(StringRegistry::NewTag("scriptpart4"), DRAWINGTYPE_LAYOUT);
+		lib4->NewDrawing(StringRegistry::NewTag("resistor1"), DRAWINGTYPE_SYMBOL);
+		lib4->NewDrawing(StringRegistry::NewTag("resistor2"), DRAWINGTYPE_LAYOUT);
+		lib4->NewDrawing(StringRegistry::NewTag("resistor3"), DRAWINGTYPE_SYMBOL);
+		lib4->NewDrawing(StringRegistry::NewTag("resistor4"), DRAWINGTYPE_LAYOUT);
+		lib5->NewDrawing(StringRegistry::NewTag("resistor5"), DRAWINGTYPE_SYMBOL);
+		lib5->NewDrawing(StringRegistry::NewTag("resistor6"), DRAWINGTYPE_LAYOUT);
+		lib5->NewDrawing(StringRegistry::NewTag("resistor7"), DRAWINGTYPE_SYMBOL);
+		lib6->NewDrawing(StringRegistry::NewTag("resistor7_v2"), DRAWINGTYPE_LAYOUT);
+		lib7->NewDrawing(StringRegistry::NewTag("resistor8"), DRAWINGTYPE_SYMBOL);
+		lib7->NewDrawing(StringRegistry::NewTag("resistor9"), DRAWINGTYPE_LAYOUT);
 	}
 
 	Examples1();
 
-	MainWindow window;
+	MainWindow window(&library_manager);
 	UNUSED(window);
 	return app.exec();
 }

@@ -18,33 +18,12 @@ You should have received a copy of the GNU General Public License
 along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Drawing.h"
+#include "LibraryTreeItem.h"
 
-Drawing::Drawing(Library *parent, stringtag_t name, DrawingType type) : LibraryTreeItem(LIBRARYTREEITEMTYPE_DRAWING){
-	m_parent = parent;
-	m_name = name;
-	m_type = type;
+LibraryTreeItemsMime::LibraryTreeItemsMime() {
+	// nothing
 }
 
-void Drawing::HistoryClear() {
-	m_history.clear();
-	m_history.emplace_back(false);
+LibraryTreeItemsMime::~LibraryTreeItemsMime() {
+	// nothing
 }
-
-void Drawing::HistoryRevert() {
-	//TODO//
-}
-
-void Drawing::HistoryPush(bool soft) {
-	UNUSED(soft);
-	//TODO//
-}
-
-void Drawing::HistoryUndo() {
-	//TODO//
-}
-
-void Drawing::HistoryRedo() {
-	//TODO//
-}
-

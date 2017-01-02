@@ -227,5 +227,13 @@ public:
 		assert(i < m_data.size());
 		return m_data[i];
 	}
+	inline T& Back() {
+		assert(!m_data.empty());
+		return m_data.back();
+	}
+	inline const T& Back() const {
+		assert(!m_data.empty());
+		return m_data.back();
+	}
 
 };

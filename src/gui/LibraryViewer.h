@@ -18,33 +18,21 @@ You should have received a copy of the GNU General Public License
 along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Drawing.h"
+#pragma once
 
-Drawing::Drawing(Library *parent, stringtag_t name, DrawingType type) : LibraryTreeItem(LIBRARYTREEITEMTYPE_DRAWING){
-	m_parent = parent;
-	m_name = name;
-	m_type = type;
-}
+#include "Basics.h"
 
-void Drawing::HistoryClear() {
-	m_history.clear();
-	m_history.emplace_back(false);
-}
+#include <QtGui>
 
-void Drawing::HistoryRevert() {
-	//TODO//
-}
+class LibraryViewer : public QTreeView {
+	Q_OBJECT
 
-void Drawing::HistoryPush(bool soft) {
-	UNUSED(soft);
-	//TODO//
-}
+public:
+	LibraryViewer(QWidget *parent = 0);
+	~LibraryViewer();
 
-void Drawing::HistoryUndo() {
-	//TODO//
-}
+private slots:
+	void OnDoubleClick(const QModelIndex &index);
+	void OnRightClick(const QPoint &point);
 
-void Drawing::HistoryRedo() {
-	//TODO//
-}
-
+};

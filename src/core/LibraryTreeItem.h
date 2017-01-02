@@ -20,23 +20,39 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "Basics.h"
-#include "Editor.h"
+#include "CoreBasics.h"
+#include "SafePointer.h"
+
+#include <cassert>
+
+#include <vector>
 
 #include <QtGui>
-#include <LibraryManager.h>
 
-class MainWindow : public QMainWindow {
+class LibraryTreeItem : public SafeTarget<LibraryTreeItem> {
+
+private:
+	LibraryTreeItemType m_tree_item_type;
+
+public:
+	inline LibraryTreeItem(LibraryTreeItemType type) : m_tree_item_type(type) {}
+
+	inline LibraryTreeItemType GetTreeItemType() const { return m_tree_item_type; }
+
+};
+
+class LibraryTreeItemsMime : public QMimeData {
 	Q_OBJECT
 
 private:
-	static const QString WINDOW_TITLE;
-
-private:
-	// member variables here
+	std::vector<SafePointer<LibraryTreeItem>> m_items;
 
 public:
-	MainWindow(LibraryManager* library_manager);
-	~MainWindow();
+	LibraryTreeItemsMime();
+	~LibraryTreeItemsMime();
+
+	inline       std::vector<SafePointer<LibraryTreeItem>>& GetItems()       { return m_items; }
+	inline const std::vector<SafePointer<LibraryTreeItem>>& GetItems() const { return m_items; }
 
 };
+

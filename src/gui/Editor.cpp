@@ -1,5 +1,6 @@
 
 #include "Editor.h"
+#include "DrawingViewer.h"
 #include "components/TabbedDocumentViewer.h"
 
 Editor::Editor(QWidget *parent) : QWidget(parent)
@@ -12,7 +13,9 @@ Editor::Editor(QWidget *parent) : QWidget(parent)
 	main_layout->addWidget(tabbedDocViewer);
 	main_layout->setMargin(0);
 
-	tabbedDocViewer->setCentralWidget(new QWidget());
+	DrawingViewer *dw  = new DrawingViewer();
+
+	tabbedDocViewer->setCentralWidget(dw);
 	tabbedDocViewer->addDocument("Test",1);
 	tabbedDocViewer->addDocument("Test2",2);
 
