@@ -26,12 +26,11 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include <iostream>
 
 LibraryManager::LibraryManager() {
-
-
+	// nothing
 }
 
 LibraryManager::~LibraryManager() {
-
+	// nothing
 }
 
 Library *LibraryManager::NewLibrary(const std::string &name, const std::string &filename, LibraryType type) {
@@ -47,287 +46,207 @@ void LibraryManager::DeleteLibrary(Library *library) {
 }
 
 
-QModelIndex LibraryManager::index(int row, int column, const QModelIndex &parent)
-const
-{
-	if (!hasIndex(row, column, parent))
+QModelIndex LibraryManager::index(int row, int column, const QModelIndex &parent) const {
+
+	// Check whether the requested index (i.e. row and column) is valid. We can already check the things that don't
+	// depend on the type of item we are working with. The final row count check will be done later.
+	if(row < 0 || column != 0)
 		return QModelIndex();
 
-	LibraryTreeItem *parentItem;
+	// is parent the root?
+	if(!parent.isValid()) {
+		if((size_t) row >= GetLibraryCount())
+			return QModelIndex();
+		return createIndex(row, column, static_cast<LibraryTreeItem*>(GetLibrary(row)));
+	}
 
-	if (parent.isValid()){
-		parentItem = static_cast<LibraryTreeItem*>(parent.internalPointer());
-		// check which type the parent is
-		switch(parentItem->GetTreeItemType()) {
-			case LIBRARYTREEITEMTYPE_LIBRARY : {
-				Library *libraryItem;
-				libraryItem = static_cast<Library*>(parentItem);
-				if((size_t) row <= libraryItem->GetLayoutCount())
-					return createIndex(row, column, static_cast<LibraryTreeItem*>(libraryItem->GetLayout(row)));
-				else
-					return QModelIndex();
-			}
-			default : {
+	// what type of parent is this?
+	LibraryTreeItem *parent_ptr = (LibraryTreeItem*) parent.internalPointer();
+	switch(parent_ptr->GetTreeItemType()) {
+		case LIBRARYTREEITEMTYPE_LIBRARY: {
+			Library *library = static_cast<Library*>(parent_ptr);
+			if((size_t) row >= library->GetLayoutCount())
 				return QModelIndex();
-			}
+			return createIndex(row, column, static_cast<LibraryTreeItem*>(library->GetLayout(row)));
+		}
+		case LIBRARYTREEITEMTYPE_DRAWING: {
+			return QModelIndex(); // drawings have no childs
+		}
+	}
 
-		}
-	}
-	else
-	{
-		if((size_t) row <= GetLibraryCount()) {
-			return createIndex(row, column, GetLibrary(row));
-		}
-		else {
-			return QModelIndex();
-		}
-	}
+	// this should never be reached
+	assert(false);
+	return QModelIndex();
+
 }
 
-QModelIndex LibraryManager::parent(const QModelIndex &index) const
-{
-	if (!index.isValid())
+QModelIndex LibraryManager::parent(const QModelIndex &index) const {
+
+	// the root has no parent
+	if(!index.isValid())
 		return QModelIndex();
 
-	LibraryTreeItem *childItem = static_cast<LibraryTreeItem*>(index.internalPointer());
-	switch(childItem->GetTreeItemType()) {
-		case LIBRARYTREEITEMTYPE_LIBRARY : {
-			// parent is root
+	// what type of item is this?
+	LibraryTreeItem *item_ptr = (LibraryTreeItem*) index.internalPointer();
+	switch(item_ptr->GetTreeItemType()) {
+		case LIBRARYTREEITEMTYPE_LIBRARY: { // parent is root
 			return QModelIndex();
 		}
-		case LIBRARYTREEITEMTYPE_DRAWING : {
-			// parent is a library
-			Drawing *drawingItem;
-			drawingItem = static_cast<Drawing*>(childItem);
-			Library *libraryItem = drawingItem->GetParent();
-			return createIndex(IndexInVector(m_libraries,libraryItem), 0, static_cast<LibraryTreeItem*>(libraryItem));
-		}
-		default : {
-			return QModelIndex();
+		case LIBRARYTREEITEMTYPE_DRAWING: { // parent is a library
+			Drawing *drawing = static_cast<Drawing*>(item_ptr);
+			Library *library = drawing->GetParent();
+			return createIndex(IndexInVector(m_libraries, library), 0, static_cast<LibraryTreeItem*>(library));
 		}
 	}
 
+	// this should never be reached
+	assert(false);
+	return QModelIndex();
+
 }
 
-int LibraryManager::rowCount(const QModelIndex &parent) const
-{
-	LibraryTreeItem *parentItem;
-	if (!parent.isValid()) {
-		// parent is root
+int LibraryManager::rowCount(const QModelIndex &parent) const {
+
+	// is parent the root?
+	if(!parent.isValid())
 		return GetLibraryCount();
-	}
-	else {
-		parentItem = static_cast<LibraryTreeItem*>(parent.internalPointer());
-		switch(parentItem->GetTreeItemType()) {
-			case LIBRARYTREEITEMTYPE_LIBRARY : {
-				Library *libraryItem;
-				libraryItem = static_cast<Library*>(parentItem);
-				return libraryItem->GetLayoutCount();
-			}
-			default : {
-				return 0;
-			}
 
+	// what type of parent is this?
+	LibraryTreeItem *parent_ptr = (LibraryTreeItem*) parent.internalPointer();
+	switch(parent_ptr->GetTreeItemType()) {
+		case LIBRARYTREEITEMTYPE_LIBRARY: {
+			Library *library = static_cast<Library*>(parent_ptr);
+			return library->GetLayoutCount();
+		}
+		case LIBRARYTREEITEMTYPE_DRAWING: {
+			return 0;
 		}
 	}
+
+	// this should never be reached
+	assert(false);
+	return 0;
+
 }
 
-int LibraryManager::columnCount(const QModelIndex &parent) const
-{
+int LibraryManager::columnCount(const QModelIndex &parent) const {
 	UNUSED(parent);
 	return 1;
 }
 
-Qt::DropActions LibraryManager::supportedDropActions() const
-{
-	return Qt::MoveAction | Qt::MoveAction;
+Qt::DropActions LibraryManager::supportedDropActions() const {
+	return Qt::MoveAction;
 }
 
-Qt::ItemFlags LibraryManager::flags(const QModelIndex &index) const
-{
-	Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
-
-	if (!index.isValid()){
-		return Qt::ItemIsDropEnabled| defaultFlags;
-	}
-	else {
-		return Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled| defaultFlags;
-	}
-
-
+Qt::ItemFlags LibraryManager::flags(const QModelIndex &index) const {
+	if(!index.isValid())
+		return Qt::ItemIsDropEnabled; // dropping on root is allowed
+	return Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled;
 }
 
-QStringList LibraryManager::mimeTypes() const
-{
+QStringList LibraryManager::mimeTypes() const {
 	QStringList types;
-	types << "application/vnd.text.list";
+	types.push_back("application/x-alterpcb-librarytreeitem");
 	return types;
 }
 
-QMimeData *LibraryManager::mimeData(const QModelIndexList &indexes) const
-{
-	QMimeData *mimeData = new QMimeData();
-	QByteArray encodedData;
-
-	QDataStream stream(&encodedData, QIODevice::WriteOnly);
-	QString text;
-	foreach (QModelIndex index, indexes) {
-		if (index.isValid()) {
-			// send the address of the dragged item + type (so that we know how to cast it later)
-			LibraryTreeItem *item = static_cast<LibraryTreeItem*>(index.internalPointer());
-			switch(item->GetTreeItemType()) {
-				case LIBRARYTREEITEMTYPE_LIBRARY : {
-					Library *libraryItem;
-					libraryItem = static_cast<Library*>(item);
-					text = "LIB_" + QString::number((qint64) libraryItem);
-					break;
-				}
-				case LIBRARYTREEITEMTYPE_DRAWING : {
-					Drawing *drawingItem;
-					drawingItem = static_cast<Drawing*>(item);
-					text = text = "DRA_" + QString::number((qint64) drawingItem);
-					break;
-				}
-				default : {
-					text = QString("ERR");
-					break;
-				}
-			}
-
-			stream << text;
-		}
+QMimeData* LibraryManager::mimeData(const QModelIndexList &indexes) const {
+	std::unique_ptr<LibraryTreeItemsMime> mime_data(new LibraryTreeItemsMime());
+	std::vector<SafePointer<LibraryTreeItem>> &items = mime_data->GetItems();
+	for(int i = 0; i < indexes.size(); ++i) {
+		const QModelIndex &index = indexes[i];
+		if(!index.isValid())
+			continue;
+		items.emplace_back((LibraryTreeItem*) index.internalPointer());
 	}
-
-	mimeData->setData("application/vnd.text.list", encodedData);
-	return mimeData;
+	mime_data->setData("application/x-alterpcb-librarytreeitem", QByteArray());
+	return mime_data.release();
 }
 
-bool LibraryManager::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
-{
-	if (action == Qt::IgnoreAction)
+bool LibraryManager::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) {
+	UNUSED(column);
+
+	if(action == Qt::IgnoreAction)
 		return true;
 
-	if (!data->hasFormat("application/vnd.text.list"))
+	const LibraryTreeItemsMime *mime_data = qobject_cast<const LibraryTreeItemsMime*>(data);
+	if(mime_data == NULL)
 		return false;
+	const std::vector<SafePointer<LibraryTreeItem>> &items = mime_data->GetItems();
 
-	if (column > 0)
-		return false;
+	// is parent the root?
+	if(!parent.isValid()) {
 
-	QByteArray encodedData = data->data("application/vnd.text.list");
-	QDataStream stream(&encodedData, QIODevice::ReadOnly);
-	QStringList newItems;
-	while (!stream.atEnd()) {
-		QString text;
-		stream >> text;
-		newItems << text;
-	}
+		layoutAboutToBeChanged();
 
-	foreach (QString text, newItems) {
-		QStringList data =  text.split("_");
-		QString objecttype = data.at(0);
-		QString pointerstr = data.at(1);
-		long objectptr = pointerstr.toLong();
-
-		if(objecttype == QString("LIB")) {
-			Library * libraryItem;
-			libraryItem = reinterpret_cast<Library*>(objectptr);
-
-			// Library can only be placed between other library OR at the end
-			if(row<0 && parent.row()>0){
-				return false;
-			}
-
-			// move the lib
-			if(row<0 && parent.row()<0) {
-				// place at the end
-				std::cerr << std::to_string(m_libraries.size()) << std::endl;
-				MoveInVector(m_libraries, IndexInVector(m_libraries, libraryItem), m_libraries.size() - 1);
-			}
-			else {
-				// place in the middle
-				size_t current_index = IndexInVector(m_libraries, libraryItem);
-				size_t target_index = row;
-				if(target_index > current_index) {
-					--target_index; // Qt does not consider the fact that removing the item will change the target index
-				}
-				MoveInVector(m_libraries, current_index, target_index);
+		// extract all libraries
+		std::vector<ForwardPointer<Library>> libraries;
+		for(size_t i = 0; i < items.size(); ++i) {
+			LibraryTreeItem *item = items[i].Get();
+			if(item != NULL && item->GetTreeItemType() == LIBRARYTREEITEMTYPE_LIBRARY) {
+				Library *library = static_cast<Library*>(item);
+				size_t index = IndexInVector(m_libraries, library);
+				libraries.emplace_back(std::move(m_libraries[index]));
 			}
 		}
-		else if(objecttype == QString("DRA")) {
-			Drawing *drawingItem;
-			drawingItem = reinterpret_cast<Drawing*>(objectptr);
 
-			// Drawing can only be placed between other drawings OR ontop of a library
-			if(parent.row()<0)
-			{
-				return false;
-			}
-			LibraryTreeItem *parentItem = static_cast<LibraryTreeItem*>(parent.internalPointer());
-			if(parentItem->GetTreeItemType() == LIBRARYTREEITEMTYPE_DRAWING){
-				return false;
-			}
+		// insert them in the correct position
+		size_t target_index = ((size_t) row < GetLibraryCount())? row : GetLibraryCount();
+		BulkInsertIntoVector(m_libraries, libraries, target_index);
 
-			// move the drawing
-			Library * targetlibraryItem;
-			targetlibraryItem = static_cast<Library*>(parentItem);
+		layoutChanged();
 
-			if(targetlibraryItem == drawingItem->GetParent()) {
-				// Move within the same library
-				targetlibraryItem->MovePositionDrawing(drawingItem , row);
-			}
-			else {
-				if(row < 0) {
-					// Move to other library (if dragged ontop of other lib)
-					ForwardPointer<Drawing> drawingItemPtr = drawingItem->GetParent()->MoveOutDrawing(drawingItem);
-					targetlibraryItem->MoveInDrawing(&drawingItemPtr);
-				}
-				else {
-					// Move to target index in other library
-					ForwardPointer<Drawing> drawingItemPtr = drawingItem->GetParent()->MoveOutDrawing(drawingItem);
-					targetlibraryItem->MoveInDrawing(&drawingItemPtr);
-					targetlibraryItem->MovePositionDrawing(drawingItem , row);
-				}
-			}
+		return true;
+	}
+
+	// What type of parent is this?
+	LibraryTreeItem *parent_ptr = (LibraryTreeItem*) parent.internalPointer();
+	switch(parent_ptr->GetTreeItemType()) {
+		case LIBRARYTREEITEMTYPE_LIBRARY: {
+			Library *library = static_cast<Library*>(parent_ptr);
+			UNUSED(library);
+			return false;
+		}
+		case LIBRARYTREEITEMTYPE_DRAWING: {
+			return false;
 		}
 	}
 
-	layoutChanged();
-	return true;
+	// this should never be reached
+	assert(false);
+	return false;
+
 }
 
-QVariant LibraryManager::data(const QModelIndex &index, int role) const
-{
-	if (!index.isValid())
+QVariant LibraryManager::data(const QModelIndex &index, int role) const {
+
+	if(!index.isValid())
 		return QVariant();
 
-	if (role != Qt::DisplayRole)
+	if(role != Qt::DisplayRole)
 		return QVariant();
 
-	LibraryTreeItem *item = static_cast<LibraryTreeItem*>(index.internalPointer());
-	switch(item->GetTreeItemType()) {
-		case LIBRARYTREEITEMTYPE_LIBRARY : {
-			Library *libraryItem;
-			libraryItem = static_cast<Library*>(item);
-			return QString::fromStdString(libraryItem->GetName());
-
+	LibraryTreeItem *item_ptr = (LibraryTreeItem*) index.internalPointer();
+	switch(item_ptr->GetTreeItemType()) {
+		case LIBRARYTREEITEMTYPE_LIBRARY: {
+			Library *library = static_cast<Library*>(item_ptr);
+			return QString::fromStdString(library->GetName());
 		}
-		case LIBRARYTREEITEMTYPE_DRAWING : {
-			Drawing *drawingItem;
-			drawingItem = static_cast<Drawing*>(item);
-			return QString::fromStdString(StringRegistry::GetString(drawingItem->GetName()));
-		}
-		default : {
-			return QString("inplementation error");
+		case LIBRARYTREEITEMTYPE_DRAWING: {
+			Drawing *drawing = static_cast<Drawing*>(item_ptr);
+			return QString::fromStdString(StringRegistry::GetString(drawing->GetName()));
 		}
 	}
+
+	// this should never be reached
+	assert(false);
+	return QVariant();
+
 }
 
-
-QVariant LibraryManager::headerData(int section, Qt::Orientation orientation,int role) const
-{
+QVariant LibraryManager::headerData(int section, Qt::Orientation orientation,int role) const {
 	UNUSED(section);
 	UNUSED(orientation);
 	UNUSED(role);
 	return QVariant();
 }
-

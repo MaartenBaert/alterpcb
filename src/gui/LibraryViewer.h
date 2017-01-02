@@ -28,10 +28,11 @@ class LibraryViewer : public QTreeView {
 	Q_OBJECT
 
 public:
-	LibraryViewer(QWidget * parent = 0);
+	LibraryViewer(QWidget *parent = 0);
 	~LibraryViewer();
 
 private slots:
 	void OnDoubleClick(const QModelIndex &index);
 	void OnRightClick(const QPoint &point);
+
 };

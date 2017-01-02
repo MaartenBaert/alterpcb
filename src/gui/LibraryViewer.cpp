@@ -2,15 +2,25 @@
 #include <iostream>
 #include "LibraryTreeItem.h"
 
-LibraryViewer::LibraryViewer(QWidget *parent) : QTreeView(parent)
-{
-	this->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(this,SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(OnRightClick(QPoint)));
-	connect(this,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(OnDoubleClick(QModelIndex)));
+LibraryViewer::LibraryViewer(QWidget *parent) : QTreeView(parent) {
+
+	setAcceptDrops(true);
+	setDragDropMode(QAbstractItemView::InternalMove);
+	setDragDropOverwriteMode(true);
+	setDragEnabled(true);
+	setDropIndicatorShown(true);
+	setHeaderHidden(true);
+	setSelectionBehavior(QAbstractItemView::SelectRows);
+	setUniformRowHeights(true);
+
+	setContextMenuPolicy(Qt::CustomContextMenu);
+
+	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(OnRightClick(QPoint)));
+	connect(this, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(OnDoubleClick(QModelIndex)));
+
 }
 
-LibraryViewer::~LibraryViewer()
-{
+LibraryViewer::~LibraryViewer() {
 
 }
 
