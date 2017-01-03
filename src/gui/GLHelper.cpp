@@ -105,12 +105,20 @@ void LinkSP(GLsp& sp, GLuint vs, GLuint gs, GLuint fs,
 }
 
 void GLInit() {
+
+	// print what we can print already
 	std::cerr << "[OpenGL] OpenGL version: " << (const char*) glGetString(GL_VERSION) << std::endl;
+	std::cerr << "[OpenGL] OpenGL vendor: " << (const char*) glGetString(GL_VENDOR) << std::endl;
+	std::cerr << "[OpenGL] OpenGL renderer: " << (const char*) glGetString(GL_RENDERER) << std::endl;
+	std::cerr << "[OpenGL] OpenGL extensions: " << (const char*) glGetString(GL_EXTENSIONS) << std::endl;
+	std::cerr << "[OpenGL] GLEW version: " << (const char*) glewGetString(GLEW_VERSION) << std::endl;
+
+	// initialize GLEW
 	GLenum err = glewInit();
 	if(err != GLEW_OK) {
 		throw std::runtime_error(std::string("GLEW error: ") + (const char*) glewGetErrorString(err));
 	}
-	std::cerr << "[OpenGL] GLEW version: " << (const char*) glewGetString(GLEW_VERSION) << std::endl;
+
 }
 
 #if GL_ENABLE_DEBUG_CALLBACK
