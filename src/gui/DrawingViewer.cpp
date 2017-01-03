@@ -145,7 +145,7 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 	glBindBuffer(GL_ARRAY_BUFFER, m_gl_vbo_basic);
 
 	// draw grid
-	auto t1 = std::chrono::high_resolution_clock::now();
+	//auto t1 = std::chrono::high_resolution_clock::now();
 	{
 		int32_t xi_min = lrint(gridbox_xmin / effective_grid_step_x + 0.4);
 		int32_t xi_max = lrint(gridbox_xmax / effective_grid_step_x - 0.4);
@@ -190,8 +190,8 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 			glDrawArrays(GL_LINES, ind1, num - ind1);
 		}
 	}
-	auto t2 = std::chrono::high_resolution_clock::now();
-	std::cerr << "[Draw] grid = " << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << " µs" << std::endl;
+	//auto t2 = std::chrono::high_resolution_clock::now();
+	//std::cerr << "[Draw] grid = " << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << " µs" << std::endl;
 
 	// unbind VAO and VBO
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
