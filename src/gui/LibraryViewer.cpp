@@ -5,12 +5,13 @@
 LibraryViewer::LibraryViewer(QWidget *parent) : QTreeView(parent) {
 
 	setAcceptDrops(true);
-	setDragDropMode(QAbstractItemView::InternalMove);
-	setDragDropOverwriteMode(true);
+	setDragDropMode(QAbstractItemView::DragDrop);
+	//setDragDropOverwriteMode(true);
 	setDragEnabled(true);
 	setDropIndicatorShown(true);
 	setHeaderHidden(true);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
+	setSelectionMode(QAbstractItemView::ExtendedSelection);
 	setUniformRowHeights(true);
 
 	setContextMenuPolicy(Qt::CustomContextMenu);

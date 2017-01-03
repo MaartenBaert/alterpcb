@@ -51,3 +51,13 @@ void Library::DeleteDrawing(Drawing *drawing) {
 		case DRAWINGTYPE_LAYOUT: DeleteFromVector(m_layouts, drawing); break;
 	}
 }
+
+size_t Library::GetDrawingIndex(Drawing *drawing) {
+	switch(drawing->GetType()) {
+		case DRAWINGTYPE_SCHEMATIC: return IndexInVector(m_schematics, drawing);
+		case DRAWINGTYPE_SYMBOL: return IndexInVector(m_symbols, drawing);
+		case DRAWINGTYPE_LAYOUT: return IndexInVector(m_layouts, drawing);
+	}
+	assert(false);
+	return 0;
+}

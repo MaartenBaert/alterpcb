@@ -47,18 +47,23 @@ public:
 	Library* NewLibrary(const std::string &name, const std::string &filename, LibraryType type);
 	void DeleteLibrary(Library *library);
 
+	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+	QVariant data(const QModelIndex &index, int role) const override;
+	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
+	Qt::ItemFlags flags(const QModelIndex &index) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+	QModelIndex index(int row, int column,const QModelIndex &parent = QModelIndex()) const override;
+	QMimeData* mimeData(const QModelIndexList &indexes) const override;
+	QStringList mimeTypes() const override;
+	QModelIndex parent(const QModelIndex &index) const override;
+	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	Qt::DropActions supportedDropActions() const override;
+
+private:
+	void UpdatePersistentModelIndices();
+
+public:
 	inline Library* GetLibrary(size_t index) const { assert(index < m_libraries.size()); return m_libraries[index].Get(); }
 	inline size_t GetLibraryCount() const { return m_libraries.size(); }
 
-	QVariant data(const QModelIndex &index, int role) const override;
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
-	QModelIndex index(int row, int column,const QModelIndex &parent = QModelIndex()) const override;
-	QModelIndex parent(const QModelIndex &index) const override;
-	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-	Qt::DropActions supportedDropActions() const override;
-	Qt::ItemFlags flags(const QModelIndex &index) const override;
-	QStringList mimeTypes() const override;
-	QMimeData* mimeData(const QModelIndexList &indexes) const;
-	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
 };

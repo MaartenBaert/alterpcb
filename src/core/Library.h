@@ -51,9 +51,11 @@ public:
 
 	Drawing* NewDrawing(stringtag_t name, DrawingType type);
 	void DeleteDrawing(Drawing *drawing);
-	ForwardPointer<Drawing> MoveOutDrawing(Drawing *drawing);
-	void MoveInDrawing(ForwardPointer<Drawing> *ptr);
-	void MovePositionDrawing(Drawing *drawing,size_t target_index);
+
+	size_t GetDrawingIndex(Drawing *drawing);
+	//ForwardPointer<Drawing> MoveOutDrawing(Drawing *drawing);
+	//void MoveInDrawing(ForwardPointer<Drawing> *ptr);
+	//void MovePositionDrawing(Drawing *drawing,size_t target_index);
 
 	inline LibraryManager* GetParent() { return m_parent; }
 	inline const std::string& GetName() const { return m_name; }
