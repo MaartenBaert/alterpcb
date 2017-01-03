@@ -20,7 +20,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "BackPointer.h"
+#include "TrackingPointer.h"
 #include "Basics.h"
 #include "CoreBasics.h"
 
@@ -34,7 +34,7 @@ class LibraryManager : public QAbstractItemModel {
 	Q_OBJECT
 
 private:
-	std::vector<ForwardPointer<Library>> m_libraries;
+	std::vector<TrackingPointer<Library>> m_libraries;
 
 public:
 	LibraryManager();

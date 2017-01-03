@@ -34,7 +34,7 @@ Library::~Library() {
 }
 
 Drawing *Library::NewDrawing(stringtag_t name, DrawingType type) {
-	ForwardPointer<Drawing> drawing(new Drawing(this,name, type));
+	TrackingPointer<Drawing> drawing(new Drawing(this,name, type));
 	Drawing *ptr = drawing.Get();
 	switch(type) {
 		case DRAWINGTYPE_SCHEMATIC: m_schematics.emplace_back(std::move(drawing)); break;

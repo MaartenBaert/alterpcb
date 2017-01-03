@@ -20,7 +20,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "BackPointer.h"
+#include "TrackingPointer.h"
 #include "StringRegistry.h"
 #include "CoreBasics.h"
 #include "Cow.h"
@@ -54,7 +54,7 @@ public:
 
 };
 
-class Drawing : public LibraryTreeItem, public BackPointer<Drawing> {
+class Drawing : public LibraryTreeItem, public TrackingTarget<Drawing> {
 
 private:
 	Library *m_parent;
@@ -88,7 +88,7 @@ public:
 };
 
 struct DrawingCompare {
-	inline bool operator()(const ForwardPointer<Drawing> &a, const ForwardPointer<Drawing> &b) const {
+	inline bool operator()(const TrackingPointer<Drawing> &a, const TrackingPointer<Drawing> &b) const {
 		return StringRegistry::GetString(a->GetName()) < StringRegistry::GetString(b->GetName());
 	}
 };

@@ -20,7 +20,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "BackPointer.h"
+#include "TrackingPointer.h"
 #include "Basics.h"
 #include "CoreBasics.h"
 #include "LibraryTreeItem.h"
@@ -31,15 +31,15 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 class LibraryManager;
 class Drawing;
 
-class Library : public LibraryTreeItem, public BackPointer<Library> {
+class Library : public LibraryTreeItem, public TrackingTarget<Library> {
 
 private:
 	LibraryManager *m_parent;
 	std::string m_name, m_file_name;
 	LibraryType m_type;
-	std::vector<ForwardPointer<Drawing>> m_schematics;
-	std::vector<ForwardPointer<Drawing>> m_symbols;
-	std::vector<ForwardPointer<Drawing>> m_layouts;
+	std::vector<TrackingPointer<Drawing>> m_schematics;
+	std::vector<TrackingPointer<Drawing>> m_symbols;
+	std::vector<TrackingPointer<Drawing>> m_layouts;
 
 public:
 	Library(LibraryManager *parent, const std::string &name, const std::string &filename, LibraryType type);
@@ -53,8 +53,8 @@ public:
 	void DeleteDrawing(Drawing *drawing);
 
 	size_t GetDrawingIndex(Drawing *drawing);
-	//ForwardPointer<Drawing> MoveOutDrawing(Drawing *drawing);
-	//void MoveInDrawing(ForwardPointer<Drawing> *ptr);
+	//TrackingPointer<Drawing> MoveOutDrawing(Drawing *drawing);
+	//void MoveInDrawing(TrackingPointer<Drawing> *ptr);
 	//void MovePositionDrawing(Drawing *drawing,size_t target_index);
 
 	inline LibraryManager* GetParent() { return m_parent; }
@@ -72,7 +72,7 @@ public:
 };
 
 struct LibraryCompare {
-	inline bool operator()(const ForwardPointer<Library> &a, const ForwardPointer<Library> &b) const {
+	inline bool operator()(const TrackingPointer<Library> &a, const TrackingPointer<Library> &b) const {
 		return a->GetName() < b->GetName();
 	}
 };

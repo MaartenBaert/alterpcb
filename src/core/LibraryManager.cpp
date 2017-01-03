@@ -34,7 +34,7 @@ LibraryManager::~LibraryManager() {
 }
 
 Library *LibraryManager::NewLibrary(const std::string &name, const std::string &filename, LibraryType type) {
-	ForwardPointer<Library> library(new Library(this, name, filename, type));
+	TrackingPointer<Library> library(new Library(this, name, filename, type));
 	Library *ptr = library.Get();
 	m_libraries.emplace_back(std::move(library));
 
@@ -94,7 +94,7 @@ bool LibraryManager::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 		layoutAboutToBeChanged();
 
 		// extract all libraries
-		std::vector<ForwardPointer<Library>> libraries;
+		std::vector<TrackingPointer<Library>> libraries;
 		for(size_t i = 0; i < items.size(); ++i) {
 			LibraryTreeItem *item = items[i].Get();
 			if(item != NULL && item->GetTreeItemType() == LIBRARYTREEITEMTYPE_LIBRARY) {

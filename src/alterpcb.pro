@@ -11,6 +11,8 @@ DEPENDPATH += common core gui
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 
+########## Warning: Everything below this line is auto-generated and will be overwritten! ##########
+
 SOURCES += \
 	common/Json.cpp \
 	common/StringRegistry.cpp \
@@ -19,17 +21,16 @@ SOURCES += \
 	core/Library.cpp \
 	core/LibraryManager.cpp \
 	core/Shape.cpp \
+	gui/components/TabbedDocumentViewer.cpp \
 	gui/DrawingViewer.cpp \
+	gui/Editor.cpp \
 	gui/GLHelper.cpp \
 	gui/LibraryTreeItem.cpp \
 	gui/LibraryViewer.cpp \
 	gui/MainWindow.cpp \
-    gui/Editor.cpp \
-    gui/components/TabbedDocumentViewer.cpp \
-	Main.cpp 
+	Main.cpp
 
 HEADERS += \
-	common/BackPointer.h \
 	common/Basics.h \
 	common/Cow.h \
 	common/EnumTranslator.h \
@@ -38,6 +39,7 @@ HEADERS += \
 	common/MurmurHash.h \
 	common/SafePointer.h \
 	common/StringRegistry.h \
+	common/TrackingPointer.h \
 	common/VData.h \
 	core/CoreBasics.h \
 	core/Drawing.h \
@@ -45,10 +47,9 @@ HEADERS += \
 	core/LibraryManager.h \
 	core/LibraryTreeItem.h \
 	core/Shape.h \
+	gui/components/TabbedDocumentViewer.h \
 	gui/DrawingViewer.h \
+	gui/Editor.h \
 	gui/GLHelper.h \
 	gui/LibraryViewer.h \
-        gui/MainWindow.h \
-        gui/Editor.h \
-        gui/components/TabbedDocumentViewer.h
-
+	gui/MainWindow.h
