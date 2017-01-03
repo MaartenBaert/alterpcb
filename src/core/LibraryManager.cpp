@@ -56,21 +56,30 @@ QVariant LibraryManager::data(const QModelIndex &index, int role) const {
 	if(!index.isValid())
 		return QVariant();
 
-	if(role != Qt::DisplayRole)
-		return QVariant();
-
 	LibraryTreeItem *item_ptr = (LibraryTreeItem*) index.internalPointer();
-	switch(item_ptr->GetTreeItemType()) {
-		case LIBRARYTREEITEMTYPE_LIBRARY: {
-			Library *library = static_cast<Library*>(item_ptr);
-			return QString::fromStdString(library->GetName());
-		}
-		case LIBRARYTREEITEMTYPE_DRAWING: {
-			Drawing *drawing = static_cast<Drawing*>(item_ptr);
-			return QString::fromStdString(StringRegistry::GetString(drawing->GetName()));
+	switch(role){
+		case Qt::DisplayRole: {
+			switch(item_ptr->GetTreeItemType()) {
+				case LIBRARYTREEITEMTYPE_LIBRARY: {
+					Library *library = static_cast<Library*>(item_ptr);
+					return QString::fromStdString(library->GetName());
+				}
+				case LIBRARYTREEITEMTYPE_DRAWING: {
+					Drawing *drawing = static_cast<Drawing*>(item_ptr);
+					return QString::fromStdString(StringRegistry::GetString(drawing->GetName()));
+				}}}
+		case Qt::DecorationRole: {
+			switch(item_ptr->GetTreeItemType()) {
+				case LIBRARYTREEITEMTYPE_LIBRARY: {
+					return QIcon::fromTheme("document-open");
+				}
+				case LIBRARYTREEITEMTYPE_DRAWING: {
+					return QIcon::fromTheme("document-save");
+				}}}
+		default: {
+			return QVariant();
 		}
 	}
-
 	// this should never be reached
 	assert(false);
 	return QVariant();
@@ -284,3 +293,5 @@ void LibraryManager::UpdatePersistentModelIndices() {
 	changePersistentIndexList(oldlist, newlist);
 
 }
+
+
