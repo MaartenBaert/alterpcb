@@ -58,6 +58,7 @@ public:
 	QModelIndex parent(const QModelIndex &index) const override;
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 	Qt::DropActions supportedDropActions() const override;
+	bool dropLocation(const QMimeData *data, Qt::DropAction action, DropLocation location_indicator, int &row, int &column, QModelIndex &parent);
 
 private:
 	void UpdatePersistentModelIndices();

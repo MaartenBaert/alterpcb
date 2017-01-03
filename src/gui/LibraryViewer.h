@@ -21,6 +21,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include "Basics.h"
+#include "CoreBasics.h"
 
 #include <QtGui>
 
@@ -30,6 +31,17 @@ class LibraryViewer : public QTreeView {
 public:
 	LibraryViewer(QWidget *parent = 0);
 	~LibraryViewer();
+
+	void dragEnterEvent(QDragEnterEvent *event);
+	void dragMoveEvent(QDragMoveEvent *event);
+	void dragLeaveEvent(QDragLeaveEvent *event);
+	void dropEvent(QDropEvent *event);
+	void paintEvent(QPaintEvent *event);
+
+private:
+	QRect m_drop_indicator_rect;
+
+	DropLocation getDropLocation(QRect &index_rect, QPoint pos);
 
 private slots:
 	void OnDoubleClick(const QModelIndex &index);

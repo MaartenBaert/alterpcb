@@ -1,6 +1,8 @@
 #include "LibraryViewer.h"
 #include <iostream>
 #include "LibraryTreeItem.h"
+#include "LibraryManager.h"
+#include "core/CoreBasics.h"
 
 LibraryViewer::LibraryViewer(QWidget *parent) : QTreeView(parent) {
 
@@ -34,32 +36,132 @@ void LibraryViewer::OnDoubleClick(const QModelIndex &index)
 void LibraryViewer::OnRightClick(const QPoint &point)
 {
 	UNUSED(point);
-	 QMenu *menu = new QMenu;
-	 QModelIndex index = this->currentIndex();
+	QMenu *menu = new QMenu;
+	QModelIndex index = this->currentIndex();
 
-	 LibraryTreeItem *Item = static_cast<LibraryTreeItem*>(index.internalPointer());
-	 switch(Item->GetTreeItemType()) {
-		 case LIBRARYTREEITEMTYPE_LIBRARY : {
-			 std::cerr << "LIBVIEWER: TODO RightCLick on lib" << std::endl;
-			 menu->addAction(QString("Close"));
-			 menu->addAction(QString("Rename"));
-			 menu->addAction( tr("Delete"));
-			 break;
-		 }
-		 case LIBRARYTREEITEMTYPE_DRAWING : {
-			  std::cerr << "LIBVIEWER: TODO RightCLick on drawing" << std::endl;
-			  menu->addAction(tr("Open"));
-			  menu->addAction(tr("Rename"));
-			  menu->addAction(tr("Cut"));
-			  menu->addAction(tr("Copy"));
-			  menu->addAction(tr("Delete"));
-			  break;
-		 }
-		 default : {
+	LibraryTreeItem *Item = static_cast<LibraryTreeItem*>(index.internalPointer());
+	switch(Item->GetTreeItemType()) {
+		case LIBRARYTREEITEMTYPE_LIBRARY : {
+			std::cerr << "LIBVIEWER: TODO RightCLick on lib" << std::endl;
+			menu->addAction(QString("Close"));
+			menu->addAction(QString("Rename"));
+			menu->addAction( tr("Delete"));
 			break;
-		 }
-	 }
-	 menu->exec(QCursor::pos());
+		}
+		case LIBRARYTREEITEMTYPE_DRAWING : {
+			std::cerr << "LIBVIEWER: TODO RightCLick on drawing" << std::endl;
+			menu->addAction(tr("Open"));
+			menu->addAction(tr("Rename"));
+			menu->addAction(tr("Cut"));
+			menu->addAction(tr("Copy"));
+			menu->addAction(tr("Delete"));
+			break;
+		}
+		default : {
+			break;
+		}
+	}
+	menu->exec(QCursor::pos());
 
 }
+
+DropLocation LibraryViewer::getDropLocation(QRect &index_rect, QPoint pos)
+{
+	//	if(event->pos().y() < index_rect.y()+index_rect.height()/2) { // indicator should show above
+	//		m_drop_indicator_rect = QRect(index_rect.x(),index_rect.y()-1,index_rect.width(),2);
+	//	}
+	//	else { // indicator should show below
+	//		m_drop_indicator_rect = QRect(index_rect.x(),index_rect.y()+index_rect.height()-1,index_rect.width(),2);
+	//	}
+
+	return DropLocation_BEFORE;
+}
+
+void LibraryViewer::dragEnterEvent(QDragEnterEvent *event)
+{
+	if(event->mimeData()->hasFormat("application/x-alterpcb-librarytreeitem"))
+	{
+		event->accept();
+	}
+	else {
+		event->ignore();
+	}
+}
+
+void LibraryViewer::dragLeaveEvent(QDragLeaveEvent *event)
+{
+	m_drop_indicator_rect = QRect();
+	viewport()->update();
+	event->ignore();
+}
+
+void LibraryViewer::dragMoveEvent(QDragMoveEvent *event)
+{
+
+	QModelIndex index = indexAt(event->pos());
+	QRect index_rect = visualRect(index);
+
+	// where is the mouse compaired to the index_rect
+	DropLocation location_indicator = getDropLocation(index_rect,event->pos());
+	int row = -1, column = -1;
+	QModelIndex parent = index;
+	if(static_cast<LibraryManager*>(this->model())->dropLocation(event->mimeData(), event->dropAction(), location_indicator, row, column, parent)) {
+		if(row < 0 || column < 0) {
+			m_drop_indicator_rect = visualRect(parent);
+		} else {
+			int numrows =  model()->rowCount(parent);
+			if(numrows == 0) {
+				m_drop_indicator_rect = visualRect(parent);
+			} else if(row < numrows) {
+				QRect index_rect = visualRect(parent.child(row, column));
+				m_drop_indicator_rect = QRect(index_rect.x(), index_rect.y(), index_rect.width(), 2);
+			} else {
+				QRect index_rect = visualRect(parent.child(numrows - 1, column));
+				m_drop_indicator_rect = QRect(index_rect.x(), index_rect.y() + index_rect.height() - 1, index_rect.width(), 2);
+			}
+		}
+		viewport()->update();
+		event->accept();
+	}
+	else {
+		m_drop_indicator_rect = QRect();
+		event->ignore();
+	}
+
+}
+
+void LibraryViewer::dropEvent(QDropEvent *event)
+{
+	m_drop_indicator_rect = QRect();
+	QModelIndex index = indexAt(event->pos());
+	QRect index_rect = visualRect(index);
+
+	// where is the mouse compaired to the index_rect
+	DropLocation location_indicator = getDropLocation(index_rect,event->pos());
+	int row = -1, column = -1;
+	QModelIndex parent = index;
+	if((static_cast<LibraryManager*>(this->model())->dropLocation(event->mimeData(), event->dropAction(), location_indicator, row, column, parent))) {
+		if (static_cast<LibraryManager*>(this->model())->dropMimeData(event->mimeData(), dragDropMode() == InternalMove ? Qt::MoveAction : event->dropAction(), row, column, parent)) {
+			if (dragDropMode() == InternalMove) {
+				event->setDropAction(Qt::MoveAction);
+			}
+			event->accept();
+		}
+	}
+	stopAutoScroll();
+	setState(NoState);
+	viewport()->update();
+}
+
+void LibraryViewer::paintEvent(QPaintEvent *event)
+{
+	QPainter painter(viewport());
+	drawTree(&painter, event->region());
+	if(!m_drop_indicator_rect.isNull()) {
+		painter.setPen(QColor(0,0,0));
+		painter.setBrush(Qt::NoBrush);
+		painter.drawRect(m_drop_indicator_rect.adjusted(0,0,-1,-1));
+	}
+}
+
 

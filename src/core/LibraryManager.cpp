@@ -261,6 +261,13 @@ Qt::DropActions LibraryManager::supportedDropActions() const {
 	return Qt::MoveAction;
 }
 
+bool LibraryManager::dropLocation(const QMimeData *data, Qt::DropAction action, DropLocation location_indicator, int &row, int &column, QModelIndex &parent)
+{
+	if(!data->hasFormat("application/x-alterpcb-librarytreeitem"))
+		return false;
+	return true;
+}
+
 void LibraryManager::UpdatePersistentModelIndices() {
 
 	// Qt exposes persistent model indices as a flat list, so lookup is pretty slow. Our own internal structure is much

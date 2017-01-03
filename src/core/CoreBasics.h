@@ -35,3 +35,10 @@ enum LibraryTreeItemType {
 	LIBRARYTREEITEMTYPE_LIBRARY,
 	LIBRARYTREEITEMTYPE_DRAWING,
 };
+
+enum DropLocation {
+	DropLocation_BEFORE,
+	DropLocation_ON_BEFORE,
+	DropLocation_ON_AFTER,
+	DropLocation_AFTER
+};
