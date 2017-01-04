@@ -28,7 +28,9 @@ SOURCES += \
 	gui/LibraryTreeItem.cpp \
 	gui/LibraryViewer.cpp \
 	gui/MainWindow.cpp \
-	Main.cpp
+	Main.cpp \
+    gui/dialogs/LibraryConfigDialog.cpp \
+    core/LibraryManagerConfigProxy.cpp
 
 HEADERS += \
 	common/Basics.h \
@@ -52,4 +54,7 @@ HEADERS += \
 	gui/Editor.h \
 	gui/GLHelper.h \
 	gui/LibraryViewer.h \
-	gui/MainWindow.h
+	gui/MainWindow.h \
+    gui/MainWindow.cpp.orig \
+    gui/dialogs/LibraryConfigDialog.h \
+    core/LibraryManagerConfigProxy.h
