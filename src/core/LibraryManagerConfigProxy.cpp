@@ -15,6 +15,14 @@ LibraryManagerConfigProxy::~LibraryManagerConfigProxy()
 
 }
 
+void LibraryManagerConfigProxy::setSourceModel(QAbstractItemModel *model)
+{
+	QAbstractProxyModel::setSourceModel(model);
+	connect(sourceModel(),SIGNAL(layoutChanged()),this,SLOT(onLayoutChanged()));
+	connect(sourceModel(),SIGNAL(layoutAboutToBeChanged()),this,SLOT(onLayoutAboutToBeChanged()));
+	connect(sourceModel(), SIGNAL(dataChanged(QModelIndex,QModelIndex)),this, SLOT(onDataChanged(QModelIndex,QModelIndex)));
+}
+
 QModelIndex LibraryManagerConfigProxy::index(int row, int column, const QModelIndex &parent) const {
 	UNUSED(parent);
 	return createIndex(row,column);
@@ -46,7 +54,7 @@ QModelIndex LibraryManagerConfigProxy::mapToSource(const QModelIndex &proxyIndex
 	if (!proxyIndex.isValid())
 		return QModelIndex();
 
-	return sourceModel()->index(proxyIndex.row(),0,QModelIndex());
+	return sourceModel()->index(proxyIndex.row(),proxyIndex.column(),QModelIndex());
 }
 
 QModelIndex LibraryManagerConfigProxy::mapFromSource(const QModelIndex &sourceIndex) const
@@ -68,20 +76,7 @@ QVariant LibraryManagerConfigProxy::data(const QModelIndex &index, int role) con
 		return QVariant();
 
 	if(role == Qt::DisplayRole) {
-		LibraryTreeItem *item_ptr = (LibraryTreeItem*) mapToSource(index).internalPointer();
-		switch(item_ptr->GetTreeItemType()) {
-			case LIBRARYTREEITEMTYPE_LIBRARY: {
-				Library *library = static_cast<Library*>(item_ptr);
-				if(index.column() == 0) {
-					return QString::fromStdString(library->GetName());
-				}
-				else if (index.column() == 1) {
-					return QString::fromStdString(library->GetFileName());
-				}
-			}
-			default : {
-				return QVariant();
-			}}
+		return sourceModel()->data(mapToSource(index),role);
 	}
 	else {
 		return QVariant();
@@ -90,4 +85,34 @@ QVariant LibraryManagerConfigProxy::data(const QModelIndex &index, int role) con
 	// this should never be reached
 	assert(false);
 	return QVariant();
+}
+
+QVariant LibraryManagerConfigProxy::headerData(int section, Qt::Orientation orientation,int role) const {
+	UNUSED(orientation);
+	if (role != Qt::DisplayRole)
+			return QVariant();
+	if(section == 0) {
+		return QString("Name");
+	}
+	else if(section == 1) {
+		return QString("File Path");
+	}
+	else {
+		return QVariant();
+	}
+}
+
+void LibraryManagerConfigProxy::onLayoutChanged()
+{
+	emit layoutChanged();
+}
+
+void LibraryManagerConfigProxy::onLayoutAboutToBeChanged()
+{
+	emit layoutAboutToBeChanged();
+}
+
+void LibraryManagerConfigProxy::onDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+{
+	emit dataChanged(mapFromSource(topLeft),mapFromSource(bottomRight));
 }

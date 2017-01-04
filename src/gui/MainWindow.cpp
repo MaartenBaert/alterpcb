@@ -90,6 +90,7 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 		dock->setObjectName("dock_libraries");
 		library_viewer = new LibraryViewer(dock);
 		library_viewer->setModel(library_manager);
+		library_viewer->hideColumn(1); //TODO remove once the searchable lib viewer is made with a proxy model (IF this is not there, the drag and drop is broken)
 		dock->setWidget(library_viewer);
 		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 		addDockWidget(Qt::LeftDockWidgetArea, dock);

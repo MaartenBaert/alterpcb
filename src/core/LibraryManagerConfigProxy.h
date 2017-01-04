@@ -29,6 +29,8 @@ public:
 	LibraryManagerConfigProxy(QObject *parent = 0);
 	~LibraryManagerConfigProxy();
 
+	void setSourceModel(QAbstractItemModel *model);
+
 	// basic model access
 	QModelIndex index(int row, int column,const QModelIndex &parent = QModelIndex()) const override;
 	QModelIndex parent(const QModelIndex &index) const override;
@@ -37,5 +39,11 @@ public:
 	QModelIndex mapToSource(const QModelIndex &proxyIndex) const override;
 	QModelIndex mapFromSource(const QModelIndex &sourceIndex) const override;
 	QVariant data(const QModelIndex &index, int role) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+
+private slots:
+	void onLayoutChanged();
+	void onLayoutAboutToBeChanged();
+	void onDataChanged(const QModelIndex &topLeft,const QModelIndex &bottomRight);
 };
 

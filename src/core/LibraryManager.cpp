@@ -49,7 +49,7 @@ QModelIndex LibraryManager::index(int row, int column, const QModelIndex &parent
 
 	// Check whether the requested index (i.e. row and column) is valid. We can already check the things that don't
 	// depend on the type of item we are working with. The final row count check will be done later.
-	if(row < 0 || column != 0)
+	if(row < 0)
 		return QModelIndex();
 
 	// is parent the root?
@@ -130,7 +130,7 @@ int LibraryManager::rowCount(const QModelIndex &parent) const {
 
 int LibraryManager::columnCount(const QModelIndex &parent) const {
 	UNUSED(parent);
-	return 1;
+	return 2;
 }
 
 Qt::ItemFlags LibraryManager::flags(const QModelIndex &index) const {
@@ -150,11 +150,24 @@ QVariant LibraryManager::data(const QModelIndex &index, int role) const {
 			switch(item_ptr->GetTreeItemType()) {
 				case LIBRARYTREEITEMTYPE_LIBRARY: {
 					Library *library = static_cast<Library*>(item_ptr);
-					return QString::fromStdString(library->GetName());
+					if(index.column() == 0) {
+						return QString::fromStdString(library->GetName());
+					}
+					else if (index.column() == 1) {
+						return QString::fromStdString(library->GetFileName());
+					}
+					else {
+						return QString("");
+					}
 				}
 				case LIBRARYTREEITEMTYPE_DRAWING: {
 					Drawing *drawing = static_cast<Drawing*>(item_ptr);
-					return QString::fromStdString(StringRegistry::GetString(drawing->GetName()));
+					if(index.column() == 0) {
+						return QString::fromStdString(StringRegistry::GetString(drawing->GetName()));
+					}
+					else {
+						return QString("");
+					}
 				}}}
 		case Qt::DecorationRole: {
 			switch(item_ptr->GetTreeItemType()) {
@@ -356,5 +369,4 @@ void LibraryManager::UpdatePersistentModelIndices() {
 
 	// presumably Qt optimizes this internally
 	changePersistentIndexList(oldlist, newlist);
-
 }
