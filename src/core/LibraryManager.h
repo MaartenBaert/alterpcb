@@ -47,18 +47,21 @@ public:
 	Library* NewLibrary(const std::string &name, const std::string &filename, LibraryType type);
 	void DeleteLibrary(Library *library);
 
-	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
-	QVariant data(const QModelIndex &index, int role) const override;
-	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
-	Qt::ItemFlags flags(const QModelIndex &index) const override;
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+	// basic model access
 	QModelIndex index(int row, int column,const QModelIndex &parent = QModelIndex()) const override;
-	QMimeData* mimeData(const QModelIndexList &indexes) const override;
-	QStringList mimeTypes() const override;
 	QModelIndex parent(const QModelIndex &index) const override;
 	int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+	int columnCount(const QModelIndex &parent = QModelIndex()) const override;
+	Qt::ItemFlags flags(const QModelIndex &index) const override;
+	QVariant data(const QModelIndex &index, int role) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+
+	// drag and drop
 	Qt::DropActions supportedDropActions() const override;
-	bool dropLocation(const QMimeData *data, Qt::DropAction action, DropLocation location_indicator, int &row, int &column, QModelIndex &parent);
+	QStringList mimeTypes() const override;
+	QMimeData* mimeData(const QModelIndexList &indexes) const override;
+	bool dropLocation(const QMimeData *data, Qt::DropAction action, DropLocation location, int &row, int &column, QModelIndex &parent);
+	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent) override;
 
 private:
 	void UpdatePersistentModelIndices();

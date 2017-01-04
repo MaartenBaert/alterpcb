@@ -37,8 +37,8 @@ enum LibraryTreeItemType {
 };
 
 enum DropLocation {
-	DropLocation_BEFORE,
-	DropLocation_ON_BEFORE,
-	DropLocation_ON_AFTER,
-	DropLocation_AFTER
+	DROPLOCATION_BEFORE,
+	DROPLOCATION_ON_BEFORE,
+	DROPLOCATION_ON_AFTER,
+	DROPLOCATION_AFTER,
 };

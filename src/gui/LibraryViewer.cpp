@@ -65,16 +65,20 @@ void LibraryViewer::OnRightClick(const QPoint &point)
 
 }
 
-DropLocation LibraryViewer::getDropLocation(QRect &index_rect, QPoint pos)
-{
-	//	if(event->pos().y() < index_rect.y()+index_rect.height()/2) { // indicator should show above
-	//		m_drop_indicator_rect = QRect(index_rect.x(),index_rect.y()-1,index_rect.width(),2);
-	//	}
-	//	else { // indicator should show below
-	//		m_drop_indicator_rect = QRect(index_rect.x(),index_rect.y()+index_rect.height()-1,index_rect.width(),2);
-	//	}
-
-	return DropLocation_BEFORE;
+DropLocation LibraryViewer::getDropLocation(QRect &index_rect, QPoint pos) {
+	if(pos.y() < index_rect.y() + index_rect.height() / 2) {
+		if(pos.y() < index_rect.y() + index_rect.height() / 4) {
+			return DROPLOCATION_BEFORE;
+		} else {
+			return DROPLOCATION_ON_BEFORE;
+		}
+	} else {
+		if(pos.y() < index_rect.y() + index_rect.height() * 3 / 4) {
+			return DROPLOCATION_ON_AFTER;
+		} else {
+			return DROPLOCATION_AFTER;
+		}
+	}
 }
 
 void LibraryViewer::dragEnterEvent(QDragEnterEvent *event)
@@ -113,10 +117,10 @@ void LibraryViewer::dragMoveEvent(QDragMoveEvent *event)
 			if(numrows == 0) {
 				m_drop_indicator_rect = visualRect(parent);
 			} else if(row < numrows) {
-				QRect index_rect = visualRect(parent.child(row, column));
-				m_drop_indicator_rect = QRect(index_rect.x(), index_rect.y(), index_rect.width(), 2);
+				QRect index_rect = visualRect(model()->index(row, column, parent));
+				m_drop_indicator_rect = QRect(index_rect.x(), index_rect.y() - 1, index_rect.width(), 2);
 			} else {
-				QRect index_rect = visualRect(parent.child(numrows - 1, column));
+				QRect index_rect = visualRect(model()->index(numrows - 1, column, parent));
 				m_drop_indicator_rect = QRect(index_rect.x(), index_rect.y() + index_rect.height() - 1, index_rect.width(), 2);
 			}
 		}
