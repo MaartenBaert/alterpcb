@@ -85,6 +85,8 @@ public:
 	inline       std::vector<Cow<Shape>>& GetShapes()       { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
 	inline const std::vector<Cow<Shape>>& GetShapes() const { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
 
+	inline void SetName(stringtag_t name) { m_name = name; }
+
 };
 
 struct DrawingCompare {

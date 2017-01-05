@@ -78,6 +78,9 @@ QVariant LibraryManagerConfigProxy::data(const QModelIndex &index, int role) con
 	if(role == Qt::DisplayRole) {
 		return sourceModel()->data(mapToSource(index),role);
 	}
+	else if(role ==  Qt::ForegroundRole) {
+		return sourceModel()->data(mapToSource(index),role);
+	}
 	else {
 		return QVariant();
 	}
@@ -90,7 +93,7 @@ QVariant LibraryManagerConfigProxy::data(const QModelIndex &index, int role) con
 QVariant LibraryManagerConfigProxy::headerData(int section, Qt::Orientation orientation,int role) const {
 	UNUSED(orientation);
 	if (role != Qt::DisplayRole)
-			return QVariant();
+		return QVariant();
 	if(section == 0) {
 		return QString("Name");
 	}
@@ -100,6 +103,23 @@ QVariant LibraryManagerConfigProxy::headerData(int section, Qt::Orientation orie
 	else {
 		return QVariant();
 	}
+}
+
+Qt::ItemFlags LibraryManagerConfigProxy::flags(const QModelIndex &index) const
+{
+	if (!index.isValid())
+		return 0;
+
+	return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
+}
+
+bool LibraryManagerConfigProxy::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+	if(role ==  Qt::EditRole) {
+		return sourceModel()->setData(mapToSource(index),value,role);
+	}
+
+	return false;
 }
 
 void LibraryManagerConfigProxy::onLayoutChanged()

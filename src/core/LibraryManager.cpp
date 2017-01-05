@@ -177,6 +177,11 @@ QVariant LibraryManager::data(const QModelIndex &index, int role) const {
 				case LIBRARYTREEITEMTYPE_DRAWING: {
 					return QIcon::fromTheme("document-save");
 				}}}
+		case Qt::ForegroundRole: {
+			if (index.column() == 1) { // color of the text to indicate if filepath is valid or not
+				return QColor(Qt::blue);
+			}
+		}
 		default: {
 			return QVariant();
 		}
@@ -192,6 +197,36 @@ QVariant LibraryManager::headerData(int section, Qt::Orientation orientation,int
 	UNUSED(orientation);
 	UNUSED(role);
 	return QVariant();
+}
+
+bool LibraryManager::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+	if(role ==  Qt::EditRole) {
+		if (!value.toString().isEmpty()) {
+			layoutAboutToBeChanged();
+			if (index.column() == 0) {
+				LibraryTreeItem *item_ptr = (LibraryTreeItem*) index.internalPointer();
+				switch(item_ptr->GetTreeItemType()) {
+					case LIBRARYTREEITEMTYPE_LIBRARY: {
+						Library *library = static_cast<Library*>(item_ptr);
+						library->SetName((value.toString()).toStdString());
+						layoutChanged();
+						return true;
+					}
+					case LIBRARYTREEITEMTYPE_DRAWING: {
+						Drawing *drawing = static_cast<Drawing*>(item_ptr);
+						drawing->SetName(StringRegistry::NewTag((value.toString()).toStdString()));
+						layoutChanged();
+						return true;
+					}}
+			}
+			else if (index.column() == 1) {
+				std::cerr << "EDIT 1" << std::endl;
+			}
+		}
+	}
+
+	return false;
 }
 
 Qt::DropActions LibraryManager::supportedDropActions() const {
