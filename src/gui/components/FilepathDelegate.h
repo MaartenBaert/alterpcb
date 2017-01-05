@@ -21,15 +21,21 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include <QtGui>
-#include "LibraryManager.h"
-#include "gui/components/FilepathDelegate.h"
 
-class LibraryConfigDialog : public QDialog {
+
+class FilepathDelegate : public QItemDelegate
+{
 	Q_OBJECT
 
 public:
-	LibraryConfigDialog(LibraryManager* library_manager);
+	FilepathDelegate(QObject *parent = 0);
 
-private:
-	FilepathDelegate m_delegate;
+	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	void setEditorData(QWidget *editor, const QModelIndex &index) const;
+	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
+	void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+private slots:
+	void openFileBrowser();
 };
+

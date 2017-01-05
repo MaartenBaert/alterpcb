@@ -30,7 +30,8 @@ SOURCES += \
 	gui/MainWindow.cpp \
 	Main.cpp \
     gui/dialogs/LibraryConfigDialog.cpp \
-    core/LibraryManagerConfigProxy.cpp
+    core/LibraryManagerConfigProxy.cpp \
+    gui/components/FilepathDelegate.cpp
 
 HEADERS += \
 	common/Basics.h \
@@ -57,4 +58,5 @@ HEADERS += \
 	gui/MainWindow.h \
     gui/MainWindow.cpp.orig \
     gui/dialogs/LibraryConfigDialog.h \
-    core/LibraryManagerConfigProxy.h
+    core/LibraryManagerConfigProxy.h \
+    gui/components/FilepathDelegate.h

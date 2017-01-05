@@ -43,9 +43,14 @@ void LibraryViewer::OnRightClick(const QPoint &point)
 	switch(Item->GetTreeItemType()) {
 		case LIBRARYTREEITEMTYPE_LIBRARY : {
 			std::cerr << "LIBVIEWER: TODO RightCLick on lib" << std::endl;
+			menu->addAction( tr("Add layout"));
+			menu->addAction( tr("Add Schematic"));
+			menu->addAction( tr("Add Symbol"));
+			menu->addSeparator();
 			menu->addAction(QString("Close"));
 			menu->addAction(QString("Rename"));
 			menu->addAction( tr("Delete"));
+
 			break;
 		}
 		case LIBRARYTREEITEMTYPE_DRAWING : {

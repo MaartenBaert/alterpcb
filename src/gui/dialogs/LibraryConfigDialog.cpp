@@ -2,6 +2,7 @@
 #include <LibraryManager.h>
 #include "LibraryViewer.h"
 #include "LibraryManagerConfigProxy.h"
+#include "gui/components/FilepathDelegate.h"
 
 
 
@@ -18,6 +19,9 @@ LibraryConfigDialog::LibraryConfigDialog(LibraryManager* library_manager)
 	library_viewer->setMinimumSize(500, 400);
 	library_viewer->setContentsMargins(0,0,0,0);
 	library_viewer->setColumnWidth(0, 150);
+
+
+	library_viewer->setItemDelegateForColumn(1,&m_delegate);
 
 	QPushButton *button_add = new QPushButton(tr("Add Library"));
 	QPushButton *button_remove = new QPushButton(tr("Remove Library"));
