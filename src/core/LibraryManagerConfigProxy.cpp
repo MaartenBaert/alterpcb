@@ -75,7 +75,7 @@ QVariant LibraryManagerConfigProxy::data(const QModelIndex &index, int role) con
 	if(!index.isValid())
 		return QVariant();
 
-	if(role == Qt::DisplayRole) {
+	if(role == Qt::DisplayRole || role == Qt::EditRole) {
 		return sourceModel()->data(mapToSource(index),role);
 	}
 	else if(role ==  Qt::ForegroundRole) {

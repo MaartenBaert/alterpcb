@@ -20,7 +20,11 @@ SOURCES += \
 	core/Drawing.cpp \
 	core/Library.cpp \
 	core/LibraryManager.cpp \
+        core/LibraryManagerConfigProxy.cpp \
 	core/Shape.cpp \
+        gui/dialogs/LibraryConfigDialog.cpp \
+        gui/components/FilepathDelegate.cpp \
+        gui/components/FilepathEditor.cpp \
 	gui/components/TabbedDocumentViewer.cpp \
 	gui/DrawingViewer.cpp \
 	gui/Editor.cpp \
@@ -28,10 +32,10 @@ SOURCES += \
 	gui/LibraryTreeItem.cpp \
 	gui/LibraryViewer.cpp \
 	gui/MainWindow.cpp \
-	Main.cpp \
-    gui/dialogs/LibraryConfigDialog.cpp \
-    core/LibraryManagerConfigProxy.cpp \
-    gui/components/FilepathDelegate.cpp
+        Main.cpp
+
+
+
 
 HEADERS += \
 	common/Basics.h \
@@ -48,15 +52,18 @@ HEADERS += \
 	core/Drawing.h \
 	core/Library.h \
 	core/LibraryManager.h \
+        core/LibraryManagerConfigProxy.h \
 	core/LibraryTreeItem.h \
 	core/Shape.h \
+        gui/dialogs/LibraryConfigDialog.h \
+        gui/components/FilepathDelegate.h \
+        gui/components/FilepathEditor.h \
 	gui/components/TabbedDocumentViewer.h \
 	gui/DrawingViewer.h \
 	gui/Editor.h \
 	gui/GLHelper.h \
 	gui/LibraryViewer.h \
 	gui/MainWindow.h \
-    gui/MainWindow.cpp.orig \
-    gui/dialogs/LibraryConfigDialog.h \
-    core/LibraryManagerConfigProxy.h \
-    gui/components/FilepathDelegate.h
+
+
+

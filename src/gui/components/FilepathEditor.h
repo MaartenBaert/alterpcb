@@ -22,20 +22,37 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtGui>
 
-
-class FilepathDelegate : public QItemDelegate
+class FilepathLineEdit : public QLineEdit
 {
 	Q_OBJECT
+private:
+	QPalette *m_palette;
 
 public:
-	FilepathDelegate(QObject *parent = 0);
 
-	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-	void setEditorData(QWidget *editor, const QModelIndex &index) const;
-	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
-	void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	FilepathLineEdit(QWidget *parent = 0);
 
 private slots:
-	void commitAndClose();
+	void onTextChanged();
 };
+
+
+class FilepathEditor : public QWidget
+{
+	Q_OBJECT
+private:
+	FilepathLineEdit m_lineedit;
+
+public:
+	FilepathEditor(QWidget *parent = 0);
+	void setText(QString text);
+	inline const QString getFileName() const { return m_lineedit.text(); }
+
+signals:
+	void editingFinished();
+
+private slots:
+	void openFileBrowser();
+};
+
 

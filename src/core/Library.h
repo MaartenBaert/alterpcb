@@ -66,7 +66,8 @@ public:
 	inline Drawing* GetLayout(size_t index) { assert(index < m_layouts.size()); return m_layouts[index].Get(); }
 	inline size_t GetLayoutCount() { return m_layouts.size(); }
 
-	void SetName(const std::string &name);
+	inline void SetName(const std::string &name) {m_name = name;}
+	inline void SetFilePath(const std::string &filename) {m_file_name = filename;}
 };
 
 struct LibraryCompare {

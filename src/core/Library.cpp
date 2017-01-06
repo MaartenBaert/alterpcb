@@ -62,7 +62,3 @@ size_t Library::GetDrawingIndex(Drawing *drawing) {
 	return 0;
 }
 
-void Library::SetName(const std::string &name)
-{
-	m_name = name;
-}

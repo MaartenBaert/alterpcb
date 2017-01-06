@@ -146,7 +146,8 @@ QVariant LibraryManager::data(const QModelIndex &index, int role) const {
 
 	LibraryTreeItem *item_ptr = (LibraryTreeItem*) index.internalPointer();
 	switch(role){
-		case Qt::DisplayRole: {
+		case Qt::DisplayRole:
+		case Qt::EditRole: {
 			switch(item_ptr->GetTreeItemType()) {
 				case LIBRARYTREEITEMTYPE_LIBRARY: {
 					Library *library = static_cast<Library*>(item_ptr);
@@ -204,8 +205,8 @@ bool LibraryManager::setData(const QModelIndex &index, const QVariant &value, in
 	if(role ==  Qt::EditRole) {
 		if (!value.toString().isEmpty()) {
 			layoutAboutToBeChanged();
+			LibraryTreeItem *item_ptr = (LibraryTreeItem*) index.internalPointer();
 			if (index.column() == 0) {
-				LibraryTreeItem *item_ptr = (LibraryTreeItem*) index.internalPointer();
 				switch(item_ptr->GetTreeItemType()) {
 					case LIBRARYTREEITEMTYPE_LIBRARY: {
 						Library *library = static_cast<Library*>(item_ptr);
@@ -221,7 +222,10 @@ bool LibraryManager::setData(const QModelIndex &index, const QVariant &value, in
 					}}
 			}
 			else if (index.column() == 1) {
-				std::cerr << "EDIT 1" << std::endl;
+				Library *library = static_cast<Library*>(item_ptr);
+				library->SetFilePath((value.toString()).toStdString());
+				layoutChanged();
+				return true;
 			}
 		}
 	}

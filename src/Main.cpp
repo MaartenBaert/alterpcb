@@ -153,7 +153,5 @@ int main(int argc, char *argv[]) {
 
 	MainWindow window(&library_manager);
 	UNUSED(window);
-	LibraryConfigDialog* dia = new LibraryConfigDialog(&library_manager);
-	dia->show();
 	return app.exec();
 }

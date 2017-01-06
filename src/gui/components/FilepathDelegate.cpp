@@ -1,4 +1,6 @@
 #include "FilepathDelegate.h"
+#include "Basics.h"
+#include "gui/components/FilepathEditor.h"
 #include <iostream>
 
 FilepathDelegate::FilepathDelegate(QObject *parent) : QItemDelegate(parent) {
@@ -6,43 +8,38 @@ FilepathDelegate::FilepathDelegate(QObject *parent) : QItemDelegate(parent) {
 
 QWidget *FilepathDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	QWidget *editor = new QWidget(parent);
-	QHBoxLayout *layout = new QHBoxLayout();
-	QLineEdit *textedit = new QLineEdit();
-	QPushButton *file_button = new QPushButton("...");
-	layout->addWidget(textedit);
-	layout->addWidget(file_button);
-	editor->setLayout(layout);
-
-	layout->setMargin(0);
-	layout->setSpacing(0);
-	file_button->setMaximumWidth(30);
-	file_button->setMinimumWidth(30);
-	connect(file_button, SIGNAL (released()), this, SLOT (openFileBrowser()));
-	textedit->setFrame(false);
-	textedit->setText((index.data(Qt::DisplayRole)).toString());
-
-	QTimer::singleShot(0, textedit, SLOT(setFocus())); // have the cursor already active in Text input box
+	UNUSED(option);
+	UNUSED(index);
+	FilepathEditor *editor = new FilepathEditor(parent);
+	connect(editor, SIGNAL(editingFinished()),this, SLOT(commitAndClose()));
 	return editor;
 }
 
 void FilepathDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-	//
+	FilepathEditor *filepatheditor = static_cast<FilepathEditor*>(editor);
+	filepatheditor->setText((index.data(Qt::EditRole)).toString());
 }
 
 void FilepathDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-	//
+	FilepathEditor *filepatheditor = static_cast<FilepathEditor*>(editor);
+	QString value = filepatheditor->getFileName();
+	model->setData(index, value, Qt::EditRole);
 }
 
 void FilepathDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+	UNUSED(editor);
+	UNUSED(option);
+	UNUSED(index);
 	editor->setGeometry(option.rect);
 }
 
-void FilepathDelegate::openFileBrowser()
+void FilepathDelegate::commitAndClose()
 {
-	QFileDialog *filedialog = new QFileDialog();
-	filedialog->show();
+	FilepathEditor *editor = qobject_cast<FilepathEditor *>(sender());
+	emit commitData(editor);
+	emit closeEditor(editor);
 }
+
