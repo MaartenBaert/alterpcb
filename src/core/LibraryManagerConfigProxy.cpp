@@ -75,10 +75,7 @@ QVariant LibraryManagerConfigProxy::data(const QModelIndex &index, int role) con
 	if(!index.isValid())
 		return QVariant();
 
-	if(role == Qt::DisplayRole || role == Qt::EditRole) {
-		return sourceModel()->data(mapToSource(index),role);
-	}
-	else if(role ==  Qt::ForegroundRole) {
+	if(role == Qt::DisplayRole || role == Qt::EditRole || role ==  Qt::ForegroundRole) {
 		return sourceModel()->data(mapToSource(index),role);
 	}
 	else {
@@ -95,10 +92,10 @@ QVariant LibraryManagerConfigProxy::headerData(int section, Qt::Orientation orie
 	if (role != Qt::DisplayRole)
 		return QVariant();
 	if(section == 0) {
-		return QString("Name");
+		return QString(tr("Name"));
 	}
 	else if(section == 1) {
-		return QString("File Path");
+		return QString(tr("File Path"));
 	}
 	else {
 		return QVariant();

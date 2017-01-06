@@ -3,12 +3,13 @@
 #include "LibraryViewer.h"
 #include "LibraryManagerConfigProxy.h"
 #include "gui/components/FilepathDelegate.h"
+#include "MainWindow.h"
 
 
-
-LibraryConfigDialog::LibraryConfigDialog(LibraryManager* library_manager)
+LibraryConfigDialog::LibraryConfigDialog(MainWindow *parent, LibraryManager* library_manager) : QDialog(parent)
 {
-	setWindowTitle("Library Manager");
+	m_parent = parent;
+	setWindowTitle(tr("Library Manager"));
 
 	QTreeView *library_viewer;
 	library_viewer = new QTreeView(this);
@@ -38,4 +39,10 @@ LibraryConfigDialog::LibraryConfigDialog(LibraryManager* library_manager)
 	layout1->addItem(layout2);
 	setLayout(layout1);
 
+}
+
+void LibraryConfigDialog::closeEvent(QCloseEvent *event)
+{
+	m_parent->CloseLibraryConfigDialog();
+	event->accept();
 }

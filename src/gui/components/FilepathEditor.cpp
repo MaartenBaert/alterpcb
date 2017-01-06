@@ -51,7 +51,7 @@ void FilepathEditor::setText(QString text) {
 
 void FilepathEditor::openFileBrowser()
 {
-	QString file_name = QFileDialog::getOpenFileName(NULL,QString("Select Library"),"","PNG Files (*.png);;All Files (*.*)",0,QFileDialog::DontUseNativeDialog); //TODO set the correct file filter
+	QString file_name = QFileDialog::getOpenFileName(NULL,QString(tr("Select Library")),"","PNG Files (*.png);;All Files (*.*)",0,QFileDialog::DontUseNativeDialog); // TODO set the correct file filter
 	if(!file_name.isNull()) {
 		m_lineedit.setText(file_name);
 		emit editingFinished();

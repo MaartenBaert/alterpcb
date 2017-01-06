@@ -24,12 +24,17 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "LibraryManager.h"
 #include "gui/components/FilepathDelegate.h"
 
+class MainWindow;
+
 class LibraryConfigDialog : public QDialog {
 	Q_OBJECT
 
-public:
-	LibraryConfigDialog(LibraryManager* library_manager);
-
 private:
 	FilepathDelegate m_delegate;
+	MainWindow *m_parent;
+
+public:
+	LibraryConfigDialog(MainWindow *parent, LibraryManager* library_manager);
+	virtual void closeEvent(QCloseEvent *event) override;
+
 };

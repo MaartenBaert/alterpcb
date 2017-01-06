@@ -23,12 +23,15 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "LibraryViewer.h"
 
 #include "DrawingViewer.h"
+#include "dialogs/LibraryConfigDialog.h"
 
 const QString MainWindow::WINDOW_TITLE = "AlterPCB";
 
 MainWindow::MainWindow(LibraryManager* library_manager) {
 
 	setWindowTitle(WINDOW_TITLE);
+	m_library_manager = library_manager;
+	m_library_config_dialog = NULL;
 
 	Editor *editor = new Editor();
 
@@ -48,7 +51,8 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 	}
 	{
 		QMenu *menu_edit = menubar->addMenu(tr("&Edit"));
-		menu_edit->addAction("Test");
+		QAction *act_open_library_manager = menu_edit->addAction(tr("Library Manager"));
+		connect(act_open_library_manager, SIGNAL (triggered(bool)), this, SLOT (OpenLibraryConfigDialog()));
 		menu_edit->addAction("Test");
 		menu_edit->addAction("Test");
 	}
@@ -127,5 +131,23 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 }
 
 MainWindow::~MainWindow() {
-	// nothing
+	CloseLibraryConfigDialog();
+}
+
+void MainWindow::OpenLibraryConfigDialog()
+{
+	if(m_library_config_dialog == NULL) {
+		m_library_config_dialog = new LibraryConfigDialog(this,m_library_manager);
+		m_library_config_dialog->show();
+	} else {
+		m_library_config_dialog->raise();
+	}
+}
+
+void MainWindow::CloseLibraryConfigDialog()
+{
+	if(m_library_config_dialog != NULL) {
+		m_library_config_dialog->deleteLater();
+		m_library_config_dialog = NULL;
+	}
 }

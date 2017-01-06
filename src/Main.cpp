@@ -27,7 +27,6 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "Shape.h"
 #include "StringRegistry.h"
 #include "VData.h"
-#include "dialogs/LibraryConfigDialog.h"
 
 #include <iostream>
 
