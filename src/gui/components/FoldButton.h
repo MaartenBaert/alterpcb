@@ -20,26 +20,35 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-enum LibraryType {
-	LIBRARYTYPE_JSON,
-	LIBRARYTYPE_PYTHON,
+#include <QtGui>
+
+enum FoldButtonSTATE {
+	FoldButtonSTATE_FOLDED,
+	FoldButtonSTATE_UNFOLDED,
+	FoldButtonSTATE_DISABLED
 };
 
-enum DrawingType {
-	DRAWINGTYPE_SCHEMATIC,
-	DRAWINGTYPE_SYMBOL,
-	DRAWINGTYPE_LAYOUT,
-};
+class FoldButton : public QPushButton {
+	Q_OBJECT
 
-enum LibraryTreeItemType {
-	LIBRARYTREEITEMTYPE_LIBRARY,
-	LIBRARYTREEITEMTYPE_DRAWING,
-};
+private:
+	FoldButtonSTATE m_state;
+	bool m_hover = false;
 
-enum DropLocation {
-	DROPLOCATION_BEFORE,
-	DROPLOCATION_ON_BEFORE,
-	DROPLOCATION_ON_AFTER,
-	DROPLOCATION_AFTER,
-};
+public:
+	FoldButton(QWidget *parent);
+	~FoldButton();
 
+	void setButtonState(FoldButtonSTATE state);
+	void enterEvent(QEvent *event);
+	void leaveEvent(QEvent *event);
+
+private slots:
+	void onClick();
+
+private:
+	void toggle_state();
+	void paintEvent(QPaintEvent *event);
+
+
+};

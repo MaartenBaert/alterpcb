@@ -20,26 +20,24 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-enum LibraryType {
-	LIBRARYTYPE_JSON,
-	LIBRARYTYPE_PYTHON,
-};
+#include <vector>
+#include <QtGui>
+#include <Shape.h>
 
-enum DrawingType {
-	DRAWINGTYPE_SCHEMATIC,
-	DRAWINGTYPE_SYMBOL,
-	DRAWINGTYPE_LAYOUT,
-};
+class ParameterViewer : public QWidget {
+	Q_OBJECT
 
-enum LibraryTreeItemType {
-	LIBRARYTREEITEMTYPE_LIBRARY,
-	LIBRARYTREEITEMTYPE_DRAWING,
-};
+private:
+	std::vector<Shape*> m_selected_shapes;
+	QVBoxLayout *m_layout;
+	int m_keybox_width;
 
-enum DropLocation {
-	DROPLOCATION_BEFORE,
-	DROPLOCATION_ON_BEFORE,
-	DROPLOCATION_ON_AFTER,
-	DROPLOCATION_AFTER,
-};
+public:
+	ParameterViewer(QWidget *parent = 0);
 
+	inline void SetSelectedShapes(std::vector<Shape*> selected_shapes) {m_selected_shapes = selected_shapes;}
+
+private:
+	void DrawData();
+
+};
