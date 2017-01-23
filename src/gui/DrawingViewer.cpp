@@ -49,7 +49,7 @@ static const char* SOURCE_FS_DOTGRID = R"(
 	void main() {
 		float fx = linescale.x * (gridposition2.x - round(gridposition2.x));
 		float fy = linescale.y * (gridposition2.y - round(gridposition2.y));
-		float alpha = texture2D(kernel, vec2(0.5f + 0.5f * fx, 0.5f + 0.5f * fy));
+		float alpha = texture2D(kernel, vec2(0.5f + 0.5f * fx, 0.5f + 0.5f * fy)).r;
 		fragcolor = color * alpha;
 	}
 )";
