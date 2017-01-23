@@ -25,8 +25,6 @@ SOURCES += \
         gui/dialogs/LibraryConfigDialog.cpp \
         gui/components/FilepathDelegate.cpp \
         gui/components/FilepathEditor.cpp \
-        gui/components/FoldButton.cpp \
-        gui/components/KeyValueEditor.cpp \
 	gui/components/TabbedDocumentViewer.cpp \
 	gui/DrawingViewer.cpp \
 	gui/Editor.cpp \
@@ -63,8 +61,6 @@ HEADERS += \
         gui/dialogs/LibraryConfigDialog.h \
         gui/components/FilepathDelegate.h \
         gui/components/FilepathEditor.h \
-        gui/components/FoldButton.h \
-        gui/components/KeyValueEditor.h \
 	gui/components/TabbedDocumentViewer.h \
 	gui/DrawingViewer.h \
 	gui/Editor.h \

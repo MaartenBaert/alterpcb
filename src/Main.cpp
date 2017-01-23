@@ -144,8 +144,6 @@ int main(int argc, char *argv[]) {
 		lib5->NewDrawing(StringRegistry::NewTag("resistor6"), DRAWINGTYPE_LAYOUT);
 		lib5->NewDrawing(StringRegistry::NewTag("resistor7"), DRAWINGTYPE_SYMBOL);
 		lib6->NewDrawing(StringRegistry::NewTag("resistor7_v2"), DRAWINGTYPE_LAYOUT);
-		lib7->NewDrawing(StringRegistry::NewTag("resistor8"), DRAWINGTYPE_SYMBOL);
-		lib7->NewDrawing(StringRegistry::NewTag("resistor9"), DRAWINGTYPE_LAYOUT);
 	}
 
 	Examples1();
