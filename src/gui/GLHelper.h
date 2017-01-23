@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Basics.h"
+#include "Color.h"
 
 #include <GL/glew.h>
 
@@ -52,6 +53,7 @@ struct GLvec4 {
 	float x, y, z, w;
 	inline GLvec4() {}
 	inline GLvec4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
+	inline GLvec4(const Color &color) : x(color.r), y(color.g), z(color.b), w(color.a) {}
 	inline operator float*() { return &x; }
 };
 
@@ -62,8 +64,8 @@ static_assert(sizeof(GLvec4) == sizeof(float) * 4, "Invalid GLvec4 struct!");
 inline GLvec4 ColorToVec(const QColor &color) {
 	return GLvec4(color.redF(), color.greenF(), color.blueF(), color.alphaF());
 }
-inline GLvec4 Premultiply(const GLvec4& v) {
-	return GLvec4(v.x * v.w, v.y * v.w, v.z * v.w, v.w);
+inline GLvec4 ColorToVec(const Color &color) {
+	return GLvec4(color.r, color.g, color.b, color.a);
 }
 
 std::string AddLineNumbers(const char *source);

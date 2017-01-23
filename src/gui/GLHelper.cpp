@@ -20,7 +20,8 @@
 
 std::string AddLineNumbers(const char *source) {
 	std::ostringstream ss;
-	uint32_t line = 0;
+	uint32_t line = 1;
+	ss << std::setw(4) << line << '.' << ' ';
 	while(*source != '\0') {
 		if(*source == '\n')
 			ss << '\n' << std::setw(4) << ++line << '.' << ' ';
@@ -41,7 +42,7 @@ void CompileVS(GLvs &vs, const char *source) {
 		glGetShaderiv(vs, GL_INFO_LOG_LENGTH, &temp);
 		std::vector<char> log(temp);
 		glGetShaderInfoLog(vs, temp, &temp, log.data());
-		throw std::runtime_error("Vertex shader compilation failed.\n\nLog:\n" + std::string(log.data(), log.size())
+		throw std::runtime_error("Vertex shader compilation failed.\n\nLog:\n" + std::string(log.data())
 								 + "\n\nSource:\n" + AddLineNumbers(source));
 	}
 }
@@ -55,7 +56,7 @@ void CompileGS(GLgs &gs, const char *source) {
 		glGetShaderiv(gs, GL_INFO_LOG_LENGTH, &temp);
 		std::vector<char> log(temp);
 		glGetShaderInfoLog(gs, temp, &temp, log.data());
-		throw std::runtime_error("Geometry shader compilation failed.\n\nLog:\n" + std::string(log.data(), log.size())
+		throw std::runtime_error("Geometry shader compilation failed.\n\nLog:\n" + std::string(log.data())
 								 + "\n\nSource:\n" + AddLineNumbers(source));
 	}
 }
@@ -69,7 +70,7 @@ void CompileFS(GLfs &fs, const char *source) {
 		glGetShaderiv(fs, GL_INFO_LOG_LENGTH, &temp);
 		std::vector<char> log(temp);
 		glGetShaderInfoLog(fs, temp, &temp, log.data());
-		throw std::runtime_error("Fragment shader compilation failed.\n\nLog:\n" + std::string(log.data(), log.size())
+		throw std::runtime_error("Fragment shader compilation failed.\n\nLog:\n" + std::string(log.data())
 								 + "\n\nSource:\n" + AddLineNumbers(source));
 	}
 }

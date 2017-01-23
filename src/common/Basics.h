@@ -62,6 +62,15 @@ template<> inline double clamp<double>(double v, double lo, double hi) {
 	return fmin(fmax(v, lo), hi);
 }
 
+template<typename F>
+inline F ToRadians(F x) {
+	return x * (F) (M_PI / 180.0);
+}
+template<typename F>
+inline F ToDegrees(F x) {
+	return x * (F) (180.0 / M_PI);
+}
+
 inline bool IsPow2(uint32_t x) {
 	// IsPow2(0) = true
 	// IsPow2(1) = true

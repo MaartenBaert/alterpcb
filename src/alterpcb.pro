@@ -14,6 +14,7 @@ QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 ########## Warning: Everything below this line is auto-generated and will be overwritten! ##########
 
 SOURCES += \
+	common/Color.cpp \
 	common/Json.cpp \
 	common/StringRegistry.cpp \
 	common/VData.cpp \
@@ -32,6 +33,7 @@ SOURCES += \
 
 HEADERS += \
 	common/Basics.h \
+	common/Color.h \
 	common/Cow.h \
 	common/EnumTranslator.h \
 	common/HashTable.h \
