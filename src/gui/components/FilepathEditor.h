@@ -20,26 +20,39 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-enum LibraryType {
-	LIBRARYTYPE_JSON,
-	LIBRARYTYPE_PYTHON,
+#include <QtGui>
+
+class FilepathLineEdit : public QLineEdit
+{
+	Q_OBJECT
+private:
+	QPalette *m_palette;
+
+public:
+
+	FilepathLineEdit(QWidget *parent = 0);
+
+private slots:
+	void onTextChanged();
 };
 
-enum DrawingType {
-	DRAWINGTYPE_SCHEMATIC,
-	DRAWINGTYPE_SYMBOL,
-	DRAWINGTYPE_LAYOUT,
+
+class FilepathEditor : public QWidget
+{
+	Q_OBJECT
+private:
+	FilepathLineEdit m_lineedit;
+
+public:
+	FilepathEditor(QWidget *parent = 0);
+	void setText(QString text);
+	inline const QString getFileName() const { return m_lineedit.text(); }
+
+signals:
+	void editingFinished();
+
+private slots:
+	void openFileBrowser();
 };
 
-enum LibraryTreeItemType {
-	LIBRARYTREEITEMTYPE_LIBRARY,
-	LIBRARYTREEITEMTYPE_DRAWING,
-};
-
-enum DropLocation {
-	DROPLOCATION_BEFORE,
-	DROPLOCATION_ON_BEFORE,
-	DROPLOCATION_ON_AFTER,
-	DROPLOCATION_AFTER,
-};
 

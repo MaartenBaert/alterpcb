@@ -24,13 +24,17 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "Editor.h"
 
 #include <QtGui>
-#include <LibraryManager.h>
+
+class LibraryManager;
+class LibraryConfigDialog;
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
 
 private:
 	static const QString WINDOW_TITLE;
+	LibraryManager *m_library_manager;
+	LibraryConfigDialog *m_library_config_dialog;
 
 private:
 	// member variables here
@@ -38,5 +42,9 @@ private:
 public:
 	MainWindow(LibraryManager* library_manager);
 	~MainWindow();
+
+public slots:
+	void OpenLibraryConfigDialog();
+	void CloseLibraryConfigDialog();
 
 };

@@ -61,3 +61,4 @@ size_t Library::GetDrawingIndex(Drawing *drawing) {
 	assert(false);
 	return 0;
 }
+

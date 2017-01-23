@@ -20,26 +20,22 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-enum LibraryType {
-	LIBRARYTYPE_JSON,
-	LIBRARYTYPE_PYTHON,
-};
+#include <QtGui>
 
-enum DrawingType {
-	DRAWINGTYPE_SCHEMATIC,
-	DRAWINGTYPE_SYMBOL,
-	DRAWINGTYPE_LAYOUT,
-};
 
-enum LibraryTreeItemType {
-	LIBRARYTREEITEMTYPE_LIBRARY,
-	LIBRARYTREEITEMTYPE_DRAWING,
-};
+class FilepathDelegate : public QItemDelegate
+{
+	Q_OBJECT
 
-enum DropLocation {
-	DROPLOCATION_BEFORE,
-	DROPLOCATION_ON_BEFORE,
-	DROPLOCATION_ON_AFTER,
-	DROPLOCATION_AFTER,
+public:
+	FilepathDelegate(QObject *parent = 0);
+
+	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	void setEditorData(QWidget *editor, const QModelIndex &index) const;
+	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
+	void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+private slots:
+	void commitAndClose();
 };
 

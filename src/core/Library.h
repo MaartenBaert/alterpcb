@@ -53,9 +53,6 @@ public:
 	void DeleteDrawing(Drawing *drawing);
 
 	size_t GetDrawingIndex(Drawing *drawing);
-	//TrackingPointer<Drawing> MoveOutDrawing(Drawing *drawing);
-	//void MoveInDrawing(TrackingPointer<Drawing> *ptr);
-	//void MovePositionDrawing(Drawing *drawing,size_t target_index);
 
 	inline LibraryManager* GetParent() { return m_parent; }
 	inline const std::string& GetName() const { return m_name; }
@@ -69,6 +66,8 @@ public:
 	inline Drawing* GetLayout(size_t index) { assert(index < m_layouts.size()); return m_layouts[index].Get(); }
 	inline size_t GetLayoutCount() { return m_layouts.size(); }
 
+	inline void SetName(const std::string &name) {m_name = name;}
+	inline void SetFilePath(const std::string &filename) {m_file_name = filename;}
 };
 
 struct LibraryCompare {

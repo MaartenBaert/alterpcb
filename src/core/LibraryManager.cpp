@@ -49,7 +49,7 @@ QModelIndex LibraryManager::index(int row, int column, const QModelIndex &parent
 
 	// Check whether the requested index (i.e. row and column) is valid. We can already check the things that don't
 	// depend on the type of item we are working with. The final row count check will be done later.
-	if(row < 0 || column != 0)
+	if(row < 0)
 		return QModelIndex();
 
 	// is parent the root?
@@ -130,7 +130,7 @@ int LibraryManager::rowCount(const QModelIndex &parent) const {
 
 int LibraryManager::columnCount(const QModelIndex &parent) const {
 	UNUSED(parent);
-	return 1;
+	return 2;
 }
 
 Qt::ItemFlags LibraryManager::flags(const QModelIndex &index) const {
@@ -146,15 +146,29 @@ QVariant LibraryManager::data(const QModelIndex &index, int role) const {
 
 	LibraryTreeItem *item_ptr = (LibraryTreeItem*) index.internalPointer();
 	switch(role){
-		case Qt::DisplayRole: {
+		case Qt::DisplayRole:
+		case Qt::EditRole: {
 			switch(item_ptr->GetTreeItemType()) {
 				case LIBRARYTREEITEMTYPE_LIBRARY: {
 					Library *library = static_cast<Library*>(item_ptr);
-					return QString::fromStdString(library->GetName());
+					if(index.column() == 0) {
+						return QString::fromStdString(library->GetName());
+					}
+					else if (index.column() == 1) {
+						return QString::fromStdString(library->GetFileName());
+					}
+					else {
+						return QString("");
+					}
 				}
 				case LIBRARYTREEITEMTYPE_DRAWING: {
 					Drawing *drawing = static_cast<Drawing*>(item_ptr);
-					return QString::fromStdString(StringRegistry::GetString(drawing->GetName()));
+					if(index.column() == 0) {
+						return QString::fromStdString(StringRegistry::GetString(drawing->GetName()));
+					}
+					else {
+						return QString("");
+					}
 				}}}
 		case Qt::DecorationRole: {
 			switch(item_ptr->GetTreeItemType()) {
@@ -164,6 +178,11 @@ QVariant LibraryManager::data(const QModelIndex &index, int role) const {
 				case LIBRARYTREEITEMTYPE_DRAWING: {
 					return QIcon::fromTheme("document-save");
 				}}}
+		case Qt::ForegroundRole: {
+			if (index.column() == 1) { // color of the text to indicate if filepath is valid or not
+				return QColor(Qt::blue);
+			}
+		}
 		default: {
 			return QVariant();
 		}
@@ -179,6 +198,39 @@ QVariant LibraryManager::headerData(int section, Qt::Orientation orientation,int
 	UNUSED(orientation);
 	UNUSED(role);
 	return QVariant();
+}
+
+bool LibraryManager::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+	if(role ==  Qt::EditRole) {
+		if (!value.toString().isEmpty()) {
+			layoutAboutToBeChanged();
+			LibraryTreeItem *item_ptr = (LibraryTreeItem*) index.internalPointer();
+			if (index.column() == 0) {
+				switch(item_ptr->GetTreeItemType()) {
+					case LIBRARYTREEITEMTYPE_LIBRARY: {
+						Library *library = static_cast<Library*>(item_ptr);
+						library->SetName((value.toString()).toStdString());
+						layoutChanged();
+						return true;
+					}
+					case LIBRARYTREEITEMTYPE_DRAWING: {
+						Drawing *drawing = static_cast<Drawing*>(item_ptr);
+						drawing->SetName(StringRegistry::NewTag((value.toString()).toStdString()));
+						layoutChanged();
+						return true;
+					}}
+			}
+			else if (index.column() == 1) {
+				Library *library = static_cast<Library*>(item_ptr);
+				library->SetFilePath((value.toString()).toStdString());
+				layoutChanged();
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 Qt::DropActions LibraryManager::supportedDropActions() const {
@@ -356,5 +408,4 @@ void LibraryManager::UpdatePersistentModelIndices() {
 
 	// presumably Qt optimizes this internally
 	changePersistentIndexList(oldlist, newlist);
-
 }

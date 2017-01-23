@@ -20,26 +20,21 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-enum LibraryType {
-	LIBRARYTYPE_JSON,
-	LIBRARYTYPE_PYTHON,
-};
+#include <QtGui>
+#include "LibraryManager.h"
+#include "gui/components/FilepathDelegate.h"
 
-enum DrawingType {
-	DRAWINGTYPE_SCHEMATIC,
-	DRAWINGTYPE_SYMBOL,
-	DRAWINGTYPE_LAYOUT,
-};
+class MainWindow;
 
-enum LibraryTreeItemType {
-	LIBRARYTREEITEMTYPE_LIBRARY,
-	LIBRARYTREEITEMTYPE_DRAWING,
-};
+class LibraryConfigDialog : public QDialog {
+	Q_OBJECT
 
-enum DropLocation {
-	DROPLOCATION_BEFORE,
-	DROPLOCATION_ON_BEFORE,
-	DROPLOCATION_ON_AFTER,
-	DROPLOCATION_AFTER,
-};
+private:
+	FilepathDelegate m_delegate;
+	MainWindow *m_parent;
 
+public:
+	LibraryConfigDialog(MainWindow *parent, LibraryManager* library_manager);
+	virtual void closeEvent(QCloseEvent *event) override;
+
+};

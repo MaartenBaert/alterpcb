@@ -120,10 +120,10 @@ int main(int argc, char *argv[]) {
 		Library *lib1 = library_manager.NewLibrary("Basic", "basic.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib2 = library_manager.NewLibrary("My PCB", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib3 = library_manager.NewLibrary("My Scripts", "myscripts.alterlib.py", LIBRARYTYPE_PYTHON);
-		Library *lib4 = library_manager.NewLibrary("Very small pcb", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
-		Library *lib5 = library_manager.NewLibrary("Random PCB", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
-		Library *lib6 = library_manager.NewLibrary("Ugly PCB", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
-		Library *lib7 = library_manager.NewLibrary("House shaped PCB", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
+		Library *lib4 = library_manager.NewLibrary("Very small pcb", "verylongpcblibname.alterlib.json", LIBRARYTYPE_JSON);
+		Library *lib5 = library_manager.NewLibrary("Random PCB", "myrandompcb.alterlib.json", LIBRARYTYPE_JSON);
+		Library *lib6 = library_manager.NewLibrary("Ugly PCB", "uglypcb.alterlib.json", LIBRARYTYPE_JSON);
+		Library *lib7 = library_manager.NewLibrary("House shaped PCB", "houseshapedpcb.alterlib.json", LIBRARYTYPE_JSON);
 		lib1->NewDrawing(StringRegistry::NewTag("resistor"), DRAWINGTYPE_SYMBOL);
 		lib1->NewDrawing(StringRegistry::NewTag("resistor"), DRAWINGTYPE_LAYOUT);
 		lib1->NewDrawing(StringRegistry::NewTag("via"), DRAWINGTYPE_LAYOUT);

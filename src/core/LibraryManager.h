@@ -55,6 +55,7 @@ public:
 	Qt::ItemFlags flags(const QModelIndex &index) const override;
 	QVariant data(const QModelIndex &index, int role) const override;
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+	bool setData(const QModelIndex &index, const QVariant &value, int role);
 
 	// drag and drop
 	Qt::DropActions supportedDropActions() const override;
