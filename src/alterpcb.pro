@@ -13,36 +13,6 @@ QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 
 ########## Warning: Everything below this line is auto-generated and will be overwritten! ##########
 
-SOURCES += \
-	common/Color.cpp \
-	common/Json.cpp \
-	common/StringRegistry.cpp \
-	common/VData.cpp \
-	core/Drawing.cpp \
-	core/Library.cpp \
-	core/LibraryManager.cpp \
-        core/LibraryManagerConfigProxy.cpp \
-	core/Shape.cpp \
-        gui/dialogs/LibraryConfigDialog.cpp \
-        gui/components/FilepathDelegate.cpp \
-        gui/components/FilepathEditor.cpp \
-        gui/components/FoldButton.cpp \
-        gui/components/KeyValueEditor.cpp \
-	gui/components/TabbedDocumentViewer.cpp \
-	gui/DrawingViewer.cpp \
-	gui/Editor.cpp \
-	gui/GLHelper.cpp \
-	gui/LibraryTreeItem.cpp \
-	gui/LibraryViewer.cpp \
-	gui/MainWindow.cpp \
-        gui/ParameterViewer.cpp \
-        Main.cpp
-
-
-
-
-
-
 HEADERS += \
 	common/Basics.h \
 	common/Color.h \
@@ -59,23 +29,43 @@ HEADERS += \
 	core/Drawing.h \
 	core/Library.h \
 	core/LibraryManager.h \
-        core/LibraryManagerConfigProxy.h \
+	core/LibraryManagerConfigProxy.h \
 	core/LibraryTreeItem.h \
 	core/Shape.h \
-        gui/dialogs/LibraryConfigDialog.h \
-        gui/components/FilepathDelegate.h \
-        gui/components/FilepathEditor.h \
-        gui/components/FoldButton.h \
-        gui/components/KeyValueEditor.h \
-	gui/components/TabbedDocumentViewer.h \
 	gui/DrawingViewer.h \
 	gui/Editor.h \
 	gui/GLHelper.h \
 	gui/LibraryViewer.h \
-        gui/MainWindow.h \
-        gui/ParameterViewer.h
+	gui/MainWindow.h \
+	gui/ParameterViewer.h \
+	gui/components/FilepathDelegate.h \
+	gui/components/FilepathEditor.h \
+	gui/components/FoldButton.h \
+	gui/components/KeyValueEditor.h \
+	gui/components/TabbedDocumentViewer.h \
+	gui/dialogs/LibraryConfigDialog.h
 
-
-
-
-
+SOURCES += \
+	Main.cpp \
+	common/Color.cpp \
+	common/Json.cpp \
+	common/StringRegistry.cpp \
+	common/VData.cpp \
+	core/Drawing.cpp \
+	core/Library.cpp \
+	core/LibraryManager.cpp \
+	core/LibraryManagerConfigProxy.cpp \
+	core/Shape.cpp \
+	gui/DrawingViewer.cpp \
+	gui/Editor.cpp \
+	gui/GLHelper.cpp \
+	gui/LibraryTreeItem.cpp \
+	gui/LibraryViewer.cpp \
+	gui/MainWindow.cpp \
+	gui/ParameterViewer.cpp \
+	gui/components/FilepathDelegate.cpp \
+	gui/components/FilepathEditor.cpp \
+	gui/components/FoldButton.cpp \
+	gui/components/KeyValueEditor.cpp \
+	gui/components/TabbedDocumentViewer.cpp \
+	gui/dialogs/LibraryConfigDialog.cpp
