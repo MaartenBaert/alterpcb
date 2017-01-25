@@ -65,9 +65,6 @@ QModelIndex LibraryManagerConfigProxy::mapFromSource(const QModelIndex &sourceIn
 	if (!sourceIndex.isValid())
 		return QModelIndex();
 
-	if (!sourceIndex.parent().isValid())
-		return QModelIndex();
-
 	return index(sourceIndex.row(),sourceIndex.column());
 }
 
@@ -104,10 +101,11 @@ QVariant LibraryManagerConfigProxy::headerData(int section, Qt::Orientation orie
 
 Qt::ItemFlags LibraryManagerConfigProxy::flags(const QModelIndex &index) const
 {
-	if (!index.isValid())
+	if (!index.isValid()){
 		return 0;
+	}
 
-	return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
+	return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
 bool LibraryManagerConfigProxy::setData(const QModelIndex &index, const QVariant &value, int role)

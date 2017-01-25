@@ -20,7 +20,7 @@ LibraryConfigDialog::LibraryConfigDialog(MainWindow *parent, LibraryManager* lib
 	library_viewer->setMinimumSize(500, 400);
 	library_viewer->setContentsMargins(0,0,0,0);
 	library_viewer->setColumnWidth(0, 150);
-
+	library_viewer->setRootIsDecorated(false);
 
 	library_viewer->setItemDelegateForColumn(1,&m_delegate);
 
