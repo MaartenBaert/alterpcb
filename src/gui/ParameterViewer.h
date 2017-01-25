@@ -76,9 +76,12 @@ private:
 	std::vector<QWidget*> m_widgets;
 	std::vector<Shape*> m_selected_shapes;
 	HashTable<ParameterEntry, ParameterHasher> m_parameters;
-	index_t m_hoverIndex;
+	bool m_hover;
+	index_t m_current_index;
+	index_t m_current_subindex;
 
-	static const int LAYOUT_BUTTONWIDTH = 20;
+	static const int LAYOUT_FOLDBUTTONWIDTH = 20;
+	static const int LAYOUT_SUBPARAMBUTTONWIDTH = 16;
 	static const int LAYOUT_VSPACING = 2; // best keep even number
 	static const int LAYOUT_HSPACING = 3;
 	int LAYOUT_LABELWIDTH = 80;
@@ -112,15 +115,14 @@ private:
 	void UpdateRange();
 	void UpdateLayout();
 
-	index_t positionToIndex(const QPoint &pos);
+	void positionToIndex(const QPoint &pos);
 	void ExpandParameter(index_t index);
 	void UnexpandParameter(index_t index);
 
 	void loadTestParam();
 
 private slots:
-	void OnFocusChange(QWidget* old_widget, QWidget* new_widget);
-
+	void OnFocusChange();
 };
 
 

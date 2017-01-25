@@ -8,18 +8,17 @@ ParameterViewer::ParameterViewer(QWidget *parent) : QAbstractScrollArea(parent) 
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	//setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn); // buggy with GTK style, maximumViewportSize() doesn't take the border into account :(
 	verticalScrollBar()->setSingleStep(20);
+	setFocusPolicy(Qt::NoFocus);
 
 	viewport()->setBackgroundRole(QPalette::Window);
 	viewport()->setAutoFillBackground(true);
 	viewport()->setMouseTracking(true);
 
-	connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(OnFocusChange(QWidget*, QWidget*)));
-
 	UpdateRange();
 
 	loadTestParam();
 
-}
+	connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(OnFocusChange()));}
 
 ParameterViewer::~ParameterViewer() {}
 
@@ -90,6 +89,28 @@ void ParameterViewer::loadTestParam()
 		this->AddWidget(i,valuebox);
 	}
 
+}
+
+void ParameterViewer::OnFocusChange()
+{
+	QWidget *focuswidget = viewport()->focusWidget();
+	if(focuswidget){ // widget can be distroyed
+		// TODO check if widget is in parameterviewer
+		QRect r = focuswidget->geometry();
+		if(r.y() > viewport()->height()-r.height()-LAYOUT_HSPACING){ // scroll down
+			verticalScrollBar()->setValue(verticalScrollBar()->value()+r.height()+LAYOUT_VSPACING);
+		}
+		if(r.y() < LAYOUT_VSPACING){ // scroll up
+			verticalScrollBar()->setValue(verticalScrollBar()->value()-r.height()-LAYOUT_VSPACING);
+		}
+		if(r.y() < LAYOUT_VSPACING-r.height()){ // loop scroll down
+			verticalScrollBar()->setValue(0);
+		}
+		if(r.y() > viewport()->height()-LAYOUT_HSPACING){ // loop scroll up
+			verticalScrollBar()->setValue(viewport()->height()-r.height()-LAYOUT_HSPACING);
+		}
+		UpdateLayout();
+	}
 }
 
 static QSize GetWidgetSize(QWidget* widget)
@@ -218,8 +239,8 @@ void ParameterViewer::paintEvent(QPaintEvent *event)
 	UNUSED(event);
 	QPainter painter(viewport());
 
-	// TODO check if in view before drawing
 	int y = -verticalScrollBar()->value();
+
 	for(index_t i = 0; i < m_widgets.size(); ++i)
 	{
 		QSize size = GetWidgetSize(m_widgets[i]);
@@ -241,18 +262,20 @@ void ParameterViewer::paintEvent(QPaintEvent *event)
 			opt.state |= QStyle::State_Sibling;
 		}
 
-		if(m_hoverIndex == i){
+		if(m_current_index == i && m_current_subindex == INDEX_NONE && m_hover){
 			opt.state |= QStyle::State_MouseOver;
 		}
 		else {
 			opt.state &= ~QStyle::State_MouseOver;
 		}
 
+		QIcon select_icon = QIcon::fromTheme("document-open");
+		QIcon deselect_icon = QIcon::fromTheme("document-save");
 
 
-		opt.rect = QRect(0,y-LAYOUT_VSPACING/2,LAYOUT_BUTTONWIDTH,size.height()+LAYOUT_VSPACING);
+		opt.rect = QRect(0,y-LAYOUT_VSPACING/2,LAYOUT_FOLDBUTTONWIDTH,size.height()+LAYOUT_VSPACING);
 		style()->drawPrimitive(QStyle::PE_IndicatorBranch, &opt, &painter, viewport());
-		painter.drawText(QRect(LAYOUT_BUTTONWIDTH+LAYOUT_HSPACING,y,LAYOUT_LABELWIDTH-LAYOUT_BUTTONWIDTH+LAYOUT_HSPACING,size.height()),Qt::AlignLeft|Qt::AlignVCenter|Qt::TextSingleLine,QString::fromStdString(StringRegistry::GetString(m_parameters[i].m_name)));
+		painter.drawText(QRect(LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,y,LAYOUT_LABELWIDTH-LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,size.height()),Qt::AlignLeft|Qt::AlignVCenter|Qt::TextSingleLine,QString::fromStdString(StringRegistry::GetString(m_parameters[i].m_name)));
 		y += size.height()+LAYOUT_VSPACING;
 
 		if(!m_parameters[i].m_mergeable && m_parameters[i].m_expanded){
@@ -260,10 +283,12 @@ void ParameterViewer::paintEvent(QPaintEvent *event)
 				if(i < m_widgets.size()-1){
 					QStyleOptionButton opt_sub;
 					opt.state = QStyle::State_Active | QStyle::State_Enabled | QStyle::State_Sibling;
-					opt.rect = QRect(0,y-LAYOUT_VSPACING/2,LAYOUT_BUTTONWIDTH,size.height()+LAYOUT_VSPACING);
+					opt.rect = QRect(0,y-LAYOUT_VSPACING/2,LAYOUT_FOLDBUTTONWIDTH,size.height()+LAYOUT_VSPACING);
 					style()->drawPrimitive(QStyle::PE_IndicatorBranch, &opt, &painter, viewport());
 				}
-				painter.drawText(QRect(LAYOUT_BUTTONWIDTH+LAYOUT_HSPACING,y,LAYOUT_LABELWIDTH-LAYOUT_BUTTONWIDTH+LAYOUT_HSPACING,size.height()),Qt::AlignLeft|Qt::AlignVCenter|Qt::TextSingleLine,QString::fromStdString("(" + std::to_string(m_parameters[i].m_subparameters[j].m_num_shapes) + ")"));
+				select_icon.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
+				deselect_icon.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_SUBPARAMBUTTONWIDTH,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
+				painter.drawText(QRect(LAYOUT_FOLDBUTTONWIDTH+3*LAYOUT_HSPACING+2*LAYOUT_SUBPARAMBUTTONWIDTH,y,LAYOUT_LABELWIDTH-LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,size.height()),Qt::AlignLeft|Qt::AlignVCenter|Qt::TextSingleLine,QString::fromStdString("(" + std::to_string(m_parameters[i].m_subparameters[j].m_num_shapes) + ")"));
 				y += size.height()+LAYOUT_VSPACING;
 			}
 		}
@@ -274,33 +299,33 @@ void ParameterViewer::paintEvent(QPaintEvent *event)
 
 void ParameterViewer::mousePressEvent(QMouseEvent *event)
 {
-	index_t index = positionToIndex(event->pos());
-	if(index != INDEX_NONE){
-	if(event->pos().x() < LAYOUT_BUTTONWIDTH){
-		if(!m_parameters[index].m_mergeable){
-			if(m_parameters[index].m_expanded){
-				UnexpandParameter(index);
-			}
-			else{
-				ExpandParameter(index);
+	positionToIndex(event->pos());
+	if(m_current_index != INDEX_NONE){
+		if(event->pos().x() < LAYOUT_FOLDBUTTONWIDTH){
+			if(!m_parameters[m_current_index].m_mergeable){
+				if(m_parameters[m_current_index].m_expanded){
+					UnexpandParameter(m_current_index);
+				}
+				else{
+					ExpandParameter(m_current_index);
 
+				}
 			}
 		}
-	}
 	}
 }
 
 void ParameterViewer::mouseDoubleClickEvent(QMouseEvent *event)
 {
-	index_t index = positionToIndex(event->pos());
-	if(index != INDEX_NONE){
-		if(event->pos().x() > LAYOUT_BUTTONWIDTH && event->pos().x() < LAYOUT_BUTTONWIDTH+LAYOUT_HSPACING+LAYOUT_LABELWIDTH){
-			if(!m_parameters[index].m_mergeable){
-				if(m_parameters[index].m_expanded){
-					UnexpandParameter(index);
+	positionToIndex(event->pos());
+	if(m_current_index != INDEX_NONE){
+		if(event->pos().x() > LAYOUT_FOLDBUTTONWIDTH && event->pos().x() < LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING+LAYOUT_LABELWIDTH){
+			if(!m_parameters[m_current_index].m_mergeable){
+				if(m_parameters[m_current_index].m_expanded){
+					UnexpandParameter(m_current_index);
 				}
 				else{
-					ExpandParameter(index);
+					ExpandParameter(m_current_index);
 				}
 			}
 		}
@@ -309,8 +334,12 @@ void ParameterViewer::mouseDoubleClickEvent(QMouseEvent *event)
 
 void ParameterViewer::mouseMoveEvent(QMouseEvent *event)
 {
-	if(event->pos().x() < LAYOUT_BUTTONWIDTH+LAYOUT_HSPACING+LAYOUT_LABELWIDTH){
-		m_hoverIndex = positionToIndex(event->pos());
+	if(event->pos().x() < LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING+LAYOUT_LABELWIDTH){
+		m_hover = true;
+		positionToIndex(event->pos());
+	}
+	else{
+		m_hover = false;
 	}
 	viewport()->update();
 }
@@ -318,39 +347,34 @@ void ParameterViewer::mouseMoveEvent(QMouseEvent *event)
 void ParameterViewer::leaveEvent(QEvent *event)
 {
 	UNUSED(event);
-	m_hoverIndex = INDEX_NONE;
+	m_current_index = INDEX_NONE;
+	m_current_subindex = INDEX_NONE;
+	m_hover = false;
 	viewport()->update();
 }
 
 void ParameterViewer::UpdateFocusChain()
 {
-	/*
-	This algorithm assumes that all direct and indirect childs of widgets in the rack are created right after the widget itself,
-	with no non-child widgets in between. It also assumes that the focus policy of widgets won't change after they have been added to the rack.
-	If these assumptions are incorrect, the focus chain will probably be messed up, but it won't cause any serious problems.
-	There's probably some clever way to do this without an intermediate std::vector,
-	but I don't want to depend too much on Qt internals such as the exact implementation of setTabOrder().
-	*/
-	QWidget *prev = this;
-	while(prev->focusPolicy() == Qt::NoFocus) {
-		prev = prev->previousInFocusChain();
-		if(prev == this)
-			break;
-	}
-	std::vector<QWidget*> focuschain; // keep this outside the loop to reuse memory
-	for(index_t i = 0; i < m_widgets.size(); ++i) {
-		focuschain.clear();
-		QWidget *curr = m_widgets[i];
-		while(curr != NULL && m_widgets[i]->isAncestorOf(curr)) {
-			if(curr->focusPolicy() != Qt::NoFocus) // setTabOrder() won't accept these
-				focuschain.push_back(curr);
-			curr = curr->nextInFocusChain();
-			if(curr == m_widgets[i])
-				break;
+	QWidget *current_widget;
+	QWidget *next_widget;
+
+	for(index_t i = 0; i < m_widgets.size()-1; ++i) {
+
+		current_widget = m_widgets[i];
+		if(!m_parameters[i].m_mergeable && m_parameters[i].m_expanded){
+			next_widget = m_parameters[i].m_subparameters[0].m_widget;
+			setTabOrder(current_widget,next_widget);
+
+			for(index_t j = 1; j < m_parameters[i].m_subparameters.size(); ++j){
+				current_widget = next_widget;
+				next_widget = m_parameters[i].m_subparameters[j].m_widget;
+				setTabOrder(current_widget,next_widget);
+			}
+			current_widget = m_parameters[i].m_subparameters[m_parameters[i].m_subparameters.size()].m_widget;
 		}
-		for(QWidget *w : focuschain) {
-			setTabOrder(prev, w);
-			prev = w;
+		else{
+			next_widget = m_widgets[i+1];
+			setTabOrder(current_widget,next_widget);
 		}
 	}
 }
@@ -374,6 +398,10 @@ void ParameterViewer::UpdateRange() {
 }
 
 void ParameterViewer::UpdateLayout() {
+
+
+
+
 	int y = -verticalScrollBar()->value();
 
 	y = y + LAYOUT_VSPACING;
@@ -381,7 +409,7 @@ void ParameterViewer::UpdateLayout() {
 	{
 		QSize size = GetWidgetSize(m_widgets[i]);
 
-		m_widgets[i]->setGeometry(LAYOUT_LABELWIDTH+LAYOUT_BUTTONWIDTH+2*LAYOUT_HSPACING, y, viewport()->width()-LAYOUT_LABELWIDTH-LAYOUT_BUTTONWIDTH-3*LAYOUT_HSPACING, size.height());
+		m_widgets[i]->setGeometry(LAYOUT_LABELWIDTH+LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING, y, viewport()->width()-LAYOUT_LABELWIDTH-LAYOUT_FOLDBUTTONWIDTH-3*LAYOUT_HSPACING, size.height());
 		m_widgets[i]->setContentsMargins(0,0,0,0);
 		y += size.height()+LAYOUT_VSPACING;
 
@@ -389,7 +417,7 @@ void ParameterViewer::UpdateLayout() {
 			for(index_t j = 0; j < m_parameters[i].m_subparameters.size(); ++j){
 				QSize size = GetWidgetSize(m_parameters[i].m_subparameters[j].m_widget);
 
-				m_parameters[i].m_subparameters[j].m_widget->setGeometry(LAYOUT_LABELWIDTH+LAYOUT_BUTTONWIDTH+2*LAYOUT_HSPACING, y, viewport()->width()-LAYOUT_LABELWIDTH-LAYOUT_BUTTONWIDTH-3*LAYOUT_HSPACING, size.height());
+				m_parameters[i].m_subparameters[j].m_widget->setGeometry(LAYOUT_LABELWIDTH+LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING, y, viewport()->width()-LAYOUT_LABELWIDTH-LAYOUT_FOLDBUTTONWIDTH-3*LAYOUT_HSPACING, size.height());
 				m_parameters[i].m_subparameters[j].m_widget->setContentsMargins(0,0,0,0);
 				y += size.height()+LAYOUT_VSPACING;
 			}
@@ -399,19 +427,21 @@ void ParameterViewer::UpdateLayout() {
 	viewport()->update();
 }
 
-index_t ParameterViewer::positionToIndex(const QPoint &pos)
+void ParameterViewer::positionToIndex(const QPoint &pos)
 {
-	index_t index = INDEX_NONE;
+	m_current_index = INDEX_NONE;
+	m_current_subindex = INDEX_NONE;
 	int y = -verticalScrollBar()->value();
 
-	y = y + LAYOUT_VSPACING;
-	for(index_t i = 0; i < m_widgets.size(); ++i)
+	y = y + LAYOUT_VSPACING/2;
+	index_t i = 0;
+	while(i < m_widgets.size() && m_current_index == INDEX_NONE)
 	{
 		QSize size = GetWidgetSize(m_widgets[i]);
 		y += size.height()+LAYOUT_VSPACING;
 
 		if(pos.y() < y){
-			index = i;
+			m_current_index = i;
 			break;
 		}
 
@@ -421,21 +451,22 @@ index_t ParameterViewer::positionToIndex(const QPoint &pos)
 				y += size.height()+LAYOUT_VSPACING;
 
 				if(pos.y() < y){
-					index = i;
+					m_current_index = i;
+					m_current_subindex = y;
 					break;
 				}
 			}
 		}
 
+		++i;
 	}
-	return index;
 }
 
 void ParameterViewer::ExpandParameter(index_t index)
 {
 	m_parameters[index].m_expanded = true;
 
-
+	// TODO replace with shape search
 	QLineEdit *widget = new QLineEdit(viewport());
 	widget->setText("fgdfg");
 	widget->setAutoFillBackground(true);
@@ -472,15 +503,4 @@ void ParameterViewer::UnexpandParameter(index_t index)
 	UpdateRange();
 }
 
-void ParameterViewer::OnFocusChange(QWidget* old_widget, QWidget* new_widget) {
-	Q_UNUSED(old_widget);
-	for(index_t i = 0; i < m_widgets.size(); ++i) {
-		if(m_widgets[i]->isAncestorOf(new_widget)) {
-			MakeVisible(m_widgets[i]);
-			break;
-		}
-	}
-	if(viewport()->isAncestorOf(new_widget)) {
-		MakeVisible(new_widget);
-	}
-}
+
