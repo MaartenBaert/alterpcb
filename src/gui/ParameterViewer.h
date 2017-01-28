@@ -27,6 +27,14 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <QtGui>
 
+enum HOVER_REGION {
+	HOVER_REGION_NONE,
+	HOVER_REGION_FOLDBUTTON,
+	HOVER_REGION_SELECTBUTTON,
+	HOVER_REGION_DESELECTBUTTON,
+	HOVER_REGION_OVERRIDEBUTTON,
+};
+
 //******************************************************************************************//
 struct SubParameterEntry {
 	index_t m_num_shapes;
@@ -76,14 +84,16 @@ private:
 	std::vector<QWidget*> m_widgets;
 	std::vector<Shape*> m_selected_shapes;
 	HashTable<ParameterEntry, ParameterHasher> m_parameters;
-	bool m_hover;
+	HOVER_REGION m_hover_region;
+	bool m_button_pressed;
 	index_t m_current_index;
 	index_t m_current_subindex;
 
 	static const int LAYOUT_FOLDBUTTONWIDTH = 20;
 	static const int LAYOUT_SUBPARAMBUTTONWIDTH = 16;
-	static const int LAYOUT_VSPACING = 2; // best keep even number
+	static const int LAYOUT_VSPACING = 4; // best keep even number
 	static const int LAYOUT_HSPACING = 3;
+	static const int LAYOUT_OVERRIDEBUTTONWIDTH = 16;
 	int LAYOUT_LABELWIDTH = 80;
 
 public:
@@ -118,6 +128,7 @@ private:
 	void positionToIndex(const QPoint &pos);
 	void ExpandParameter(index_t index);
 	void UnexpandParameter(index_t index);
+	void changeHoverRegion(HOVER_REGION hover_region);
 
 	void loadTestParam();
 

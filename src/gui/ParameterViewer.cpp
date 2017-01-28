@@ -27,49 +27,12 @@ void ParameterViewer::loadTestParam()
 {
 	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
 	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
 	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
 	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
 	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
 
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
 
 
 
@@ -240,59 +203,100 @@ void ParameterViewer::paintEvent(QPaintEvent *event)
 	QPainter painter(viewport());
 
 	int y = -verticalScrollBar()->value();
+	y = y + LAYOUT_VSPACING;
 
 	for(index_t i = 0; i < m_widgets.size(); ++i)
 	{
 		QSize size = GetWidgetSize(m_widgets[i]);
 
-		QStyleOptionButton opt;
+		QStyleOptionButton opt_foldbutton;
 
 		if(m_parameters[i].m_mergeable) {
-			opt.state = QStyle::State_Item | QStyle::State_Active | QStyle::State_Enabled;
+			opt_foldbutton.state = QStyle::State_Item | QStyle::State_Active | QStyle::State_Enabled;
 		}
 		else {
 			if(m_parameters[i].m_expanded){
-				opt.state = QStyle::State_Item | QStyle::State_Children | QStyle::State_Open | QStyle::State_Active | QStyle::State_Enabled;
+				opt_foldbutton.state = QStyle::State_Item | QStyle::State_Children | QStyle::State_Open | QStyle::State_Active | QStyle::State_Enabled;
 			}
 			else{
-				opt.state = QStyle::State_Item | QStyle::State_Children | QStyle::State_Active | QStyle::State_Enabled;
+				opt_foldbutton.state = QStyle::State_Item | QStyle::State_Children | QStyle::State_Active | QStyle::State_Enabled;
 			}
 		}
 		if(i < m_widgets.size()-1){
-			opt.state |= QStyle::State_Sibling;
+			opt_foldbutton.state |= QStyle::State_Sibling;
 		}
 
-		if(m_current_index == i && m_current_subindex == INDEX_NONE && m_hover){
-			opt.state |= QStyle::State_MouseOver;
+		if(m_current_index == i && m_current_subindex == INDEX_NONE && m_hover_region == HOVER_REGION_FOLDBUTTON){
+			opt_foldbutton.state |= QStyle::State_MouseOver;
 		}
 		else {
-			opt.state &= ~QStyle::State_MouseOver;
+			opt_foldbutton.state &= ~QStyle::State_MouseOver;
 		}
 
-		QIcon select_icon = QIcon::fromTheme("document-open");
-		QIcon deselect_icon = QIcon::fromTheme("document-save");
+		QIcon select_icon = QIcon();
+		QIcon deselect_icon = QIcon();
+		QIcon icon1 = QIcon::fromTheme("document-open");
+		QIcon icon2 = QIcon::fromTheme("document-save");
+
+		select_icon.addPixmap(icon1.pixmap(QSize(16,16)));
+		select_icon.addPixmap(icon2.pixmap(QSize(16,16)),QIcon::Active,QIcon::Off);
+		deselect_icon.addPixmap(icon2.pixmap(QSize(16,16)));
+		deselect_icon.addPixmap(icon1.pixmap(QSize(16,16)),QIcon::Active,QIcon::Off);
 
 
-		opt.rect = QRect(0,y-LAYOUT_VSPACING/2,LAYOUT_FOLDBUTTONWIDTH,size.height()+LAYOUT_VSPACING);
-		style()->drawPrimitive(QStyle::PE_IndicatorBranch, &opt, &painter, viewport());
+		opt_foldbutton.rect = QRect(0,y-LAYOUT_VSPACING/2,LAYOUT_FOLDBUTTONWIDTH,size.height()+LAYOUT_VSPACING);
+		style()->drawPrimitive(QStyle::PE_IndicatorBranch, &opt_foldbutton, &painter, viewport());
 		painter.drawText(QRect(LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,y,LAYOUT_LABELWIDTH-LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,size.height()),Qt::AlignLeft|Qt::AlignVCenter|Qt::TextSingleLine,QString::fromStdString(StringRegistry::GetString(m_parameters[i].m_name)));
+
+		QStyleOptionButton opt_overridebutton;
+		opt_overridebutton.state = QStyle::State_Sunken;
+		if(m_parameters[i].m_override) {
+			opt_overridebutton.state |= QStyle::State_On;
+		}
+		else {
+			opt_overridebutton.state |= QStyle::State_Off;
+		}
+		opt_overridebutton.rect = QRect(LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
+		style()->drawPrimitive(QStyle::PE_IndicatorCheckBox,&opt_overridebutton, &painter, viewport());
+
 		y += size.height()+LAYOUT_VSPACING;
+
+
 
 		if(!m_parameters[i].m_mergeable && m_parameters[i].m_expanded){
 			for(index_t j = 0; j < m_parameters[i].m_subparameters.size(); ++j){
 				if(i < m_widgets.size()-1){
 					QStyleOptionButton opt_sub;
-					opt.state = QStyle::State_Active | QStyle::State_Enabled | QStyle::State_Sibling;
-					opt.rect = QRect(0,y-LAYOUT_VSPACING/2,LAYOUT_FOLDBUTTONWIDTH,size.height()+LAYOUT_VSPACING);
-					style()->drawPrimitive(QStyle::PE_IndicatorBranch, &opt, &painter, viewport());
+					opt_foldbutton.state = QStyle::State_Active | QStyle::State_Enabled | QStyle::State_Sibling;
+					opt_foldbutton.rect = QRect(0,y-LAYOUT_VSPACING/2,LAYOUT_FOLDBUTTONWIDTH,size.height()+LAYOUT_VSPACING);
+					style()->drawPrimitive(QStyle::PE_IndicatorBranch, &opt_foldbutton, &painter, viewport());
 				}
-				select_icon.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
-				deselect_icon.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_SUBPARAMBUTTONWIDTH,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
+
+				QIcon::Mode mode_select = QIcon::Normal;
+				if(m_current_index == i && m_current_subindex == j && m_hover_region == HOVER_REGION_SELECTBUTTON){
+					mode_select = QIcon::Active;
+				}
+				QIcon::Mode mode_deselect = QIcon::Normal;
+				if(m_current_index == i && m_current_subindex == j && m_hover_region == HOVER_REGION_DESELECTBUTTON){
+					mode_deselect = QIcon::Active;
+				}
+
+				select_icon.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height(),Qt::AlignCenter,mode_select,QIcon::Off);
+				deselect_icon.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_SUBPARAMBUTTONWIDTH,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height(),Qt::AlignCenter,mode_deselect,QIcon::Off);
 				painter.drawText(QRect(LAYOUT_FOLDBUTTONWIDTH+3*LAYOUT_HSPACING+2*LAYOUT_SUBPARAMBUTTONWIDTH,y,LAYOUT_LABELWIDTH-LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,size.height()),Qt::AlignLeft|Qt::AlignVCenter|Qt::TextSingleLine,QString::fromStdString("(" + std::to_string(m_parameters[i].m_subparameters[j].m_num_shapes) + ")"));
+
+				if(m_parameters[i].m_override) {
+					opt_overridebutton.state |= QStyle::State_On;
+				}
+				else {
+					opt_overridebutton.state |= QStyle::State_Off;
+				}
+				opt_overridebutton.rect = QRect(LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
+				style()->drawPrimitive(QStyle::PE_IndicatorCheckBox,&opt_overridebutton, &painter, viewport());
+
 				y += size.height()+LAYOUT_VSPACING;
 			}
 		}
-
 	}
 
 }
@@ -301,31 +305,44 @@ void ParameterViewer::mousePressEvent(QMouseEvent *event)
 {
 	positionToIndex(event->pos());
 	if(m_current_index != INDEX_NONE){
-		if(event->pos().x() < LAYOUT_FOLDBUTTONWIDTH){
-			if(!m_parameters[m_current_index].m_mergeable){
-				if(m_parameters[m_current_index].m_expanded){
-					UnexpandParameter(m_current_index);
-				}
-				else{
-					ExpandParameter(m_current_index);
-
+		if(m_current_subindex == INDEX_NONE){ // CLICK on fold button
+			if(event->pos().x() < LAYOUT_FOLDBUTTONWIDTH){
+				if(!m_parameters[m_current_index].m_mergeable){
+					if(m_parameters[m_current_index].m_expanded){
+						UnexpandParameter(m_current_index);
+					}
+					else{
+						ExpandParameter(m_current_index);
+					}
 				}
 			}
 		}
+		else{
+			if(event->pos().x() >  LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING && event->pos().x() < LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING + LAYOUT_SUBPARAMBUTTONWIDTH){
+				std::cerr << "BUTTON1 CLICKED" << std::endl;
+			}
+			if(event->pos().x() >  LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING + LAYOUT_SUBPARAMBUTTONWIDTH && event->pos().x() < LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING + 2*LAYOUT_SUBPARAMBUTTONWIDTH){
+				std::cerr << "BUTTON2 CLICKED" << std::endl;
+			}
+		}
+
 	}
 }
+
 
 void ParameterViewer::mouseDoubleClickEvent(QMouseEvent *event)
 {
 	positionToIndex(event->pos());
 	if(m_current_index != INDEX_NONE){
-		if(event->pos().x() > LAYOUT_FOLDBUTTONWIDTH && event->pos().x() < LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING+LAYOUT_LABELWIDTH){
-			if(!m_parameters[m_current_index].m_mergeable){
-				if(m_parameters[m_current_index].m_expanded){
-					UnexpandParameter(m_current_index);
-				}
-				else{
-					ExpandParameter(m_current_index);
+		if(m_current_subindex == INDEX_NONE){
+			if(event->pos().x() > LAYOUT_FOLDBUTTONWIDTH && event->pos().x() < LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING+LAYOUT_LABELWIDTH){
+				if(!m_parameters[m_current_index].m_mergeable){
+					if(m_parameters[m_current_index].m_expanded){
+						UnexpandParameter(m_current_index);
+					}
+					else{
+						ExpandParameter(m_current_index);
+					}
 				}
 			}
 		}
@@ -335,13 +352,25 @@ void ParameterViewer::mouseDoubleClickEvent(QMouseEvent *event)
 void ParameterViewer::mouseMoveEvent(QMouseEvent *event)
 {
 	if(event->pos().x() < LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING+LAYOUT_LABELWIDTH){
-		m_hover = true;
 		positionToIndex(event->pos());
+		if(m_current_subindex == INDEX_NONE){
+			changeHoverRegion(HOVER_REGION_FOLDBUTTON);
+		}
+		else{
+			if(event->pos().x() > LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING && event->pos().x() < LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING+LAYOUT_SUBPARAMBUTTONWIDTH){
+				changeHoverRegion(HOVER_REGION_SELECTBUTTON);
+			}
+			else if(event->pos().x() > LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_SUBPARAMBUTTONWIDTH && event->pos().x() < LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+2*LAYOUT_SUBPARAMBUTTONWIDTH){
+				changeHoverRegion(HOVER_REGION_DESELECTBUTTON);
+			}
+			else{
+				changeHoverRegion(HOVER_REGION_NONE);
+			}
+		}
 	}
 	else{
-		m_hover = false;
+		changeHoverRegion(HOVER_REGION_NONE);
 	}
-	viewport()->update();
 }
 
 void ParameterViewer::leaveEvent(QEvent *event)
@@ -349,7 +378,7 @@ void ParameterViewer::leaveEvent(QEvent *event)
 	UNUSED(event);
 	m_current_index = INDEX_NONE;
 	m_current_subindex = INDEX_NONE;
-	m_hover = false;
+	m_hover_region = HOVER_REGION_NONE;
 	viewport()->update();
 }
 
@@ -409,15 +438,19 @@ void ParameterViewer::UpdateLayout() {
 	{
 		QSize size = GetWidgetSize(m_widgets[i]);
 
-		m_widgets[i]->setGeometry(LAYOUT_LABELWIDTH+LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING, y, viewport()->width()-LAYOUT_LABELWIDTH-LAYOUT_FOLDBUTTONWIDTH-3*LAYOUT_HSPACING, size.height());
+		m_widgets[i]->setGeometry(LAYOUT_LABELWIDTH+LAYOUT_FOLDBUTTONWIDTH+3*LAYOUT_HSPACING+LAYOUT_OVERRIDEBUTTONWIDTH, y, viewport()->width()-LAYOUT_LABELWIDTH-LAYOUT_FOLDBUTTONWIDTH-4*LAYOUT_HSPACING-LAYOUT_OVERRIDEBUTTONWIDTH, size.height());
 		m_widgets[i]->setContentsMargins(0,0,0,0);
+		if(!m_parameters[i].m_override) {
+			static_cast<QLineEdit*>(m_widgets[i])->setEnabled(false);
+		}
+
 		y += size.height()+LAYOUT_VSPACING;
 
 		if(!m_parameters[i].m_mergeable && m_parameters[i].m_expanded){
 			for(index_t j = 0; j < m_parameters[i].m_subparameters.size(); ++j){
 				QSize size = GetWidgetSize(m_parameters[i].m_subparameters[j].m_widget);
 
-				m_parameters[i].m_subparameters[j].m_widget->setGeometry(LAYOUT_LABELWIDTH+LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING, y, viewport()->width()-LAYOUT_LABELWIDTH-LAYOUT_FOLDBUTTONWIDTH-3*LAYOUT_HSPACING, size.height());
+				m_parameters[i].m_subparameters[j].m_widget->setGeometry(LAYOUT_LABELWIDTH+LAYOUT_FOLDBUTTONWIDTH+3*LAYOUT_HSPACING+LAYOUT_OVERRIDEBUTTONWIDTH, y, viewport()->width()-LAYOUT_LABELWIDTH-LAYOUT_FOLDBUTTONWIDTH-4*LAYOUT_HSPACING-LAYOUT_OVERRIDEBUTTONWIDTH, size.height());
 				m_parameters[i].m_subparameters[j].m_widget->setContentsMargins(0,0,0,0);
 				y += size.height()+LAYOUT_VSPACING;
 			}
@@ -452,7 +485,7 @@ void ParameterViewer::positionToIndex(const QPoint &pos)
 
 				if(pos.y() < y){
 					m_current_index = i;
-					m_current_subindex = y;
+					m_current_subindex = j;
 					break;
 				}
 			}
@@ -501,6 +534,14 @@ void ParameterViewer::UnexpandParameter(index_t index)
 	UpdateLayout();
 	UpdateFocusChain();
 	UpdateRange();
+}
+
+void ParameterViewer::changeHoverRegion(HOVER_REGION hover_region)
+{
+	if(m_hover_region != hover_region){
+		m_hover_region = hover_region;
+		viewport()->update();
+	}
 }
 
 
