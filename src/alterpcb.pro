@@ -27,6 +27,7 @@ HEADERS += \
 	common/VData.h \
 	core/CoreBasics.h \
 	core/Drawing.h \
+	core/LayerManager.h \
 	core/Library.h \
 	core/LibraryManager.h \
 	core/LibraryManagerConfigProxy.h \
@@ -35,6 +36,7 @@ HEADERS += \
 	gui/DrawingViewer.h \
 	gui/Editor.h \
 	gui/GLHelper.h \
+	gui/LayerViewer.h \
 	gui/LibraryViewer.h \
 	gui/MainWindow.h \
 	gui/ParameterViewer.h \
@@ -50,6 +52,7 @@ SOURCES += \
 	common/StringRegistry.cpp \
 	common/VData.cpp \
 	core/Drawing.cpp \
+	core/LayerManager.cpp \
 	core/Library.cpp \
 	core/LibraryManager.cpp \
 	core/LibraryManagerConfigProxy.cpp \
@@ -57,6 +60,7 @@ SOURCES += \
 	gui/DrawingViewer.cpp \
 	gui/Editor.cpp \
 	gui/GLHelper.cpp \
+	gui/LayerViewer.cpp \
 	gui/LibraryTreeItem.cpp \
 	gui/LibraryViewer.cpp \
 	gui/MainWindow.cpp \

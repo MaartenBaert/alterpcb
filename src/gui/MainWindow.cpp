@@ -22,6 +22,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "LibraryManager.h"
 #include "LibraryViewer.h"
 #include "ParameterViewer.h"
+#include "LayerViewer.h"
 
 #include "DrawingViewer.h"
 #include "dialogs/LibraryConfigDialog.h"
@@ -76,12 +77,11 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 		menu_view_showhide->addAction(dock->toggleViewAction());
 	}
 
-	QTreeView *layer_viewer;
+	LayerViewer *layer_viewer;
 	{
 		QDockWidget *dock = new QDockWidget(tr("Layers"), this);
 		dock->setObjectName("dock_layers");
-		layer_viewer = new QTreeView(dock);
-		layer_viewer->setUniformRowHeights(true);
+		layer_viewer = new LayerViewer(dock);
 		dock->setWidget(layer_viewer);
 		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 		addDockWidget(Qt::LeftDockWidgetArea, dock);
