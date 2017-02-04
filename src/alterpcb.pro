@@ -11,6 +11,9 @@ DEPENDPATH += common core gui gui/components gui/dialogs
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 
+RESOURCES += \
+        resources_icons.qrc
+
 ########## Warning: Everything below this line is auto-generated and will be overwritten! ##########
 
 HEADERS += \
