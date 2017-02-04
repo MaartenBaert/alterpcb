@@ -14,7 +14,16 @@ private:
 	QTabBar *m_tabbar;
 	QWidget *m_base;
 	QRect m_panelrect;
-	QVBoxLayout *l;
+	QVBoxLayout *m_layout;
+
+public:
+	explicit TabbedDocumentViewer(QWidget *parent = 0);
+	void setCentralWidget(QWidget * central);
+	void addDocument(QIcon icon, QString name, const QVariant &document_pointer);
+	void addDocument(QString name, const QVariant &document_pointer);
+	void removeDocument(const QVariant &document_pointer);
+
+private:
 	void updateLayout();
 	void initStyleOption(QStyleOptionTabWidgetFrame *option) const;
 
@@ -22,22 +31,13 @@ private:
 	void resizeEvent(QResizeEvent *e);
 	bool event(QEvent *ev);
 	void changeEvent(QEvent *ev);
-	QMap<int,int> tabDocIndex;
-public:
-	explicit TabbedDocumentViewer(QWidget *parent = 0);
-	void setCentralWidget(QWidget * central);
-	void addDocument(QIcon icon, QString name, int index);
-	void addDocument(QString name, int index);
-	void removeDocument(int index);
 
 signals:
-	void tabClicked(int index);
+	void tabClicked(QVariant data);
 
 
 private slots:
 	void tabbarClicked(int index);
-
-public slots:
 };
 
 

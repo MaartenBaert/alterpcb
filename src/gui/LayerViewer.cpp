@@ -1,9 +1,10 @@
 #include "LayerViewer.h"
 #include "LayerManager.h"
 #include <iostream>
+#include "LayerManager.h"
 
-LayerViewer::LayerViewer(QWidget *parent) : QTreeView(parent) {
-	setModel(new LayerManager());
+LayerViewer::LayerViewer(QWidget *parent, LayerManager *layer_manager) : QTreeView(parent) {
+	setModel(layer_manager);
 	setUniformRowHeights(true);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
 	setRootIsDecorated(false);
@@ -13,8 +14,9 @@ LayerViewer::LayerViewer(QWidget *parent) : QTreeView(parent) {
 	header()->setResizeMode(0,QHeaderView::Stretch);
 	header()->setResizeMode(1,QHeaderView::Fixed);
 	header()->setResizeMode(2,QHeaderView::Fixed);
-	resizeColumnToContents(1);
-	resizeColumnToContents(2);
+	setColumnWidth(1,style()->pixelMetric(QStyle::PM_IndicatorWidth)+8);
+	setColumnWidth(2,style()->pixelMetric(QStyle::PM_IndicatorWidth)+8);
+	header()->setDefaultAlignment(Qt::AlignHCenter);
 }
 
 void LayerViewer::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)

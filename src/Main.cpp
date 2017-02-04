@@ -27,6 +27,8 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "Shape.h"
 #include "StringRegistry.h"
 #include "VData.h"
+#include "LayerManager.h"
+#include "LayerStack.h"
 
 #include <iostream>
 
@@ -106,6 +108,7 @@ void Examples1() {
 
 int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
+	qRegisterMetaType<DocumentPointer>("DocumentPointer");
 
 	#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 		QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
@@ -115,8 +118,10 @@ int main(int argc, char *argv[]) {
 	StringRegistry string_registry;
 	UNUSED(string_registry);
 
+
 	LibraryManager library_manager;
 	{
+
 		Library *lib1 = library_manager.NewLibrary("Basic", "basic.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib2 = library_manager.NewLibrary("My PCB", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib3 = library_manager.NewLibrary("My Scripts", "myscripts.alterlib.py", LIBRARYTYPE_PYTHON);
@@ -124,31 +129,44 @@ int main(int argc, char *argv[]) {
 		Library *lib5 = library_manager.NewLibrary("Random PCB", "myrandompcb.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib6 = library_manager.NewLibrary("Ugly PCB", "uglypcb.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib7 = library_manager.NewLibrary("House shaped PCB", "houseshapedpcb.alterlib.json", LIBRARYTYPE_JSON);
-		lib1->NewDrawing(StringRegistry::NewTag("resistor"), DRAWINGTYPE_SYMBOL);
-		lib1->NewDrawing(StringRegistry::NewTag("resistor"), DRAWINGTYPE_LAYOUT);
-		lib1->NewDrawing(StringRegistry::NewTag("via"), DRAWINGTYPE_LAYOUT);
-		lib1->NewDrawing(StringRegistry::NewTag("pad"), DRAWINGTYPE_LAYOUT);
-		lib2->NewDrawing(StringRegistry::NewTag("toplevel"), DRAWINGTYPE_LAYOUT);
-		lib2->NewDrawing(StringRegistry::NewTag("part1"), DRAWINGTYPE_LAYOUT);
-		lib2->NewDrawing(StringRegistry::NewTag("part2"), DRAWINGTYPE_LAYOUT);
-		lib2->NewDrawing(StringRegistry::NewTag("part3"), DRAWINGTYPE_LAYOUT);
-		lib3->NewDrawing(StringRegistry::NewTag("scriptpart1"), DRAWINGTYPE_LAYOUT);
-		lib3->NewDrawing(StringRegistry::NewTag("scriptpart2"), DRAWINGTYPE_LAYOUT);
-		lib3->NewDrawing(StringRegistry::NewTag("scriptpart3"), DRAWINGTYPE_LAYOUT);
-		lib3->NewDrawing(StringRegistry::NewTag("scriptpart4"), DRAWINGTYPE_LAYOUT);
-		lib4->NewDrawing(StringRegistry::NewTag("resistor1"), DRAWINGTYPE_SYMBOL);
-		lib4->NewDrawing(StringRegistry::NewTag("resistor2"), DRAWINGTYPE_LAYOUT);
-		lib4->NewDrawing(StringRegistry::NewTag("resistor3"), DRAWINGTYPE_SYMBOL);
-		lib4->NewDrawing(StringRegistry::NewTag("resistor4"), DRAWINGTYPE_LAYOUT);
-		lib5->NewDrawing(StringRegistry::NewTag("resistor5"), DRAWINGTYPE_SYMBOL);
-		lib5->NewDrawing(StringRegistry::NewTag("resistor6"), DRAWINGTYPE_LAYOUT);
-		lib5->NewDrawing(StringRegistry::NewTag("resistor7"), DRAWINGTYPE_SYMBOL);
-		lib6->NewDrawing(StringRegistry::NewTag("resistor7_v2"), DRAWINGTYPE_LAYOUT);
+
+		lib1->NewDrawing(StringRegistry::NewTag("resistor"), DRAWINGTYPE_SYMBOL,StringRegistry::NewTag("4layerpcb"));
+		lib1->NewDrawing(StringRegistry::NewTag("resistor"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("4layerpcb"));
+		lib1->NewDrawing(StringRegistry::NewTag("via"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("2layerpcb"));
+		lib1->NewDrawing(StringRegistry::NewTag("pad"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("2layerpcb"));
+		lib2->NewDrawing(StringRegistry::NewTag("toplevel"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("4layerpcb"));
+		lib2->NewDrawing(StringRegistry::NewTag("part1"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("4layerpcb"));
+		lib2->NewDrawing(StringRegistry::NewTag("part2"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("2layerpcb"));
+		lib2->NewDrawing(StringRegistry::NewTag("part3"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("2layerpcb"));
+		lib3->NewDrawing(StringRegistry::NewTag("scriptpart1"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("4layerpcb"));
+		lib3->NewDrawing(StringRegistry::NewTag("scriptpart2"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("2layerpcb"));
+		lib3->NewDrawing(StringRegistry::NewTag("scriptpart3"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("2layerpcb"));
+		lib3->NewDrawing(StringRegistry::NewTag("scriptpart4"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("4layerpcb"));
+		lib4->NewDrawing(StringRegistry::NewTag("resistor1"), DRAWINGTYPE_SYMBOL,StringRegistry::NewTag("4layerpcb"));
+		lib4->NewDrawing(StringRegistry::NewTag("resistor2"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("2layerpcb"));
+		lib4->NewDrawing(StringRegistry::NewTag("resistor3"), DRAWINGTYPE_SYMBOL,StringRegistry::NewTag("4layerpcb"));
+		lib4->NewDrawing(StringRegistry::NewTag("resistor4"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("4layerpcb"));
+		lib5->NewDrawing(StringRegistry::NewTag("resistor5"), DRAWINGTYPE_SYMBOL,StringRegistry::NewTag("4layerpcb"));
+		lib5->NewDrawing(StringRegistry::NewTag("resistor6"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("2layerpcb"));
+		lib5->NewDrawing(StringRegistry::NewTag("resistor7"), DRAWINGTYPE_SYMBOL,StringRegistry::NewTag("4layerpcb"));
+		lib6->NewDrawing(StringRegistry::NewTag("resistor7_v2"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("2layerpcb"));
+
+		LayerStack *layerstack1 = lib1->NewLayerStack(StringRegistry::NewTag("4layerpcb"));
+		layerstack1->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-top1"),QColor(0,255,0),LAYERTEXTURE_SOLID));
+		layerstack1->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-top2"),QColor(255,255,0),LAYERTEXTURE_SOLID));
+		layerstack1->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-bottom2"),QColor(0,255,255),LAYERTEXTURE_SOLID));
+		layerstack1->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-bottom1"),QColor(255,0,100),LAYERTEXTURE_SOLID));
+		LayerStack *layerstack2 = lib1->NewLayerStack(StringRegistry::NewTag("2layerpcb"));
+		layerstack2->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-top1"),QColor(0,100,0),LAYERTEXTURE_SOLID));
+		layerstack2->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-top2"),QColor(0,255,50),LAYERTEXTURE_SOLID));
+
+
 	}
+
 
 	Examples1();
 
-	MainWindow window(&library_manager);
+	MainWindow window(&library_manager,new LayerManager());
 	UNUSED(window);
 	return app.exec();
 }

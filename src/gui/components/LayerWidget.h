@@ -20,38 +20,29 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "Basics.h"
-#include "DocumentEditor.h"
-
 #include <QtGui>
 
-class LibraryManager;
 class LayerManager;
-class LibraryConfigDialog;
-class LayerConfigDialog;
 
-class MainWindow : public QMainWindow {
+class LayerWidget: public QWidget
+{
 	Q_OBJECT
 
 private:
-	static const QString WINDOW_TITLE;
-	LibraryManager *m_library_manager;
-	LayerManager *m_layer_manager;
-	LibraryConfigDialog *m_library_config_dialog;
-	LayerConfigDialog *m_layer_config_dialog;
+	LayerManager *m_layer_mananger;
 
+	static const int LAYOUT_TOTAL_WIDTH = 200;
+	static const int LAYOUT_TOTAL_SPACING = 20;
 
-private:
-	// member variables here
+	static const int LAYOUT_METAL_HEIGHT = 20;
+	const QColor LAYOUT_METAL_COLOR = QColor(128, 255, 255);
+	static const int LAYOUT_DIE_HEIGHT = 20;
+	const QColor LAYOUT_DIE_COLOR = QColor(128, 255, 255);
 
 public:
-	MainWindow(LibraryManager* library_manager, LayerManager* layer_manager);
-	~MainWindow();
+	LayerWidget(QWidget *parent, LayerManager* layer_manager);
 
-public slots:
-	void OpenLibraryConfigDialog();
-	void CloseLibraryConfigDialog();
-	void OpenLayerConfigDialog();
-	void CloseLayerConfigDialog();
+protected:
+	virtual void paintEvent(QPaintEvent* event)	override;
 
 };

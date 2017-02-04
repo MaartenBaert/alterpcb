@@ -20,38 +20,20 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "Basics.h"
-#include "DocumentEditor.h"
-
 #include <QtGui>
 
-class LibraryManager;
+class MainWindow;
 class LayerManager;
-class LibraryConfigDialog;
-class LayerConfigDialog;
 
-class MainWindow : public QMainWindow {
+class LayerConfigDialog : public QDialog {
 	Q_OBJECT
 
 private:
-	static const QString WINDOW_TITLE;
-	LibraryManager *m_library_manager;
-	LayerManager *m_layer_manager;
-	LibraryConfigDialog *m_library_config_dialog;
-	LayerConfigDialog *m_layer_config_dialog;
-
-
-private:
-	// member variables here
+	MainWindow *m_parent;
 
 public:
-	MainWindow(LibraryManager* library_manager, LayerManager* layer_manager);
-	~MainWindow();
-
-public slots:
-	void OpenLibraryConfigDialog();
-	void CloseLibraryConfigDialog();
-	void OpenLayerConfigDialog();
-	void CloseLayerConfigDialog();
-
+	LayerConfigDialog(MainWindow *parent,LayerManager *layer_manager);
+	virtual void closeEvent(QCloseEvent *event) override;
 };
+
+

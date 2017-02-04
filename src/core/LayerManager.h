@@ -22,32 +22,24 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 #include "StringRegistry.h"
+#include "LayerStack.h"
+#include "Document.h"
 
 #include <QtGui>
 
-enum LAYERTEXTURE{
-	LAYERTEXTURE_SOLID,
-};
 
-struct LAYER{
-	stringtag_t m_name;
-	bool m_displayed;
-	bool m_selectable;
-	QColor m_color;
-	LAYERTEXTURE m_texture;
-
-	inline LAYER(stringtag_t name, bool displayed, bool selectable, QColor color, LAYERTEXTURE texture)
-		: m_name(name), m_displayed(displayed), m_selectable(selectable), m_color(color), m_texture(texture) {}
-};
 
 class LayerManager : public QAbstractItemModel {
 	Q_OBJECT
 
 private:
-	std::vector<LAYER*> m_layers;
+	LayerStack *m_layerstack;
+	Document *m_document;
 
 public:
 	LayerManager();
+
+	void setActiveDocument(Document *document);
 
 	QModelIndex index(int row, int column,const QModelIndex &parent = QModelIndex()) const override;
 	QModelIndex parent(const QModelIndex &index) const override;

@@ -25,11 +25,13 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtGui>
 
+class LayerManager;
+
 class LayerViewer : public QTreeView {
 	Q_OBJECT
 
 public:
-	LayerViewer(QWidget *parent = 0);
+	LayerViewer(QWidget *parent, LayerManager *layer_manager);
 
 private slots:
 	void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected) override;

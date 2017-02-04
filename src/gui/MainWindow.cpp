@@ -22,20 +22,24 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "LibraryManager.h"
 #include "LibraryViewer.h"
 #include "ParameterViewer.h"
+#include "LayerManager.h"
 #include "LayerViewer.h"
 
 #include "DrawingViewer.h"
 #include "dialogs/LibraryConfigDialog.h"
+#include "dialogs/LayerConfigDialog.h"
 
 const QString MainWindow::WINDOW_TITLE = "AlterPCB";
 
-MainWindow::MainWindow(LibraryManager* library_manager) {
+MainWindow::MainWindow(LibraryManager* library_manager,LayerManager* layer_manager) {
 
 	setWindowTitle(WINDOW_TITLE);
 	m_library_manager = library_manager;
+	m_layer_manager = layer_manager;
 	m_library_config_dialog = NULL;
+	m_layer_config_dialog = NULL;
 
-	Editor *editor = new Editor();
+	DocumentEditor *editor = new DocumentEditor(this,library_manager,layer_manager);
 
 	QMenuBar *menubar = new QMenuBar(this);
 	{
@@ -55,7 +59,8 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 		QMenu *menu_edit = menubar->addMenu(tr("&Edit"));
 		QAction *act_open_library_manager = menu_edit->addAction(tr("Library Manager"));
 		connect(act_open_library_manager, SIGNAL (triggered(bool)), this, SLOT (OpenLibraryConfigDialog()));
-		menu_edit->addAction("Test");
+		QAction *act_open_layer_manager = menu_edit->addAction(tr("Layer Manager"));
+		connect(act_open_layer_manager, SIGNAL (triggered(bool)), this, SLOT (OpenLayerConfigDialog()));
 		menu_edit->addAction("Test");
 	}
 
@@ -81,7 +86,7 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 	{
 		QDockWidget *dock = new QDockWidget(tr("Layers"), this);
 		dock->setObjectName("dock_layers");
-		layer_viewer = new LayerViewer(dock);
+		layer_viewer = new LayerViewer(dock,m_layer_manager);
 		dock->setWidget(layer_viewer);
 		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 		addDockWidget(Qt::LeftDockWidgetArea, dock);
@@ -149,5 +154,23 @@ void MainWindow::CloseLibraryConfigDialog()
 	if(m_library_config_dialog != NULL) {
 		m_library_config_dialog->deleteLater();
 		m_library_config_dialog = NULL;
+	}
+}
+
+void MainWindow::OpenLayerConfigDialog()
+{
+	if(m_layer_config_dialog == NULL) {
+		m_layer_config_dialog = new LayerConfigDialog(this,m_layer_manager);
+		m_layer_config_dialog->show();
+	} else {
+		m_layer_config_dialog->raise();
+	}
+}
+
+void MainWindow::CloseLayerConfigDialog()
+{
+	if(m_layer_config_dialog != NULL) {
+		m_layer_config_dialog->deleteLater();
+		m_layer_config_dialog = NULL;
 	}
 }

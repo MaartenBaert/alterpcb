@@ -5,53 +5,53 @@ TabbedDocumentViewer::TabbedDocumentViewer(QWidget *parent) : QWidget(parent)
 	m_base = new QWidget(this);
 	m_tabbar = new QTabBar(this);
 	connect(m_tabbar,SIGNAL(currentChanged(int)),this,SLOT(tabbarClicked(int)));
-	l=new QVBoxLayout(m_base);
-	l->setMargin(2);
+	m_layout=new QVBoxLayout(m_base);
+	m_layout->setMargin(2);
 	updateLayout();
 }
 
 void TabbedDocumentViewer::setCentralWidget(QWidget *central)
 {
 	// Remove all widgets
-	while(l->count() > 1){
-		l->removeItem(l->takeAt(0));
+	while(m_layout->count() > 1){
+		m_layout->removeItem(m_layout->takeAt(0));
 	}
 
-	l->addWidget(central);
+	m_layout->addWidget(central);
 	UNUSED(central);
 }
 
-void TabbedDocumentViewer::addDocument(QIcon icon, QString name, int index)
+void TabbedDocumentViewer::addDocument(QIcon icon, QString name, const QVariant &document_pointer)
 {
 	int tab_index = m_tabbar->addTab(icon, name);
-	tabDocIndex.insert(tab_index, index);
+	m_tabbar->setTabData(tab_index,document_pointer);
 	updateLayout();
 
 }
 
-void TabbedDocumentViewer::addDocument(QString name, int index)
+void TabbedDocumentViewer::addDocument(QString name, const QVariant &document_pointer)
 {
 	int tab_index = m_tabbar->addTab(name);
-	tabDocIndex.insert(tab_index, index);
+	m_tabbar->setTabData(tab_index,document_pointer);
 	updateLayout();
 
 }
 
-void TabbedDocumentViewer::removeDocument(int index)
+void TabbedDocumentViewer::removeDocument(const QVariant &document_pointer)
 {
-	int tabindex = tabDocIndex.key(index,-1);
-	if(tabindex == -1){
-		return;
-	}
+	int tabindex = 0; // TODO
+//	if(tabindex == -1){
+//		return;
+//	}
 	m_tabbar->removeTab(tabindex);
-	tabDocIndex.remove(tabindex);
+
 	updateLayout();
 
 }
 
 void TabbedDocumentViewer::tabbarClicked(int index)
 {
-	emit tabClicked(tabDocIndex.value(index));
+	emit tabClicked(m_tabbar->tabData(index));
 }
 
 void TabbedDocumentViewer::paintEvent(QPaintEvent *event)

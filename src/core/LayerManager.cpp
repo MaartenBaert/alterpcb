@@ -3,12 +3,15 @@
 
 LayerManager::LayerManager()
 {
-	m_layers.emplace_back(new LAYER(StringRegistry::NewTag("Copper-Top"),true,true,QColor(Qt::red),LAYERTEXTURE_SOLID));
-	m_layers.emplace_back(new LAYER(StringRegistry::NewTag("Copper-Bottom"),false,false,QColor(Qt::blue),LAYERTEXTURE_SOLID));
-	m_layers.emplace_back(new LAYER(StringRegistry::NewTag("SolderMask-Top"),true,true,QColor(Qt::yellow),LAYERTEXTURE_SOLID));
-	m_layers.emplace_back(new LAYER(StringRegistry::NewTag("SolderMask-Bottom"),false,false,QColor(Qt::green),LAYERTEXTURE_SOLID));
-	m_layers.emplace_back(new LAYER(StringRegistry::NewTag("Text-Top"),true,true,QColor(Qt::cyan),LAYERTEXTURE_SOLID));
-	m_layers.emplace_back(new LAYER(StringRegistry::NewTag("Text-Bottom"),false,false,QColor(Qt::blue),LAYERTEXTURE_SOLID));
+	m_layerstack = nullptr;
+}
+
+void LayerManager::setActiveDocument(Document *document)
+{
+	m_document = document;
+	layoutAboutToBeChanged();
+	m_layerstack = m_document->getLayerStack();
+	layoutChanged();
 }
 
 QModelIndex LayerManager::index(int row, int column, const QModelIndex &parent) const
@@ -19,10 +22,10 @@ QModelIndex LayerManager::index(int row, int column, const QModelIndex &parent) 
 		return QModelIndex();
 
 	// parent should always be root
-	if(!parent.isValid()) {
-		if((size_t) row >= m_layers.size())
+	if(!parent.isValid() && m_layerstack) {
+		if((size_t) row >= m_layerstack->GetLogicLayerSize())
 			return QModelIndex();
-		return createIndex(row, column,m_layers[row]);
+		return createIndex(row, column,m_layerstack->GetLogicLayer(row));
 	}
 	else{
 		return QModelIndex();
@@ -38,8 +41,8 @@ QModelIndex LayerManager::parent(const QModelIndex &index) const
 int LayerManager::rowCount(const QModelIndex &parent) const
 {
 	UNUSED(parent);
-	if(!parent.isValid()){
-		return m_layers.size();
+	if(!parent.isValid() && m_layerstack){
+		return m_layerstack->GetLogicLayerSize();
 	}
 	else{
 		return 0;
@@ -50,7 +53,12 @@ int LayerManager::rowCount(const QModelIndex &parent) const
 int LayerManager::columnCount(const QModelIndex &parent) const
 {
 	UNUSED(parent);
+	if(m_layerstack){
 	return 3;
+	}
+	else{
+		return 0;
+	}
 }
 
 Qt::ItemFlags LayerManager::flags(const QModelIndex &index) const
@@ -70,7 +78,7 @@ QVariant LayerManager::data(const QModelIndex &index, int role) const
 	if(!index.isValid())
 		return QVariant();
 
-	LAYER *item_ptr = (LAYER*) index.internalPointer();
+	LOGIC_LAYER *item_ptr = (LOGIC_LAYER*) index.internalPointer();
 
 	if(role == Qt::DisplayRole){
 		if(index.column() == 0){
@@ -82,19 +90,34 @@ QVariant LayerManager::data(const QModelIndex &index, int role) const
 	}
 	else if(role == Qt::CheckStateRole && index.column() > 0){
 		if(index.column() == 1){
-			return item_ptr->m_selectable ? Qt::Checked : Qt::Unchecked;
+			return m_document->m_layerstackattributes[m_document->m_layerstackattributes.Find(item_ptr->m_name)].m_selectable ? Qt::Checked : Qt::Unchecked;
 		}
 		if(index.column() == 2){
-			return item_ptr->m_displayed ? Qt::Checked : Qt::Unchecked;
+			return m_document->m_layerstackattributes[m_document->m_layerstackattributes.Find(item_ptr->m_name)].m_visable ? Qt::Checked : Qt::Unchecked;
 		}
 		else{
 			return QVariant();
 		}
 	}
 	else if(role == Qt::DecorationRole && index.column() == 0){
-		QPixmap pixmap(100,100);
-		pixmap.fill(item_ptr->m_color);
-		return QIcon(pixmap);
+		QPixmap pixmap(16,16);
+		pixmap.fill(Qt::transparent);
+		QPixmap bordermap("/users/micas/astandae/alterpcb/data/icons/16/alterpcb-layermanager-layer-border.png");
+		QPixmap texturemap("/users/micas/astandae/alterpcb/data/icons/16/alterpcb-layermanager-layer-vstripe.png");
+		QPixmap colormap(16,16);
+		colormap.fill(item_ptr->m_color);
+
+		QPainter *painter= new QPainter(&pixmap);
+		painter->setCompositionMode(QPainter::CompositionMode_Plus);
+		painter->drawPixmap(0, 0, 16, 16, texturemap);
+		painter->drawPixmap(0, 0, 16, 16, colormap);
+
+		painter->setCompositionMode(QPainter::CompositionMode_Multiply);
+		painter->drawPixmap(0, 0, 16, 16, bordermap);
+		painter->end();
+
+		QIcon icon = QIcon(pixmap);
+		return icon;
 	}
 	else{
 		return QVariant();
@@ -130,17 +153,17 @@ bool LayerManager::setData(const QModelIndex &index, const QVariant &value, int 
 	if(!index.isValid())
 		return false;
 
-	LAYER *item_ptr = (LAYER*) index.internalPointer();
+	LOGIC_LAYER *item_ptr = (LOGIC_LAYER*) index.internalPointer();
 	if(role == Qt::CheckStateRole && index.column() > 0){
 			if(index.column() == 1){
 				layoutAboutToBeChanged();
-				item_ptr->m_selectable  = !item_ptr->m_selectable;
+				m_document->m_layerstackattributes[m_document->m_layerstackattributes.Find(item_ptr->m_name)].m_selectable = !m_document->m_layerstackattributes[m_document->m_layerstackattributes.Find(item_ptr->m_name)].m_selectable;
 				layoutChanged();
 				return true;
 			}
 			if(index.column() == 2){
 				layoutAboutToBeChanged();
-				item_ptr->m_displayed = !item_ptr->m_displayed;
+				 m_document->m_layerstackattributes[m_document->m_layerstackattributes.Find(item_ptr->m_name)].m_visable = ! m_document->m_layerstackattributes[m_document->m_layerstackattributes.Find(item_ptr->m_name)].m_visable;
 				layoutChanged();
 				return true;
 			}
@@ -154,5 +177,7 @@ bool LayerManager::setData(const QModelIndex &index, const QVariant &value, int 
 
 void LayerManager::activeLayerChanged(QModelIndex &index)
 {
+	UNUSED(index);
 	std::cerr << "active layer changed" << std::endl;
+	layoutChanged();
 }

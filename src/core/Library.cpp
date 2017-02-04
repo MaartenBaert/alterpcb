@@ -21,6 +21,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "Library.h"
 
 #include "Drawing.h"
+#include "LayerStack.h"
 
 Library::Library(LibraryManager *parent,const std::string &name, const std::string &filename, LibraryType type) : LibraryTreeItem(LIBRARYTREEITEMTYPE_LIBRARY) {
 	m_parent = parent;
@@ -33,8 +34,8 @@ Library::~Library() {
 	// nothing
 }
 
-Drawing *Library::NewDrawing(stringtag_t name, DrawingType type) {
-	TrackingPointer<Drawing> drawing(new Drawing(this,name, type));
+Drawing *Library::NewDrawing(stringtag_t name, DrawingType type, stringtag_t layerstack) {
+	TrackingPointer<Drawing> drawing(new Drawing(this,name, type, layerstack));
 	Drawing *ptr = drawing.Get();
 	switch(type) {
 		case DRAWINGTYPE_SCHEMATIC: m_schematics.emplace_back(std::move(drawing)); break;
@@ -52,6 +53,14 @@ void Library::DeleteDrawing(Drawing *drawing) {
 	}
 }
 
+LayerStack *Library::NewLayerStack(stringtag_t name)
+{
+	TrackingPointer<LayerStack> layerstack(new LayerStack(name));
+	LayerStack *ptr = layerstack.Get();
+	m_layerstacks.emplace_back(std::move(layerstack));
+	return ptr;
+}
+
 size_t Library::GetDrawingIndex(Drawing *drawing) {
 	switch(drawing->GetType()) {
 		case DRAWINGTYPE_SCHEMATIC: return IndexInVector(m_schematics, drawing);
@@ -60,5 +69,17 @@ size_t Library::GetDrawingIndex(Drawing *drawing) {
 	}
 	assert(false);
 	return 0;
+}
+
+LayerStack *Library::GetLayerStack(stringtag_t layerstack_name)
+{
+	for(index_t i = 0 ; i < m_layerstacks.size(); ++i) {
+		if(m_layerstacks[i]->GetName() == layerstack_name){
+			return m_layerstacks[i].Get();
+		}
+	}
+
+	// should not be reached
+	return nullptr;
 }
 

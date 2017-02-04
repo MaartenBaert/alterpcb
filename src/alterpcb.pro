@@ -26,15 +26,17 @@ HEADERS += \
 	common/TrackingPointer.h \
 	common/VData.h \
 	core/CoreBasics.h \
+	core/Document.h \
 	core/Drawing.h \
 	core/LayerManager.h \
+	core/LayerStack.h \
 	core/Library.h \
 	core/LibraryManager.h \
 	core/LibraryManagerConfigProxy.h \
 	core/LibraryTreeItem.h \
 	core/Shape.h \
+	gui/DocumentEditor.h \
 	gui/DrawingViewer.h \
-	gui/Editor.h \
 	gui/GLHelper.h \
 	gui/LayerViewer.h \
 	gui/LibraryViewer.h \
@@ -42,7 +44,9 @@ HEADERS += \
 	gui/ParameterViewer.h \
 	gui/components/FilepathDelegate.h \
 	gui/components/FilepathEditor.h \
+	gui/components/LayerWidget.h \
 	gui/components/TabbedDocumentViewer.h \
+	gui/dialogs/LayerConfigDialog.h \
 	gui/dialogs/LibraryConfigDialog.h
 
 SOURCES += \
@@ -51,14 +55,16 @@ SOURCES += \
 	common/Json.cpp \
 	common/StringRegistry.cpp \
 	common/VData.cpp \
+	core/Document.cpp \
 	core/Drawing.cpp \
 	core/LayerManager.cpp \
+	core/LayerStack.cpp \
 	core/Library.cpp \
 	core/LibraryManager.cpp \
 	core/LibraryManagerConfigProxy.cpp \
 	core/Shape.cpp \
+	gui/DocumentEditor.cpp \
 	gui/DrawingViewer.cpp \
-	gui/Editor.cpp \
 	gui/GLHelper.cpp \
 	gui/LayerViewer.cpp \
 	gui/LibraryTreeItem.cpp \
@@ -67,5 +73,7 @@ SOURCES += \
 	gui/ParameterViewer.cpp \
 	gui/components/FilepathDelegate.cpp \
 	gui/components/FilepathEditor.cpp \
+	gui/components/LayerWidget.cpp \
 	gui/components/TabbedDocumentViewer.cpp \
+	gui/dialogs/LayerConfigDialog.cpp \
 	gui/dialogs/LibraryConfigDialog.cpp

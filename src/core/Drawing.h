@@ -62,9 +62,10 @@ private:
 	DrawingType m_type;
 	std::vector<DrawingHistory> m_history;
 	size_t m_history_position;
+	stringtag_t m_layerstack;
 
 public:
-	Drawing(Library *parent, stringtag_t name, DrawingType type);
+	Drawing(Library *parent, stringtag_t name, DrawingType type, stringtag_t layerstack);
 
 	// noncopyable
 	Drawing(const Drawing&) = delete;
@@ -81,6 +82,7 @@ public:
 
 	inline stringtag_t GetName() const { return m_name; }
 	inline DrawingType GetType() const { return m_type; }
+	inline stringtag_t GetLayerStack() const { return m_layerstack; }
 
 	inline       std::vector<Cow<Shape>>& GetShapes()       { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
 	inline const std::vector<Cow<Shape>>& GetShapes() const { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
