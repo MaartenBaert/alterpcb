@@ -21,7 +21,9 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 #include <QtGui>
 
-extern QIcon layermanager_layer_solid;
+extern QIcon g_icon_layermanager_layer_solid, g_icon_layermanager_layer_vstripe_light;
+extern QIcon g_icon_librarymanager_library, g_icon_librarymanager_layout, g_icon_librarymanager_symbol, g_icon_librarymanager_schematic, g_icon_librarymanager_script;
+extern QIcon g_icon_parameterviewer_override_onnormal, g_icon_parameterviewer_override_onmouseover,g_icon_parameterviewer_override_onpressed,g_icon_parameterviewer_override_offnormal,g_icon_parameterviewer_override_offmouseover, g_icon_parameterviewer_override_offpressed, g_icon_parameterviewer_select_normal, g_icon_parameterviewer_select_mouseover, g_icon_parameterviewer_select_pressed, g_icon_parameterviewer_deselect_normal, g_icon_parameterviewer_deselect_mouseover, g_icon_parameterviewer_deselect_pressed;
 
 
 void LoadIcons();

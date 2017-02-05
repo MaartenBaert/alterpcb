@@ -23,6 +23,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "Library.h"
 #include "Drawing.h"
 #include "StringRegistry.h"
+#include "Icons.h"
 #include <iostream>
 
 LibraryManager::LibraryManager() {
@@ -173,10 +174,19 @@ QVariant LibraryManager::data(const QModelIndex &index, int role) const {
 		case Qt::DecorationRole: {
 			switch(item_ptr->GetTreeItemType()) {
 				case LIBRARYTREEITEMTYPE_LIBRARY: {
-					return QIcon::fromTheme("document-open");
+					return g_icon_librarymanager_library;
 				}
 				case LIBRARYTREEITEMTYPE_DRAWING: {
-					return QIcon::fromTheme("document-save");
+					Drawing *drawing = static_cast<Drawing*>(item_ptr);
+					switch (drawing->GetType()) {
+						case DRAWINGTYPE_SCHEMATIC:
+							return g_icon_librarymanager_schematic;
+						case DRAWINGTYPE_SYMBOL:
+							return g_icon_librarymanager_symbol;
+						case DRAWINGTYPE_LAYOUT:
+							return g_icon_librarymanager_layout;
+					}
+					return QVariant();
 				}}}
 		case Qt::ForegroundRole: {
 			if (index.column() == 1) { // color of the text to indicate if filepath is valid or not

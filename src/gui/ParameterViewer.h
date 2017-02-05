@@ -97,19 +97,6 @@ private:
 	static const int LAYOUT_OVERRIDEBUTTONWIDTH = 16;
 	int LAYOUT_LABELWIDTH = 70;
 
-	const QIcon m_icon_override_onnormal = QIcon::fromTheme("document-open");
-	const QIcon m_icon_override_onmouseover = QIcon::fromTheme("document-save");
-	const QIcon m_icon_override_onpressed = QIcon::fromTheme("document-close");
-	const QIcon m_icon_override_offnormal = QIcon::fromTheme("document-save");
-	const QIcon m_icon_override_offmouseover = QIcon::fromTheme("document-open");
-	const QIcon m_icon_override_offpressed = QIcon::fromTheme("document-close");
-	const QIcon m_icon_select_normal = QIcon::fromTheme("document-open");
-	const QIcon m_icon_select_mouseover = QIcon::fromTheme("document-save");
-	const QIcon m_icon_select_pressed = QIcon::fromTheme("document-open");
-	const QIcon m_icon_deselect_normal = QIcon::fromTheme("document-save-as");
-	const QIcon m_icon_deselect_mouseover = QIcon::fromTheme("document-open");
-	const QIcon m_icon_deselect_pressed = QIcon::fromTheme("document-save");
-
 public:
 	ParameterViewer(QWidget *parent = 0);
 	~ParameterViewer();

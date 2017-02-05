@@ -7,6 +7,7 @@
 #include "Library.h"
 #include "Drawing.h"
 #include "Document.h"
+#include "Icons.h"
 #include <iostream>
 
 DocumentEditor::DocumentEditor(QWidget *parent, LibraryManager* library_manager, LayerManager* layer_manager) : QWidget(parent)
@@ -39,8 +40,20 @@ void DocumentEditor::addDocument(Drawing *drawing)
 	void *ptr = (void*) document.Get();
 	m_documents.emplace_back(std::move(document));
 
+	QIcon icon;
+	switch (drawing->GetType()) {
+		case DRAWINGTYPE_SCHEMATIC:
+			icon =  g_icon_librarymanager_schematic;
+			break;
+		case DRAWINGTYPE_SYMBOL:
+			icon =  g_icon_librarymanager_symbol;
+			break;
+		case DRAWINGTYPE_LAYOUT:
+			icon =  g_icon_librarymanager_layout;
+			break;
+	}
 
-	m_tabbedDocViewer->addDocument(QIcon::fromTheme("document-save"),QString::fromStdString(StringRegistry::GetString(drawing->GetName())),QVariant::fromValue(ptr));
+	m_tabbedDocViewer->addDocument(icon,QString::fromStdString(StringRegistry::GetString(drawing->GetName())),QVariant::fromValue(ptr));
 }
 
 void DocumentEditor::documentChanged(QVariant data)

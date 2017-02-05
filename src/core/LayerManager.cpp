@@ -103,7 +103,17 @@ QVariant LayerManager::data(const QModelIndex &index, int role) const
 	else if(role == Qt::DecorationRole && index.column() == 0){
 		QPixmap pixmap(16,16);
 		pixmap.fill(Qt::transparent);
-		QPixmap texturemap = QPixmap(":/layermanager-layer-vstripe");
+
+		QPixmap texturemap;
+		switch (item_ptr->m_texture) {
+			case LAYERTEXTURE_SOLID:
+				texturemap = g_icon_layermanager_layer_solid.pixmap(16,16);
+				break;
+			case LAYERTEXTURE_VSTRIPE_LIGHT:
+				texturemap = g_icon_layermanager_layer_vstripe_light.pixmap(16,16);
+				break;
+		}
+
 		QPixmap colormap(16,16);
 		colormap.fill(item_ptr->m_color);
 
