@@ -28,6 +28,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 enum LAYERTEXTURE{
 	LAYERTEXTURE_SOLID,
+	LAYERTEXTURE_VSTRIPE_LIGHT,
 };
 
 enum LAYERTYPE{

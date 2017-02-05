@@ -154,9 +154,9 @@ int main(int argc, char *argv[]) {
 
 		LayerStack *layerstack1 = lib1->NewLayerStack(StringRegistry::NewTag("4layerpcb"));
 		layerstack1->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-top1"),QColor(0,255,0),LAYERTEXTURE_SOLID));
-		layerstack1->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-top2"),QColor(255,255,0),LAYERTEXTURE_SOLID));
+		layerstack1->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-top2"),QColor(255,255,0),LAYERTEXTURE_VSTRIPE_LIGHT));
 		layerstack1->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-bottom2"),QColor(0,255,255),LAYERTEXTURE_SOLID));
-		layerstack1->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-bottom1"),QColor(255,0,100),LAYERTEXTURE_SOLID));
+		layerstack1->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-bottom1"),QColor(255,0,100),LAYERTEXTURE_VSTRIPE_LIGHT));
 		LayerStack *layerstack2 = lib1->NewLayerStack(StringRegistry::NewTag("2layerpcb"));
 		layerstack2->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-top1"),QColor(0,100,0),LAYERTEXTURE_SOLID));
 		layerstack2->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-top2"),QColor(0,255,50),LAYERTEXTURE_SOLID));

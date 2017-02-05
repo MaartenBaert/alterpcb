@@ -5,8 +5,8 @@ TEMPLATE = app
 
 LIBS += -lGL -lGLEW
 
-INCLUDEPATH += common core gui gui/components gui/dialogs data/icons/16
-DEPENDPATH += common core gui gui/components gui/dialogs data/icons/16
+INCLUDEPATH += common core gui gui/components gui/dialogs
+DEPENDPATH += common core gui gui/components gui/dialogs
 
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_CXXFLAGS_RELEASE += -DNDEBUG

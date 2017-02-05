@@ -1,5 +1,6 @@
 #include "ParameterViewer.h"
 #include "StringRegistry.h"
+#include "Icons.h"
 #include <sstream>
 #include <iostream>
 
@@ -249,30 +250,30 @@ void ParameterViewer::paintEvent(QPaintEvent *event)
 			if(m_parameters[i].m_override){
 				// PRESSED
 				if(m_button_pressed && m_hover_region == HOVER_REGION_OVERRIDEBUTTON && m_current_index == i &&  m_current_subindex == INDEX_NONE){
-					m_icon_override_onpressed.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
+					g_icon_parameterviewer_override_onpressed.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
 				}
 				// MOUSE OVER
 				else if(m_hover_region == HOVER_REGION_OVERRIDEBUTTON && m_current_index == i &&  m_current_subindex == INDEX_NONE){
-					m_icon_override_onmouseover.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
+					g_icon_parameterviewer_override_onmouseover.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
 				}
 				// NORMAL
 				else{
-					m_icon_override_onnormal.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
+					g_icon_parameterviewer_override_onnormal.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
 				}
 			}
 			// OFF STATE
 			else{
 				// PRESSED
 				if(m_button_pressed && m_hover_region == HOVER_REGION_OVERRIDEBUTTON && m_current_index == i &&  m_current_subindex == INDEX_NONE){
-					m_icon_override_offpressed.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
+					g_icon_parameterviewer_override_offpressed.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
 				}
 				// MOUSE OVER
 				else if(m_hover_region == HOVER_REGION_OVERRIDEBUTTON && m_current_index == i &&  m_current_subindex == INDEX_NONE){
-					m_icon_override_offmouseover.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
+					g_icon_parameterviewer_override_offmouseover.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
 				}
 				// NORMAL
 				else{
-					m_icon_override_offnormal.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
+					g_icon_parameterviewer_override_offnormal.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
 				}
 			}
 		}
@@ -298,15 +299,15 @@ void ParameterViewer::paintEvent(QPaintEvent *event)
 
 					// PRESSED
 					if(m_button_pressed && m_hover_region == HOVER_REGION_SELECTBUTTON && m_current_index == i &&  m_current_subindex == j){
-						m_icon_select_pressed.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
+						g_icon_parameterviewer_select_pressed.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
 					}
 					// MOUSE OVER
 					else if(m_hover_region == HOVER_REGION_SELECTBUTTON && m_current_index == i && m_current_subindex == j){
-						m_icon_select_mouseover.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
+						g_icon_parameterviewer_select_mouseover.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
 					}
 					// NORMAL
 					else{
-						m_icon_select_normal.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
+						g_icon_parameterviewer_select_normal.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+LAYOUT_HSPACING,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
 					}
 				}
 
@@ -315,15 +316,15 @@ void ParameterViewer::paintEvent(QPaintEvent *event)
 
 					// PRESSED
 					if(m_button_pressed && m_hover_region == HOVER_REGION_DESELECTBUTTON && m_current_index == i &&  m_current_subindex == j){
-						m_icon_deselect_pressed.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_SUBPARAMBUTTONWIDTH,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
+						g_icon_parameterviewer_deselect_pressed.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_SUBPARAMBUTTONWIDTH,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
 					}
 					// MOUSE OVER
 					else if(m_hover_region == HOVER_REGION_DESELECTBUTTON && m_current_index == i && m_current_subindex == j){
-						m_icon_deselect_mouseover.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_SUBPARAMBUTTONWIDTH,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
+						g_icon_parameterviewer_deselect_mouseover.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_SUBPARAMBUTTONWIDTH,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
 					}
 					// NORMAL
 					else{
-						m_icon_deselect_normal.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_SUBPARAMBUTTONWIDTH,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
+						g_icon_parameterviewer_deselect_normal.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_SUBPARAMBUTTONWIDTH,y,LAYOUT_SUBPARAMBUTTONWIDTH,size.height());
 					}
 				}
 
@@ -338,30 +339,30 @@ void ParameterViewer::paintEvent(QPaintEvent *event)
 					if(m_parameters[i].m_override){
 						// PRESSED
 						if(m_button_pressed && m_hover_region == HOVER_REGION_OVERRIDEBUTTON &&  m_current_index == i &&  m_current_subindex == j){
-							m_icon_override_onpressed.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
+							g_icon_parameterviewer_override_onpressed.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
 						}
 						// MOUSE OVER
 						else if(m_hover_region == HOVER_REGION_OVERRIDEBUTTON &&  m_current_index == i &&  m_current_subindex == j){
-							m_icon_override_onmouseover.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
+							g_icon_parameterviewer_override_onmouseover.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
 						}
 						// NORMAL
 						else{
-							m_icon_override_onnormal.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
+							g_icon_parameterviewer_override_onnormal.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
 						}
 					}
 					// OFF STATE
 					else{
 						// PRESSED
 						if(m_button_pressed && m_hover_region == HOVER_REGION_OVERRIDEBUTTON &&  m_current_index == i &&  m_current_subindex == j){
-							m_icon_override_offpressed.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
+							g_icon_parameterviewer_override_offpressed.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
 						}
 						// MOUSE OVER
 						else if(m_hover_region == HOVER_REGION_OVERRIDEBUTTON &&  m_current_index == i &&  m_current_subindex == j){
-							m_icon_override_offmouseover.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
+							g_icon_parameterviewer_override_offmouseover.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
 						}
 						// NORMAL
 						else{
-							m_icon_override_offnormal.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
+							g_icon_parameterviewer_override_offnormal.paint(&painter,LAYOUT_FOLDBUTTONWIDTH+2*LAYOUT_HSPACING+LAYOUT_LABELWIDTH,y+(size.height()-LAYOUT_OVERRIDEBUTTONWIDTH)/2,LAYOUT_OVERRIDEBUTTONWIDTH,LAYOUT_OVERRIDEBUTTONWIDTH);
 						}
 					}
 				}
