@@ -29,6 +29,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "VData.h"
 #include "LayerManager.h"
 #include "LayerStack.h"
+#include "Icons.h"
 
 #include <iostream>
 
@@ -166,6 +167,7 @@ int main(int argc, char *argv[]) {
 
 	Examples1();
 
+	LoadIcons();
 	MainWindow window(&library_manager,new LayerManager());
 	UNUSED(window);
 	return app.exec();

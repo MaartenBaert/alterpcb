@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>data/icons/16/alterpcb-layermanager-layer-border.png</file>
-        <file>data/icons/16/alterpcb-layermanager-layer-solid.png</file>
-        <file>data/icons/16/alterpcb-layermanager-layer-vstripe.png</file>
+        <file alias="layermanager-layer-solid">data/icons/16/alterpcb-layermanager-layer-solid.png</file>
+        <file alias="layermanager-layer-vstripe">data/icons/16/alterpcb-layermanager-layer-vstripe.png</file>
     </qresource>
 </RCC>

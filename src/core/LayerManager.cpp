@@ -1,4 +1,5 @@
 #include "LayerManager.h"
+#include "Icons.h"
 #include <iostream>
 
 LayerManager::LayerManager()
@@ -102,18 +103,13 @@ QVariant LayerManager::data(const QModelIndex &index, int role) const
 	else if(role == Qt::DecorationRole && index.column() == 0){
 		QPixmap pixmap(16,16);
 		pixmap.fill(Qt::transparent);
-		QPixmap bordermap("/users/micas/astandae/alterpcb/data/icons/16/alterpcb-layermanager-layer-border.png");
-		QPixmap texturemap("/users/micas/astandae/alterpcb/data/icons/16/alterpcb-layermanager-layer-vstripe.png");
+		QPixmap texturemap = QPixmap(":/layermanager-layer-vstripe");
 		QPixmap colormap(16,16);
 		colormap.fill(item_ptr->m_color);
 
 		QPainter *painter= new QPainter(&pixmap);
-		painter->setCompositionMode(QPainter::CompositionMode_Plus);
-		painter->drawPixmap(0, 0, 16, 16, texturemap);
 		painter->drawPixmap(0, 0, 16, 16, colormap);
-
-		painter->setCompositionMode(QPainter::CompositionMode_Multiply);
-		painter->drawPixmap(0, 0, 16, 16, bordermap);
+		painter->drawPixmap(0, 0, 16, 16, texturemap);
 		painter->end();
 
 		QIcon icon = QIcon(pixmap);

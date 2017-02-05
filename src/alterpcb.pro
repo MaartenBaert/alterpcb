@@ -5,8 +5,8 @@ TEMPLATE = app
 
 LIBS += -lGL -lGLEW
 
-INCLUDEPATH += common core gui gui/components gui/dialogs
-DEPENDPATH += common core gui gui/components gui/dialogs
+INCLUDEPATH += common core gui gui/components gui/dialogs data/icons/16
+DEPENDPATH += common core gui gui/components gui/dialogs data/icons/16
 
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
@@ -50,7 +50,8 @@ HEADERS += \
 	gui/components/LayerWidget.h \
 	gui/components/TabbedDocumentViewer.h \
 	gui/dialogs/LayerConfigDialog.h \
-	gui/dialogs/LibraryConfigDialog.h
+	gui/dialogs/LibraryConfigDialog.h \
+    gui/Icons.h
 
 SOURCES += \
 	Main.cpp \
@@ -79,4 +80,5 @@ SOURCES += \
 	gui/components/LayerWidget.cpp \
 	gui/components/TabbedDocumentViewer.cpp \
 	gui/dialogs/LayerConfigDialog.cpp \
-	gui/dialogs/LibraryConfigDialog.cpp
+	gui/dialogs/LibraryConfigDialog.cpp \
+    gui/Icons.cpp
