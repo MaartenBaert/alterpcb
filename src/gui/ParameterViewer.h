@@ -27,6 +27,8 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 #include <QtGui>
 
+class MainWindow;
+
 enum HOVER_REGION {
 	HOVER_REGION_NONE,
 	HOVER_REGION_FOLDBUTTON,
@@ -82,6 +84,7 @@ class ParameterViewer : public QAbstractScrollArea {
 	Q_OBJECT
 
 private:
+	MainWindow *m_mainwindow;
 	std::vector<QWidget*> m_widgets;
 	std::vector<Shape*> m_selected_shapes;
 	HashTable<ParameterEntry, ParameterHasher> m_parameters;
@@ -98,7 +101,7 @@ private:
 	int LAYOUT_LABELWIDTH = 70;
 
 public:
-	ParameterViewer(QWidget *parent = 0);
+	ParameterViewer(QWidget *parent, MainWindow *mainwindow);
 	~ParameterViewer();
 
 	index_t GetWidgetCount();
@@ -132,11 +135,9 @@ private:
 	void UnexpandParameter(index_t index);
 	HOVER_REGION getHoverRegion(const QPoint &pos);
 	void changeHoverRegion(HOVER_REGION hover_region);
+	void ensureWidgetVisible(QWidget *childWidget);
 
 	void loadTestParam();
-
-private slots:
-	void OnFocusChange();
 };
 
 

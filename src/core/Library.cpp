@@ -80,6 +80,7 @@ LayerStack *Library::GetLayerStack(stringtag_t layerstack_name)
 	}
 
 	// should not be reached
-	return nullptr;
+	assert(false);
+	return 0;
 }
 

@@ -26,16 +26,16 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "HashTable.h"
 
 class Drawing;
-class DocumentEditor;
+class DocumentViewer;
 class LayerStack;
 
 struct LayerStackAttributesEntry{
 	stringtag_t m_name;
-	bool m_visable;
+	bool m_visible;
 	bool m_selectable;
 
 	inline LayerStackAttributesEntry(stringtag_t name, bool visable, bool selectable)
-		: m_name(name), m_visable(visable), m_selectable(selectable) {}
+		: m_name(name), m_visible(visable), m_selectable(selectable) {}
 
 	inline bool operator==(const LayerStackAttributesEntry &other) const {
 		return m_name == other.m_name;
@@ -60,19 +60,29 @@ class Document : public TrackingTarget<Document>
 {
 private:
 	Drawing *m_drawing;
-	DocumentEditor *m_document_editor;
-
-public:
+	DocumentViewer *m_document_editor;
 	HashTable<LayerStackAttributesEntry, LayerStackAttributesHasher> m_layerstackattributes;
 
 public:
-	Document(DocumentEditor *document_editor,Drawing *drawing);
+	Document(DocumentViewer *document_editor,Drawing *drawing);
 
 	// noncopyable
 	Document(const Document&) = delete;
 	Document& operator=(const Document&) = delete;
 
 	LayerStack *getLayerStack();
+	inline Drawing *GetDrawing() {return m_drawing;}
+	inline bool GetSelectable(stringtag_t str_tag) { return m_layerstackattributes[GetIndex(str_tag)].m_selectable; }
+	inline void SetSelectable(stringtag_t str_tag, bool selectable) { m_layerstackattributes[GetIndex(str_tag)].m_selectable = selectable; }
+	inline bool GetVisible(stringtag_t str_tag) { return m_layerstackattributes[GetIndex(str_tag)].m_visible; }
+	inline void SetVisible(stringtag_t str_tag, bool visable) { m_layerstackattributes[GetIndex(str_tag)].m_visible = visable; }
+
+private:
+	inline index_t GetIndex(stringtag_t str_tag) {
+		index_t index = m_layerstackattributes.Find(str_tag);
+		assert(index != INDEX_NONE);
+		return index;
+	}
 
 };
 

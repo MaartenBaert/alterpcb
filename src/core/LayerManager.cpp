@@ -1,17 +1,20 @@
 #include "LayerManager.h"
+
 #include "Icons.h"
+#include "MainWindow.h"
+
 #include <iostream>
 
-LayerManager::LayerManager()
+LayerManager::LayerManager(MainWindow *main_window)
 {
-	m_layerstack = nullptr;
+	m_main_window = main_window;
 }
 
-void LayerManager::setActiveDocument(Document *document)
-{
-	m_document = document;
+void LayerManager::BeforeDocumentChange() {
 	layoutAboutToBeChanged();
-	m_layerstack = m_document->getLayerStack();
+}
+
+void LayerManager::AfterDocumentChange() {
 	layoutChanged();
 }
 
@@ -23,10 +26,10 @@ QModelIndex LayerManager::index(int row, int column, const QModelIndex &parent) 
 		return QModelIndex();
 
 	// parent should always be root
-	if(!parent.isValid() && m_layerstack) {
-		if((size_t) row >= m_layerstack->GetLogicLayerSize())
+	if(!parent.isValid() && GetLayerStack()) {
+		if((size_t) row >= GetLayerStack()->GetLogicalLayerSize())
 			return QModelIndex();
-		return createIndex(row, column,m_layerstack->GetLogicLayer(row));
+		return createIndex(row, column,GetLayerStack()->GetLogicalLayer(row));
 	}
 	else{
 		return QModelIndex();
@@ -42,8 +45,8 @@ QModelIndex LayerManager::parent(const QModelIndex &index) const
 int LayerManager::rowCount(const QModelIndex &parent) const
 {
 	UNUSED(parent);
-	if(!parent.isValid() && m_layerstack){
-		return m_layerstack->GetLogicLayerSize();
+	if(!parent.isValid() && GetDocument() != NULL){
+		return GetLayerStack()->GetLogicalLayerSize();
 	}
 	else{
 		return 0;
@@ -54,18 +57,13 @@ int LayerManager::rowCount(const QModelIndex &parent) const
 int LayerManager::columnCount(const QModelIndex &parent) const
 {
 	UNUSED(parent);
-	if(m_layerstack){
 	return 3;
-	}
-	else{
-		return 0;
-	}
 }
 
 Qt::ItemFlags LayerManager::flags(const QModelIndex &index) const
 {
 	if (!index.isValid())
-			return 0;
+		return 0;
 	if(index.column() > 0){
 		return Qt::ItemIsEnabled | Qt::ItemIsUserCheckable;
 	}
@@ -79,7 +77,10 @@ QVariant LayerManager::data(const QModelIndex &index, int role) const
 	if(!index.isValid())
 		return QVariant();
 
-	LOGIC_LAYER *item_ptr = (LOGIC_LAYER*) index.internalPointer();
+	if(GetDocument() == NULL)
+		return false;
+
+	LogicalLayer *item_ptr = (LogicalLayer*) index.internalPointer();
 
 	if(role == Qt::DisplayRole){
 		if(index.column() == 0){
@@ -91,10 +92,10 @@ QVariant LayerManager::data(const QModelIndex &index, int role) const
 	}
 	else if(role == Qt::CheckStateRole && index.column() > 0){
 		if(index.column() == 1){
-			return m_document->m_layerstackattributes[m_document->m_layerstackattributes.Find(item_ptr->m_name)].m_selectable ? Qt::Checked : Qt::Unchecked;
+			return GetDocument()->GetSelectable(item_ptr->m_name) ? Qt::Checked : Qt::Unchecked;
 		}
 		if(index.column() == 2){
-			return m_document->m_layerstackattributes[m_document->m_layerstackattributes.Find(item_ptr->m_name)].m_visable ? Qt::Checked : Qt::Unchecked;
+			return GetDocument()->GetVisible(item_ptr->m_name) ? Qt::Checked : Qt::Unchecked;
 		}
 		else{
 			return QVariant();
@@ -117,10 +118,11 @@ QVariant LayerManager::data(const QModelIndex &index, int role) const
 		QPixmap colormap(16,16);
 		colormap.fill(item_ptr->m_color);
 
-		QPainter *painter= new QPainter(&pixmap);
-		painter->drawPixmap(0, 0, 16, 16, colormap);
-		painter->drawPixmap(0, 0, 16, 16, texturemap);
-		painter->end();
+		{
+			QPainter painter(&pixmap);
+			painter.drawPixmap(0, 0, 16, 16, colormap);
+			painter.drawPixmap(0, 0, 16, 16, texturemap);
+		}
 
 		QIcon icon = QIcon(pixmap);
 		return icon;
@@ -156,24 +158,27 @@ bool LayerManager::setData(const QModelIndex &index, const QVariant &value, int 
 {
 	UNUSED(value);
 
+	if(GetDocument() == NULL)
+		return false;
+
 	if(!index.isValid())
 		return false;
 
-	LOGIC_LAYER *item_ptr = (LOGIC_LAYER*) index.internalPointer();
+	LogicalLayer *item_ptr = (LogicalLayer*) index.internalPointer();
 	if(role == Qt::CheckStateRole && index.column() > 0){
-			if(index.column() == 1){
-				layoutAboutToBeChanged();
-				m_document->m_layerstackattributes[m_document->m_layerstackattributes.Find(item_ptr->m_name)].m_selectable = !m_document->m_layerstackattributes[m_document->m_layerstackattributes.Find(item_ptr->m_name)].m_selectable;
-				layoutChanged();
-				return true;
-			}
-			if(index.column() == 2){
-				layoutAboutToBeChanged();
-				 m_document->m_layerstackattributes[m_document->m_layerstackattributes.Find(item_ptr->m_name)].m_visable = ! m_document->m_layerstackattributes[m_document->m_layerstackattributes.Find(item_ptr->m_name)].m_visable;
-				layoutChanged();
-				return true;
-			}
+		if(index.column() == 1){
+			layoutAboutToBeChanged();
+			GetDocument()->SetSelectable(item_ptr->m_name,!GetDocument()->GetSelectable(item_ptr->m_name));
+			layoutChanged();
+			return true;
 		}
+		if(index.column() == 2){
+			layoutAboutToBeChanged();
+			GetDocument()->SetVisible(item_ptr->m_name,!GetDocument()->GetVisible(item_ptr->m_name));
+			layoutChanged();
+			return true;
+		}
+	}
 	else{
 		return false;
 	}
@@ -186,4 +191,20 @@ void LayerManager::activeLayerChanged(QModelIndex &index)
 	UNUSED(index);
 	std::cerr << "active layer changed" << std::endl;
 	layoutChanged();
+}
+
+LayerStack *LayerManager::GetLayerStack() const
+{
+	if(GetDocument() == NULL){
+		return NULL;
+	}
+	else{
+		return m_main_window->GetDocumentViewer()->GetActiveDocument()->getLayerStack();
+	}
+
+}
+
+Document *LayerManager::GetDocument() const
+{
+	return m_main_window->GetDocumentViewer()->GetActiveDocument();
 }

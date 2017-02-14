@@ -38,12 +38,12 @@ enum LAYERTYPE{
 	LAYERTYPE_VIA,
 };
 
-struct LOGIC_LAYER{
+struct LogicalLayer{
 	stringtag_t m_name;
 	QColor m_color;
 	LAYERTEXTURE m_texture;
 
-	inline LOGIC_LAYER(stringtag_t name, QColor color, LAYERTEXTURE texture)
+	inline LogicalLayer(stringtag_t name, QColor color, LAYERTEXTURE texture)
 		: m_name(name), m_color(color), m_texture(texture) {}
 };
 
@@ -51,7 +51,7 @@ class LayerStack : public TrackingTarget<LayerStack> {
 
 private:
 	stringtag_t m_name;
-	std::vector<LOGIC_LAYER*> m_logic_layers;
+	std::vector<LogicalLayer> m_logical_layers;
 
 public:
 	LayerStack(stringtag_t name);
@@ -61,9 +61,10 @@ public:
 	LayerStack& operator=(const LayerStack&) = delete;
 
 	inline stringtag_t GetName() const { return m_name; }
-	inline size_t GetLogicLayerSize() const { return m_logic_layers.size(); }
-	inline LOGIC_LAYER* GetLogicLayer(size_t index) { return m_logic_layers[index]; }
+	inline size_t GetLogicalLayerSize() const { return m_logical_layers.size(); }
+	inline LogicalLayer* GetLogicalLayer(size_t index) { return &m_logical_layers[index]; }
 
-	void AddLayer(LOGIC_LAYER *logic_layer);
+	void AddLayer(LogicalLayer logical_layer);
 };
+
 

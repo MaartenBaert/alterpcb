@@ -9,6 +9,7 @@ LayerWidget::LayerWidget(QWidget *parent, LayerManager *layer_manager) : QWidget
 
 void LayerWidget::paintEvent(QPaintEvent *event)
 {
+	UNUSED(event);
 	QPainter painter(this);
 	QRect rect(10, 20, LAYOUT_TOTAL_WIDTH, LAYOUT_METAL_HEIGHT);
 	painter.fillRect(rect,QBrush(QColor(128, 128, 255, 255)));

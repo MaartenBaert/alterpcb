@@ -5,6 +5,8 @@
 #include <QWidget>
 #include <QtGui>
 #include <QMap>
+#include <vector>
+#include "Document.h"
 
 class TabbedDocumentViewer : public QWidget
 {
@@ -15,13 +17,14 @@ private:
 	QWidget *m_base;
 	QRect m_panelrect;
 	QVBoxLayout *m_layout;
+	std::vector<Document*> m_documents;
 
 public:
 	explicit TabbedDocumentViewer(QWidget *parent = 0);
 	void setCentralWidget(QWidget * central);
-	void addDocument(QIcon icon, QString name, const QVariant &document_pointer);
-	void addDocument(QString name, const QVariant &document_pointer);
-	void removeDocument(const QVariant &document_pointer);
+	void addDocument(QIcon icon, QString name, Document *ptr);
+	void addDocument(QString name, Document *ptr);
+	void removeDocument(Document *ptr);
 
 private:
 	void updateLayout();
@@ -33,7 +36,7 @@ private:
 	void changeEvent(QEvent *ev);
 
 signals:
-	void tabClicked(QVariant data);
+	void tabClicked(Document *ptr);
 
 
 private slots:

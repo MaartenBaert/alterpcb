@@ -20,26 +20,26 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include <vector>
 #include "StringRegistry.h"
 #include "LayerStack.h"
 #include "Document.h"
 
 #include <QtGui>
+#include <vector>
 
-
+class MainWindow;
 
 class LayerManager : public QAbstractItemModel {
 	Q_OBJECT
 
 private:
-	LayerStack *m_layerstack;
-	Document *m_document;
+	MainWindow *m_main_window;
 
 public:
-	LayerManager();
+	LayerManager(MainWindow *main_window);
 
-	void setActiveDocument(Document *document);
+	void BeforeDocumentChange();
+	void AfterDocumentChange();
 
 	QModelIndex index(int row, int column,const QModelIndex &parent = QModelIndex()) const override;
 	QModelIndex parent(const QModelIndex &index) const override;
@@ -52,5 +52,8 @@ public:
 
 	void activeLayerChanged(QModelIndex &index);
 
+private:
+	LayerStack* GetLayerStack() const;
+	Document* GetDocument() const;
 };
 

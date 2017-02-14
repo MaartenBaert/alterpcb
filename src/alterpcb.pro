@@ -38,9 +38,10 @@ HEADERS += \
 	core/LibraryManagerConfigProxy.h \
 	core/LibraryTreeItem.h \
 	core/Shape.h \
-	gui/DocumentEditor.h \
+	gui/DocumentViewer.h \
 	gui/DrawingViewer.h \
 	gui/GLHelper.h \
+	gui/Icons.h \
 	gui/LayerViewer.h \
 	gui/LibraryViewer.h \
 	gui/MainWindow.h \
@@ -50,8 +51,7 @@ HEADERS += \
 	gui/components/LayerWidget.h \
 	gui/components/TabbedDocumentViewer.h \
 	gui/dialogs/LayerConfigDialog.h \
-	gui/dialogs/LibraryConfigDialog.h \
-    gui/Icons.h
+	gui/dialogs/LibraryConfigDialog.h
 
 SOURCES += \
 	Main.cpp \
@@ -67,9 +67,10 @@ SOURCES += \
 	core/LibraryManager.cpp \
 	core/LibraryManagerConfigProxy.cpp \
 	core/Shape.cpp \
-	gui/DocumentEditor.cpp \
+	gui/DocumentViewer.cpp \
 	gui/DrawingViewer.cpp \
 	gui/GLHelper.cpp \
+	gui/Icons.cpp \
 	gui/LayerViewer.cpp \
 	gui/LibraryTreeItem.cpp \
 	gui/LibraryViewer.cpp \
@@ -80,5 +81,4 @@ SOURCES += \
 	gui/components/LayerWidget.cpp \
 	gui/components/TabbedDocumentViewer.cpp \
 	gui/dialogs/LayerConfigDialog.cpp \
-	gui/dialogs/LibraryConfigDialog.cpp \
-    gui/Icons.cpp
+	gui/dialogs/LibraryConfigDialog.cpp

@@ -2,9 +2,10 @@
 #include "LayerManager.h"
 #include <iostream>
 #include "LayerManager.h"
+#include "MainWindow.h"
 
-LayerViewer::LayerViewer(QWidget *parent, LayerManager *layer_manager) : QTreeView(parent) {
-	setModel(layer_manager);
+LayerViewer::LayerViewer(QWidget *parent, MainWindow *main_window) : QTreeView(parent) {
+	setModel(main_window->GetLayerManager());
 	setUniformRowHeights(true);
 	setSelectionBehavior(QAbstractItemView::SelectRows);
 	setRootIsDecorated(false);

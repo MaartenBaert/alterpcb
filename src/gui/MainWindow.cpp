@@ -31,15 +31,12 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 const QString MainWindow::WINDOW_TITLE = "AlterPCB";
 
-MainWindow::MainWindow(LibraryManager* library_manager,LayerManager* layer_manager) {
-
+MainWindow::MainWindow(LibraryManager* library_manager) {
 	setWindowTitle(WINDOW_TITLE);
 	m_library_manager = library_manager;
-	m_layer_manager = layer_manager;
+	m_layer_manager = new LayerManager(this);
 	m_library_config_dialog = NULL;
 	m_layer_config_dialog = NULL;
-
-	DocumentEditor *editor = new DocumentEditor(this,library_manager,layer_manager);
 
 	QMenuBar *menubar = new QMenuBar(this);
 	{
@@ -71,42 +68,41 @@ MainWindow::MainWindow(LibraryManager* library_manager,LayerManager* layer_manag
 
 	setMenuBar(menubar);
 
-	ParameterViewer *parameter_viewer;
+
 	{
 		QDockWidget *dock = new QDockWidget(tr("Parameters"), this);
 		dock->setObjectName("dock_parameters");
-		parameter_viewer = new ParameterViewer(dock);
-		dock->setWidget(parameter_viewer);
+		m_parameter_viewer = new ParameterViewer(dock,this);
+		dock->setWidget(m_parameter_viewer);
 		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 		addDockWidget(Qt::RightDockWidgetArea, dock);
 		menu_view_showhide->addAction(dock->toggleViewAction());
 	}
 
-	LayerViewer *layer_viewer;
 	{
 		QDockWidget *dock = new QDockWidget(tr("Layers"), this);
 		dock->setObjectName("dock_layers");
-		layer_viewer = new LayerViewer(dock,m_layer_manager);
-		dock->setWidget(layer_viewer);
+		m_layer_viewer = new LayerViewer(dock,this);
+		dock->setWidget(m_layer_viewer);
 		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 		addDockWidget(Qt::LeftDockWidgetArea, dock);
 		menu_view_showhide->addAction(dock->toggleViewAction());
 	}
 
-	QTreeView *library_viewer;
 	{
 		QDockWidget *dock = new QDockWidget(tr("Libraries"), this);
 		dock->setObjectName("dock_libraries");
-		library_viewer = new LibraryViewer(dock);
-		library_viewer->setModel(library_manager);
-		library_viewer->hideColumn(1); //TODO remove once the searchable lib viewer is made with a proxy model (IF this is not there, the drag and drop is broken)
-		dock->setWidget(library_viewer);
+		m_library_viewer = new LibraryViewer(dock,this);
+		m_library_viewer->setModel(m_library_manager);
+		m_library_viewer->hideColumn(1); //TODO remove once the searchable lib viewer is made with a proxy model (IF this is not there, the drag and drop is broken)
+		dock->setWidget(m_library_viewer);
 		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 		addDockWidget(Qt::LeftDockWidgetArea, dock);
 		menu_view_showhide->addAction(dock->toggleViewAction());
 	}
 
-	setCentralWidget(editor);
+	m_document_viewer = new DocumentViewer(this,this);
+	setCentralWidget(m_document_viewer);
 
 	QToolBar *toolbar = new QToolBar(this);
 	toolbar->setMovable(false);

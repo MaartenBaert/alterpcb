@@ -130,6 +130,7 @@ int main(int argc, char *argv[]) {
 		Library *lib5 = library_manager.NewLibrary("Random PCB", "myrandompcb.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib6 = library_manager.NewLibrary("Ugly PCB", "uglypcb.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib7 = library_manager.NewLibrary("House shaped PCB", "houseshapedpcb.alterlib.json", LIBRARYTYPE_JSON);
+		UNUSED(lib7);
 
 		lib1->NewDrawing(StringRegistry::NewTag("resistor"), DRAWINGTYPE_SYMBOL,StringRegistry::NewTag("4layerpcb"));
 		lib1->NewDrawing(StringRegistry::NewTag("resistor"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("4layerpcb"));
@@ -153,22 +154,19 @@ int main(int argc, char *argv[]) {
 		lib6->NewDrawing(StringRegistry::NewTag("resistor7_v2"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("2layerpcb"));
 
 		LayerStack *layerstack1 = lib1->NewLayerStack(StringRegistry::NewTag("4layerpcb"));
-		layerstack1->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-top1"),QColor(0,255,0),LAYERTEXTURE_SOLID));
-		layerstack1->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-top2"),QColor(255,255,0),LAYERTEXTURE_VSTRIPE_LIGHT));
-		layerstack1->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-bottom2"),QColor(0,255,255),LAYERTEXTURE_SOLID));
-		layerstack1->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-bottom1"),QColor(255,0,100),LAYERTEXTURE_VSTRIPE_LIGHT));
+		layerstack1->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top1"),QColor(0,255,0),LAYERTEXTURE_SOLID));
+		layerstack1->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top2"),QColor(255,255,0),LAYERTEXTURE_VSTRIPE_LIGHT));
+		layerstack1->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-bottom2"),QColor(0,255,255),LAYERTEXTURE_SOLID));
+		layerstack1->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-bottom1"),QColor(255,0,100),LAYERTEXTURE_VSTRIPE_LIGHT));
 		LayerStack *layerstack2 = lib1->NewLayerStack(StringRegistry::NewTag("2layerpcb"));
-		layerstack2->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-top1"),QColor(0,100,0),LAYERTEXTURE_SOLID));
-		layerstack2->AddLayer(new LOGIC_LAYER(StringRegistry::NewTag("copper-top2"),QColor(0,255,50),LAYERTEXTURE_SOLID));
+		layerstack2->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top1"),QColor(0,100,0),LAYERTEXTURE_SOLID));
+		layerstack2->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top2"),QColor(0,255,50),LAYERTEXTURE_SOLID));
 
 
 	}
 
-
-	Examples1();
-
 	LoadIcons();
-	MainWindow window(&library_manager,new LayerManager());
+	MainWindow window(&library_manager);
 	UNUSED(window);
 	return app.exec();
 }

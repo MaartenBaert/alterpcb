@@ -4,11 +4,16 @@
 #include <sstream>
 #include <iostream>
 
-ParameterViewer::ParameterViewer(QWidget *parent) : QAbstractScrollArea(parent) {
+ParameterViewer::ParameterViewer(QWidget *parent, MainWindow *mainwindow) : QAbstractScrollArea(parent) {
+	m_mainwindow = mainwindow;
+	m_hover_region = HOVER_REGION_NONE;
+	m_button_pressed = false;
+	m_current_index = INDEX_NONE;
+	m_current_subindex = INDEX_NONE;
 
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	//setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn); // buggy with GTK style, maximumViewportSize() doesn't take the border into account :(
-	verticalScrollBar()->setSingleStep(20);
+	verticalScrollBar()->setSingleStep(10);
 	setFocusPolicy(Qt::NoFocus);
 
 	viewport()->setBackgroundRole(QPalette::Window);
@@ -18,14 +23,64 @@ ParameterViewer::ParameterViewer(QWidget *parent) : QAbstractScrollArea(parent) 
 	UpdateRange();
 
 	loadTestParam();
-
-	connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(OnFocusChange()));}
+}
 
 ParameterViewer::~ParameterViewer() {}
 
 
 void ParameterViewer::loadTestParam()
 {
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
+
+
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
+	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
 	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
 	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
 	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
@@ -53,28 +108,6 @@ void ParameterViewer::loadTestParam()
 		this->AddWidget(i,valuebox);
 	}
 
-}
-
-void ParameterViewer::OnFocusChange()
-{
-	QWidget *focuswidget = viewport()->focusWidget();
-	if(focuswidget){ // widget can be distroyed
-		// TODO check if widget is in parameterviewer
-		QRect r = focuswidget->geometry();
-		if(r.y() > viewport()->height()-r.height()-LAYOUT_HSPACING){ // scroll down
-			verticalScrollBar()->setValue(verticalScrollBar()->value()+r.height()+LAYOUT_VSPACING);
-		}
-		if(r.y() < LAYOUT_VSPACING){ // scroll up
-			verticalScrollBar()->setValue(verticalScrollBar()->value()-r.height()-LAYOUT_VSPACING);
-		}
-		if(r.y() < LAYOUT_VSPACING-r.height()){ // loop scroll down
-			verticalScrollBar()->setValue(0);
-		}
-		if(r.y() > viewport()->height()-LAYOUT_HSPACING){ // loop scroll up
-			verticalScrollBar()->setValue(viewport()->height()-r.height()-LAYOUT_HSPACING);
-		}
-		UpdateLayout();
-	}
 }
 
 static QSize GetWidgetSize(QWidget* widget)
@@ -195,7 +228,12 @@ void ParameterViewer::scrollContentsBy(int dx, int dy)
 }
 
 bool ParameterViewer::focusNextPrevChild(bool next) {
-	return QWidget::focusNextPrevChild(next); //TODO// remove?
+	if (QWidget::focusNextPrevChild(next)) {
+		if (QWidget *fw = focusWidget())
+			ensureWidgetVisible(fw);
+		return true;
+	}
+	return false;
 }
 
 void ParameterViewer::paintEvent(QPaintEvent *event)
@@ -473,7 +511,7 @@ void ParameterViewer::UpdateFocusChain()
 				next_widget = m_parameters[i].m_subparameters[j].m_widget;
 				setTabOrder(current_widget,next_widget);
 			}
-			current_widget = m_parameters[i].m_subparameters[m_parameters[i].m_subparameters.size()].m_widget;
+			current_widget = m_parameters[i].m_subparameters.back().m_widget;
 		}
 		else{
 			if(i != m_widgets.size()-1){
@@ -499,7 +537,7 @@ void ParameterViewer::UpdateRange() {
 
 	}
 	verticalScrollBar()->setPageStep(viewport()->height());
-	verticalScrollBar()->setRange(0, std::max(0, height - LAYOUT_VSPACING - viewport()->height()));
+	verticalScrollBar()->setRange(0, std::max(0, height - viewport()->height()));
 }
 
 void ParameterViewer::UpdateLayout() {
@@ -655,6 +693,17 @@ void ParameterViewer::changeHoverRegion(HOVER_REGION hover_region)
 		//		viewport()->update(); //TODO only update te viewport when something needs to change
 	}
 	viewport()->update();
+}
+
+void ParameterViewer::ensureWidgetVisible(QWidget *childWidget)
+{
+	QRect rect = childWidget->geometry().adjusted(0,-LAYOUT_VSPACING,0,LAYOUT_VSPACING);
+	if(rect.y() < 0) {
+		verticalScrollBar()->setValue(verticalScrollBar()->value() + rect.y());
+	}
+	if(rect.y() + rect.height() > viewport()->height()) {
+		verticalScrollBar()->setValue(verticalScrollBar()->value() + rect.y() + rect.height() - viewport()->height());
+	}
 }
 
 

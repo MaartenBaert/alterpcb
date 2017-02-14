@@ -5,7 +5,7 @@ LayerStack::LayerStack(stringtag_t name)
 	m_name = name;
 }
 
-void LayerStack::AddLayer(LOGIC_LAYER *logic_layer)
+void LayerStack::AddLayer(LogicalLayer logical_layer)
 {
-	m_logic_layers.emplace_back(logic_layer);
+	m_logical_layers.push_back(logical_layer);
 }

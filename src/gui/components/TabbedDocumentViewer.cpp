@@ -1,4 +1,5 @@
 #include "TabbedDocumentViewer.h"
+#include "DrawingViewer.h"
 
 TabbedDocumentViewer::TabbedDocumentViewer(QWidget *parent) : QWidget(parent)
 {
@@ -21,37 +22,27 @@ void TabbedDocumentViewer::setCentralWidget(QWidget *central)
 	UNUSED(central);
 }
 
-void TabbedDocumentViewer::addDocument(QIcon icon, QString name, const QVariant &document_pointer)
+void TabbedDocumentViewer::addDocument(QIcon icon, QString name, Document *ptr)
 {
+	m_documents.push_back(ptr);
 	int tab_index = m_tabbar->addTab(icon, name);
-	m_tabbar->setTabData(tab_index,document_pointer);
+	m_tabbar->setCurrentIndex(tab_index);
 	updateLayout();
 
 }
 
-void TabbedDocumentViewer::addDocument(QString name, const QVariant &document_pointer)
+void TabbedDocumentViewer::addDocument(QString name, Document *ptr)
 {
+	m_documents.push_back(ptr);
 	int tab_index = m_tabbar->addTab(name);
-	m_tabbar->setTabData(tab_index,document_pointer);
-	updateLayout();
-
-}
-
-void TabbedDocumentViewer::removeDocument(const QVariant &document_pointer)
-{
-	int tabindex = 0; // TODO
-//	if(tabindex == -1){
-//		return;
-//	}
-	m_tabbar->removeTab(tabindex);
-
+	m_tabbar->setCurrentIndex(tab_index);
 	updateLayout();
 
 }
 
 void TabbedDocumentViewer::tabbarClicked(int index)
 {
-	emit tabClicked(m_tabbar->tabData(index));
+	emit tabClicked(m_documents[index]);
 }
 
 void TabbedDocumentViewer::paintEvent(QPaintEvent *event)
