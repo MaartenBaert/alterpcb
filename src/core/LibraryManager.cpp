@@ -386,7 +386,7 @@ void LibraryManager::UpdatePersistentModelIndices() {
 	QModelIndexList oldlist = persistentIndexList();
 	QModelIndexList newlist = oldlist;
 	for(int i = 0; i < oldlist.size(); ++i) {
-		int row;
+		int row = 0; // to avoid compiler warning
 		LibraryTreeItem *item_ptr = (LibraryTreeItem*) oldlist[i].internalPointer();
 		switch(item_ptr->GetTreeItemType()) {
 			case LIBRARYTREEITEMTYPE_LIBRARY: {

@@ -18,17 +18,26 @@ You should have received a copy of the GNU General Public License
 along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "Basics.h"
 #include "MainWindow.h"
+#include "StringRegistry.h"
 
 // these are temporary, for testing:
 #include "Drawing.h"
+#include "Json.h"
 #include "Library.h"
 #include "LibraryManager.h"
 #include "Shape.h"
-#include "StringRegistry.h"
 #include "VData.h"
 
+// these are temporary, for testing:
+#include <cfenv>
+#include <cfloat>
+#include <chrono>
+#include <iomanip>
 #include <iostream>
+#include <random>
+#include <sstream>
 
 void Examples1() {
 
@@ -102,18 +111,111 @@ void Examples1() {
 				tag_extra, MakeVList(nullptr, true, 42, 12.34, "Test"));
 	std::cerr << "c2 = " << c2 << std::endl;
 
+	// Testing small/large numbers:
+	VData d = MakeVList(
+		12.34e-10, 12.34e-9, 12.34e-8, 12.34e-7, 12.34e-6, 12.34e-5, 12.34e-4,
+		12.34e-3 , 12.34e-2, 12.34e-1, 12.34e+0, 12.34e+1, 12.34e+2, 12.34e+3,
+		12.34e+4 , 12.34e+5, 12.34e+6, 12.34e+7, 12.34e+8, 12.34e+9, 12.34e+10,
+		M_PI, 1.0e-310, 1.0e-315, 1.0e-320, 0.0 / 0.0, 1e200 * 1e200, sqrt(-1.0), log(0.0),
+		1, 12, 123, 1234, -12345, -123456, -123456789, -9223372036854775807, 9223372036854775807, 0.1, 0.2, 0.3, 0.4);
+	//std::cerr.precision(17);
+	std::cerr << "d = " << d << std::endl;
+	std::cerr << "JSON: ";
+	Json::Format format;
+	format.multiline = false;
+	Json::ToStream(d, std::cerr.rdbuf(), format);
+	std::cerr << std::endl;
+
+}
+
+void Examples2() {
+
+	VData data;
+
+	auto t1 = std::chrono::high_resolution_clock::now();
+	Json::FromFile(data, "data/json-large-data/json-testdata3.json");
+	auto t2 = std::chrono::high_resolution_clock::now();
+	Json::ToFile(data, "data/json-large-data/json-testdata3-out.json");
+	auto t3 = std::chrono::high_resolution_clock::now();
+
+	VData data2;
+	Json::FromFile(data2, "data/json-large-data/json-testdata3.json");
+
+	//std::cerr << "Testdata1 = " << data << std::endl;
+	std::cerr << "JSON read time=" << std::chrono::duration<double>(t2 - t1).count() << std::endl;
+	std::cerr << "JSON write time=" << std::chrono::duration<double>(t3 - t2).count() << std::endl;
+	std::cerr << "Equal=" << (data == data2) << std::endl;
+
+}
+
+void Examples3() {
+
+	Json::Format format;
+	format.multiline = false;
+
+	std::mt19937_64 rng(std::chrono::high_resolution_clock::now().time_since_epoch().count());
+	//std::uniform_int_distribution<uint64_t> dist(0x0010000000000000, 0x7fefffffffffffff); // without zero and subnormals
+	std::uniform_int_distribution<uint64_t> dist(0x0000000000000000, 0x7fefffffffffffff); // with zero and subnormals
+	//std::uniform_int_distribution<uint64_t> dist(0x4400000000000000, 0x480fffffffffffff); // good range for finding rounding errors
+
+	std::cerr << "Round trip testing ..." << std::endl;
+	size_t n = 1000000;
+	for(size_t i = 0; i < n; ++i) {
+		for(size_t j = 0; j < n; ++j) {
+			uint64_t val1 = dist(rng);
+			val1 |= (rng() & 1) << 63;
+			//val1 = 0x4510eef878a0b98b;
+			VData val2 = MemCast<double>(val1);
+			std::string str;
+			Json::ToString(val2, str, format);
+			/*
+			std::string str2;
+			{
+				std::ostringstream ss;
+				ss.precision(16);
+				ss << std::scientific << val2.AsFloat();
+				str2 = ss.str();
+			}*/
+			VData val3;
+			Json::FromString(val3, str);
+			uint64_t val4 = MemCast<uint64_t>(val3.AsFloat());
+			if(val2.AsFloat() != val3.AsFloat() || val1 != val4) {
+				uint32_t sign1 = val1 >> 63;
+				uint32_t expo1 = (val1 >> 52) & ((UINT64_C(1) << 11) - 1);
+				uint64_t mant1 = val1 & ((UINT64_C(1) << 52) - 1);
+				uint32_t sign4 = val4 >> 63;
+				uint32_t expo4 = (val4 >> 52) & ((UINT64_C(1) << 11) - 1);
+				uint64_t mant4 = val4 & ((UINT64_C(1) << 52) - 1);
+				std::cerr.precision(16);
+				std::cerr << "fail: "
+						  << std::right << sign1 << "/" << std::setw(4) << expo1 << "/" << std::setw(16) << mant1 << " >> "
+						  << std::left << std::setw(25) << std::scientific << val2.AsFloat() << " >> "
+						  << std::left << std::setw(25) << str << " >> "
+						  << std::left << std::setw(25) << std::scientific << val3.AsFloat() << " >> "
+						  << std::right << sign4 << "/" << std::setw(4) << expo4 << "/" << std::setw(16) << mant4 << std::endl;
+			}
+		}
+		std::cerr << "Completed " << (i + 1) * n << " tests ..." << std::endl;
+	}
+	std::cerr << "Round trip test complete!" << std::endl;
+
 }
 
 int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
 
-	#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-		QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
-		QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
-	#endif
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+	QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+	QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+#endif
 
 	StringRegistry string_registry;
 	UNUSED(string_registry);
+
+	//Examples1();
+	//Examples2();
+	//Examples3();
+	//return 0;
 
 	LibraryManager library_manager;
 	{
@@ -147,8 +249,6 @@ int main(int argc, char *argv[]) {
 		lib7->NewDrawing(StringRegistry::NewTag("resistor8"), DRAWINGTYPE_SYMBOL);
 		lib7->NewDrawing(StringRegistry::NewTag("resistor9"), DRAWINGTYPE_LAYOUT);
 	}
-
-	Examples1();
 
 	MainWindow window(&library_manager);
 	UNUSED(window);

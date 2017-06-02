@@ -11,10 +11,10 @@
 #define GL_ENABLE_DEBUG_CALLBACK 1
 #endif
 
-// Set to 1 to raise SIGINT when an OpenGL error occurs.
-#define GL_SIGINT_ON_ERROR 1
+// Set to 1 to break into the debugger when an OpenGL error occurs.
+#define GL_BREAK_ON_ERROR 1
 
-#if GL_ENABLE_DEBUG_CALLBACK && GL_SIGINT_ON_ERROR
+#if GL_ENABLE_DEBUG_CALLBACK && GL_BREAK_ON_ERROR
 #include <csignal>
 #endif
 
@@ -46,6 +46,7 @@ void CompileVS(GLvs &vs, const char *source) {
 								 + "\n\nSource:\n" + AddLineNumbers(source));
 	}
 }
+
 void CompileGS(GLgs &gs, const char *source) {
 	int temp;
 	gs.New();
@@ -60,6 +61,7 @@ void CompileGS(GLgs &gs, const char *source) {
 								 + "\n\nSource:\n" + AddLineNumbers(source));
 	}
 }
+
 void CompileFS(GLfs &fs, const char *source) {
 	int temp;
 	fs.New();
@@ -74,6 +76,7 @@ void CompileFS(GLfs &fs, const char *source) {
 								 + "\n\nSource:\n" + AddLineNumbers(source));
 	}
 }
+
 void LinkSP(GLsp& sp, GLuint vs, GLuint gs, GLuint fs,
 			std::initializer_list<const char*> attrib_list,
 			std::initializer_list<const char*> fragdata_list,
@@ -144,9 +147,9 @@ void OpenGLDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 		case GL_DEBUG_SEVERITY_NOTIFICATION: std::cerr << "NOTIFICATION";   break;
 	}
 	std::cerr << " / "<< std::string(message, length) << std::endl;
-#if GL_SIGINT_ON_ERROR
+#if GL_BREAK_ON_ERROR
 	if(type == GL_DEBUG_TYPE_ERROR) {
-		raise(SIGINT);
+		raise(SIGTRAP);
 	}
 #endif
 }
@@ -154,11 +157,15 @@ void OpenGLDebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
 
 void GLRegisterDebugCallback() {
 #if GL_ENABLE_DEBUG_CALLBACK
-	GLuint ids = 0;
-	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, &ids, GL_TRUE);
-	glDebugMessageCallback(OpenGLDebugCallback, NULL);
-	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	glEnable(GL_DEBUG_OUTPUT);
-	std::cerr << "[OpenGL] Debugging enabled." << std::endl;
+	if(GLEW_KHR_debug) {
+		GLuint ids = 0;
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, &ids, GL_TRUE);
+		glDebugMessageCallback(OpenGLDebugCallback, NULL);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		glEnable(GL_DEBUG_OUTPUT);
+		std::cerr << "[OpenGL] Debugging enabled." << std::endl;
+	} else {
+		std::cerr << "[OpenGL] Debugging not supported by driver." << std::endl;
+	}
 #endif
 }

@@ -20,4 +20,41 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-//TODO//
+#include "StringHelper.h"
+#include "VData.h"
+
+#include <streambuf>
+#include <string>
+
+namespace Json {
+
+class ParseError : public std::runtime_error {
+private:
+	size_t m_line, m_column, m_length; // these start at zero - add one when displaying to the user
+public:
+	template<typename... Args>
+	inline ParseError(size_t line, size_t column, size_t length, Args&&... args)
+		: std::runtime_error(MakeString("JSON parse error: ", std::forward<Args>(args)...,
+										" (line ", line + 1, ", column ", column + 1, ", length ", length, ")")),
+		m_line(line), m_column(column), m_length(length) {}
+	inline size_t GetLine() { return m_line; }
+	inline size_t GetColumn() { return m_column; }
+	inline size_t GetLength() { return m_length; }
+};
+
+struct Format {
+	bool multiline;
+	uint32_t precision;
+	bool engineering;
+	inline Format() : multiline(true), precision(17), engineering(false) {}
+};
+
+void FromStream(VData &data, std::streambuf *stream);
+void FromString(VData &data, const std::string &str);
+void FromFile(VData &data, const std::string &filename);
+
+void ToStream(const VData &data, std::streambuf *stream, const Format &format = Format());
+void ToString(const VData &data, std::string &str, const Format &format = Format());
+void ToFile(const VData &data, const std::string &filename, const Format &format = Format());
+
+}

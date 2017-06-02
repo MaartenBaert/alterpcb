@@ -187,6 +187,13 @@ public:
 	inline VData& operator=(Dict &&value) { Destruct(); ConstructDict(std::move(value)); return *this; }
 
 	template<typename... Args>
+	inline std::string& NewString(Args&&... args) {
+		Destruct();
+		ConstructString(std::forward<Args>(args)...);
+		return m_value_string;
+	}
+
+	template<typename... Args>
 	inline List& NewList(Args&&... args) {
 		Destruct();
 		ConstructList(std::forward<Args>(args)...);
@@ -325,12 +332,19 @@ inline hash_t VDataDictHasher::operator()(hash_t hash, stringtag_t value) const 
 
 std::ostream& operator<<(std::ostream &stream, const VData &data);
 
+bool operator==(const VData &a, const VData &b);
+
+inline bool operator!=(const VData &a, const VData &b) {
+	return !(a == b);
+}
+
+inline void ExtendVList(VData::List&) {}
+
 template<typename V, typename... Args>
 inline void ExtendVList(VData::List &ref, V &&value, Args&&... args) {
 	ref.emplace_back(std::forward<V>(value));
 	ExtendVList(ref, std::forward<Args>(args)...);
 }
-inline void ExtendVList(VData::List&) {}
 
 template<typename... Args>
 inline VData MakeVList(Args&&... args) {
@@ -341,12 +355,13 @@ inline VData MakeVList(Args&&... args) {
 	return data;
 }
 
+inline void ExtendVDict(VData::Dict&) {}
+
 template<typename K, typename V, typename... Args>
 inline void ExtendVDict(VData::Dict &ref, K &&key, V &&value, Args&&... args) {
 	ref.EmplaceBack(std::forward<K>(key), std::forward<V>(value));
 	ExtendVDict(ref, std::forward<Args>(args)...);
 }
-inline void ExtendVDict(VData::Dict&) {}
 
 template<typename... Args>
 inline VData MakeVDict(Args&&... args) {

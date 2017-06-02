@@ -20,27 +20,19 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include <cassert>
-#include <cmath>
-#include <cstdint>
-#include <cstring>
+#include <sstream>
 
-typedef double real_t;
-typedef uint32_t index_t;
-typedef uint32_t stringtag_t;
-typedef uint32_t hash_t;
+inline void ExtendString(std::ostringstream&) {}
 
-struct Vertex {
-	real_t x, y;
-	inline Vertex() {}
-	inline Vertex(double x, double y) : x(x), y(y) {}
-};
+template<typename V, typename... Args>
+inline void ExtendString(std::ostringstream &ss, V &&value, Args&&... args) {
+	ss << std::forward<V>(value);
+	ExtendString(ss, std::forward<Args>(args)...);
+}
 
-constexpr index_t INDEX_NONE = (index_t) -1;
-constexpr index_t STRINGTAG_NONE = (stringtag_t) -1;
-
-#define UNUSED(x) ((void) (x))
-
-#if defined(__GNUC__) && !defined(__clang__)
-#define MAY_ALIAS __attribute((__may_alias__))
-#endif
+template<typename... Args>
+inline std::string MakeString(Args&&... args) {
+	std::ostringstream ss;
+	ExtendString(ss, std::forward<Args>(args)...);
+	return ss.str();
+}

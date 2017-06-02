@@ -60,8 +60,10 @@ inline hash_t HashData(hash_t hash, const void *data, size_t size) {
 #else
 	const uint8_t *bytes = data;
 	for(size_t i = 0; i < word_count; ++i) {
-		const uint8_t *word = bytes + i * 4;
-		uint32_t value = (uint32_t) word[0] | ((uint32_t) word[1] << 8) | ((uint32_t) word[2] << 16) | ((uint32_t) word[3] << 24);
+		//const uint8_t *word = bytes + i * 4;
+		//uint32_t value = (uint32_t) word[0] | ((uint32_t) word[1] << 8) | ((uint32_t) word[2] << 16) | ((uint32_t) word[3] << 24);
+		uint32_t value;
+		memcpy(value, bytes + i * 4, 4);
 		hash = HashData32(hash, value);
 	}
 #endif

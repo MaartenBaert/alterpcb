@@ -13,15 +13,35 @@ QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 
 ########## Warning: Everything below this line is auto-generated and will be overwritten! ##########
 
+tests {
+
+	HEADERS += \
+		tests/catch.hpp
+
+	SOURCES += \
+		tests/Main.cpp \
+		tests/TestDecimal.cpp \
+		tests/TestJson.cpp
+
+} else {
+
+	SOURCES += \
+		main/Main.cpp
+
+}
+
 HEADERS += \
 	common/Basics.h \
 	common/Color.h \
 	common/Cow.h \
+	common/Decimal.h \
 	common/EnumTranslator.h \
 	common/HashTable.h \
 	common/Json.h \
+	common/MiscMath.h \
 	common/MurmurHash.h \
 	common/SafePointer.h \
+	common/StringHelper.h \
 	common/StringRegistry.h \
 	common/TrackingPointer.h \
 	common/VData.h \
@@ -46,8 +66,8 @@ HEADERS += \
 	gui/dialogs/LibraryConfigDialog.h
 
 SOURCES += \
-	Main.cpp \
 	common/Color.cpp \
+	common/Decimal.cpp \
 	common/Json.cpp \
 	common/StringRegistry.cpp \
 	common/VData.cpp \

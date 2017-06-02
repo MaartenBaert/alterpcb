@@ -121,3 +121,11 @@ public:
 	}
 
 };
+
+// convenience functions (shorter name)
+inline stringtag_t SRNewTag(const std::string &str) { return StringRegistry::NewTag(str); }
+inline stringtag_t SRNewTag(std::string &&str) { return StringRegistry::NewTag(str); }
+inline stringtag_t SRNewTag(const char *str) { return StringRegistry::NewTag(str); }
+inline stringtag_t SRFindTag(const std::string &str) { return StringRegistry::FindTag(str); }
+inline stringtag_t SRFindTag(const char *str) { return StringRegistry::FindTag(str); }
+inline const std::string& SRGetString(stringtag_t tag) { return StringRegistry::GetString(tag); }

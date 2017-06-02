@@ -61,7 +61,7 @@ std::ostream& operator<<(std::ostream &stream, const VData &data) {
 			const VData::Dict &ref = data.AsDict();
 			if(ref.GetSize() != 0) {
 				stream << '"' << StringRegistry::GetString(ref[0].Key()) << "\": " << ref[0].Value();
-				for(size_t i = 1; i < ref.GetSize(); ++i) {
+				for(index_t i = 1; i < ref.GetSize(); ++i) {
 					stream << ", \"" << StringRegistry::GetString(ref[i].Key()) << "\": " << ref[i].Value();
 				}
 			}
@@ -70,4 +70,41 @@ std::ostream& operator<<(std::ostream &stream, const VData &data) {
 		}
 	}
 	return stream;
+}
+
+bool operator==(const VData &a, const VData &b) {
+	if(a.GetType() != b.GetType())
+		return false;
+	switch(a.GetType()) {
+		case VDATA_NULL: return true;
+		case VDATA_BOOL: return (a.AsBool() == b.AsBool());
+		case VDATA_INT: return (a.AsInt() == b.AsInt());
+		case VDATA_FLOAT: return (a.AsFloat() == b.AsFloat());
+		case VDATA_STRING: return (a.AsString() == b.AsString());
+		case VDATA_LIST: {
+			const VData::List &ref1 = a.AsList(), &ref2 = b.AsList();
+			if(ref1.size() != ref2.size())
+				return false;
+			for(size_t i = 0; i < ref1.size(); ++i) {
+				if(ref1[i] != ref2[i])
+					return false;
+			}
+			return true;
+		}
+		case VDATA_DICT: {
+			const VData::Dict &ref1 = a.AsDict(), &ref2 = b.AsDict();
+			if(ref1.GetSize() != ref2.GetSize())
+				return false;
+			for(size_t i = 0; i < ref1.GetSize(); ++i) {
+				if(ref1[i].Key() != ref2[i].Key())
+					return false;
+				if(ref1[i].Value() != ref2[i].Value())
+					return false;
+			}
+			return true;
+		}
+	}
+	// this should never be reached
+	assert(false);
+	return false;
 }

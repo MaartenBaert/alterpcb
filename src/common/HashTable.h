@@ -21,6 +21,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include "Basics.h"
+#include "MiscMath.h"
 #include "MurmurHash.h"
 
 #include <cstdint>

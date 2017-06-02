@@ -20,27 +20,26 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include <cassert>
-#include <cmath>
-#include <cstdint>
-#include <cstring>
+#include "Basics.h"
 
-typedef double real_t;
-typedef uint32_t index_t;
-typedef uint32_t stringtag_t;
-typedef uint32_t hash_t;
+#include <cstddef>
+#include <utility>
 
-struct Vertex {
-	real_t x, y;
-	inline Vertex() {}
-	inline Vertex(double x, double y) : x(x), y(y) {}
+enum FloatType {
+	FLOATTYPE_NORMAL,
+	FLOATTYPE_INF,
+	FLOATTYPE_NAN,
 };
 
-constexpr index_t INDEX_NONE = (index_t) -1;
-constexpr index_t STRINGTAG_NONE = (stringtag_t) -1;
+struct Decimal {
+	FloatType type;
+	bool negative;
+	int32_t expo;
+	uint64_t mant;
+};
 
-#define UNUSED(x) ((void) (x))
+constexpr size_t DECIMAL_BUFFER_SIZE = 25;
+constexpr uint64_t DECIMAL_MANT_MAX = UINT64_C(13446744073709551615);
 
-#if defined(__GNUC__) && !defined(__clang__)
-#define MAY_ALIAS __attribute((__may_alias__))
-#endif
+Decimal ToDecimal(double value, uint32_t precision);
+double FromDecimal(Decimal dec);
