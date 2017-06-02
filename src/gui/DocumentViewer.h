@@ -21,9 +21,9 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include "Basics.h"
-#include "TabbedDocumentViewer.h"
 #include "Document.h"
 #include "TrackingPointer.h"
+#include "TearOutTabbar.h"
 
 #include <QWidget>
 #include <QtGui>
@@ -42,7 +42,8 @@ private:
 	DrawingViewer *m_drawing_viewer;
 	Document *m_active_document;
 
-	QTabBar *m_tabbar;
+	TearOutTabbar *m_tabbar;
+	//QTabBar *m_tabbar;
 	QWidget *m_base;
 	QRect m_panelrect;
 	QVBoxLayout *m_layout;

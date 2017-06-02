@@ -49,9 +49,9 @@ HEADERS += \
 	gui/components/FilepathDelegate.h \
 	gui/components/FilepathEditor.h \
 	gui/components/LayerWidget.h \
-	gui/components/TabbedDocumentViewer.h \
 	gui/dialogs/LayerConfigDialog.h \
-	gui/dialogs/LibraryConfigDialog.h
+	gui/dialogs/LibraryConfigDialog.h \
+    gui/components/TearOutTabbar.h
 
 SOURCES += \
 	Main.cpp \
@@ -79,6 +79,6 @@ SOURCES += \
 	gui/components/FilepathDelegate.cpp \
 	gui/components/FilepathEditor.cpp \
 	gui/components/LayerWidget.cpp \
-	gui/components/TabbedDocumentViewer.cpp \
 	gui/dialogs/LayerConfigDialog.cpp \
-	gui/dialogs/LibraryConfigDialog.cpp
+	gui/dialogs/LibraryConfigDialog.cpp \
+    gui/components/TearOutTabbar.cpp

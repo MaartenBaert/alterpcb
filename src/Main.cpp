@@ -124,8 +124,8 @@ int main(int argc, char *argv[]) {
 	{
 
 		Library *lib1 = library_manager.NewLibrary("Basic", "basic.alterlib.json", LIBRARYTYPE_JSON);
-		Library *lib2 = library_manager.NewLibrary("My PCB", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
-		Library *lib3 = library_manager.NewLibrary("My Scripts", "myscripts.alterlib.py", LIBRARYTYPE_PYTHON);
+		Library *lib2 = lib1;//library_manager.NewLibrary("My PCB", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
+		Library *lib3 = lib1;//library_manager.NewLibrary("My Scripts", "myscripts.alterlib.py", LIBRARYTYPE_PYTHON);
 		Library *lib4 = library_manager.NewLibrary("Very small pcb", "verylongpcblibname.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib5 = library_manager.NewLibrary("Random PCB", "myrandompcb.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib6 = library_manager.NewLibrary("Ugly PCB", "uglypcb.alterlib.json", LIBRARYTYPE_JSON);
@@ -136,7 +136,7 @@ int main(int argc, char *argv[]) {
 		lib1->NewDrawing(StringRegistry::NewTag("resistor"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("4layerpcb"));
 		lib1->NewDrawing(StringRegistry::NewTag("via"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("2layerpcb"));
 		lib1->NewDrawing(StringRegistry::NewTag("pad"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("2layerpcb"));
-		lib2->NewDrawing(StringRegistry::NewTag("toplevel"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("4layerpcb"));
+		lib1->NewDrawing(StringRegistry::NewTag("toplevel"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("4layerpcb"));
 		lib2->NewDrawing(StringRegistry::NewTag("part1"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("4layerpcb"));
 		lib2->NewDrawing(StringRegistry::NewTag("part2"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("2layerpcb"));
 		lib2->NewDrawing(StringRegistry::NewTag("part3"), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("2layerpcb"));
@@ -162,11 +162,11 @@ int main(int argc, char *argv[]) {
 		layerstack2->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top1"),QColor(0,100,0),LAYERTEXTURE_SOLID));
 		layerstack2->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top2"),QColor(0,255,50),LAYERTEXTURE_SOLID));
 
-
 	}
 
 	LoadIcons();
 	MainWindow window(&library_manager);
+	//MainWindow window2(&library_manager);
 	UNUSED(window);
 	return app.exec();
 }

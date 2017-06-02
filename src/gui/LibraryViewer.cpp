@@ -96,7 +96,7 @@ DropLocation LibraryViewer::getDropLocation(QRect &index_rect, QPoint pos) {
 
 void LibraryViewer::dragEnterEvent(QDragEnterEvent *event)
 {
-	if(event->mimeData()->hasFormat("application/x-alterpcb-librarytreeitem"))
+	if(event->mimeData()->hasFormat("application/LibraryTreeItemsMime"))
 	{
 		event->accept();
 	}

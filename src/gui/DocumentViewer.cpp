@@ -1,7 +1,6 @@
 #include "Document.h"
 #include "DocumentViewer.h"
 #include "DrawingViewer.h"
-#include "components/TabbedDocumentViewer.h"
 #include "LayerManager.h"
 #include "LibraryManager.h"
 #include "Library.h"
@@ -20,18 +19,18 @@ DocumentViewer::DocumentViewer(QWidget *parent, MainWindow *main_window) : QWidg
 	m_drawing_viewer = new DrawingViewer(this);
 
 	m_base = new QWidget(this);
-	m_tabbar = new QTabBar(this);
-	m_tabbar->setTabsClosable(true);
-	m_tabbar->setMovable(true);
-	m_tabbar->setExpanding(false);
-	connect(m_tabbar,SIGNAL(currentChanged(int)),this,SLOT(OnActiveDocumentChange(int)));
-	connect(m_tabbar,SIGNAL(tabCloseRequested(int)),this,SLOT(OnRemoveDocument(int)));
-	connect(m_tabbar,SIGNAL(tabMoved(int, int)),this,SLOT(OnDocumentMove(int,int)));
+	m_tabbar = new TearOutTabbar(this);
+	//m_tabbar = new QTabBar(this);
+//	m_tabbar->setTabsClosable(true);
+//	m_tabbar->setMovable(true);
+//	m_tabbar->setExpanding(false);
+//	connect(m_tabbar,SIGNAL(currentChanged(int)),this,SLOT(OnActiveDocumentChange(int)));
+//	connect(m_tabbar,SIGNAL(tabCloseRequested(int)),this,SLOT(OnRemoveDocument(int)));
+//	connect(m_tabbar,SIGNAL(tabMoved(int, int)),this,SLOT(OnDocumentMove(int,int)));
 
 	m_layout=new QVBoxLayout(m_base);
 	m_layout->setMargin(2);
 	m_layout->addWidget(m_drawing_viewer);
-
 	updateLayout();
 }
 
