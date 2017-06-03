@@ -25,11 +25,17 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtGui>
 
+class MainWindow;
+
 class LibraryViewer : public QTreeView {
 	Q_OBJECT
 
+private:
+	MainWindow *m_main_window;
+	QRect m_drop_indicator_rect;
+
 public:
-	LibraryViewer(QWidget *parent = 0);
+	LibraryViewer(QWidget *parent, MainWindow *main_window);
 	~LibraryViewer();
 
 	void dragEnterEvent(QDragEnterEvent *event);
@@ -39,8 +45,6 @@ public:
 	void paintEvent(QPaintEvent *event);
 
 private:
-	QRect m_drop_indicator_rect;
-
 	DropLocation getDropLocation(QRect &index_rect, QPoint pos);
 
 private slots:

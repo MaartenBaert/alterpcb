@@ -3,8 +3,11 @@
 #include "LibraryTreeItem.h"
 #include "LibraryManager.h"
 #include "core/CoreBasics.h"
+#include "MainWindow.h"
+#include "Drawing.h"
 
-LibraryViewer::LibraryViewer(QWidget *parent) : QTreeView(parent) {
+LibraryViewer::LibraryViewer(QWidget *parent, MainWindow *main_window) : QTreeView(parent) {
+	m_main_window = main_window;
 
 	setAcceptDrops(true);
 	setDragDropMode(QAbstractItemView::DragDrop);
@@ -15,6 +18,7 @@ LibraryViewer::LibraryViewer(QWidget *parent) : QTreeView(parent) {
 	setSelectionBehavior(QAbstractItemView::SelectRows);
 	setSelectionMode(QAbstractItemView::ExtendedSelection);
 	setUniformRowHeights(true);
+
 
 	setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -30,7 +34,11 @@ LibraryViewer::~LibraryViewer() {
 void LibraryViewer::OnDoubleClick(const QModelIndex &index)
 {
 	UNUSED(index);
-	std::cerr << "LIBVIEWER: TODO DoubleClick open file" << std::endl;
+
+	LibraryTreeItem *Item = (LibraryTreeItem*) index.internalPointer();
+	if(Item->GetTreeItemType() == LIBRARYTREEITEMTYPE_DRAWING){
+		m_main_window->GetDocumentViewer()->OpenDrawing(static_cast<Drawing*>(Item));
+	}
 }
 
 void LibraryViewer::OnRightClick(const QPoint &point)

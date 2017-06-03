@@ -30,6 +30,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 class LibraryManager;
 class Drawing;
+class LayerStack;
 
 class Library : public LibraryTreeItem, public TrackingTarget<Library> {
 
@@ -40,6 +41,7 @@ private:
 	std::vector<TrackingPointer<Drawing>> m_schematics;
 	std::vector<TrackingPointer<Drawing>> m_symbols;
 	std::vector<TrackingPointer<Drawing>> m_layouts;
+	std::vector<TrackingPointer<LayerStack>> m_layerstacks;
 
 public:
 	Library(LibraryManager *parent, const std::string &name, const std::string &filename, LibraryType type);
@@ -49,8 +51,9 @@ public:
 	Library(const Library&) = delete;
 	Library& operator=(const Library&) = delete;
 
-	Drawing* NewDrawing(stringtag_t name, DrawingType type);
+	Drawing* NewDrawing(stringtag_t name, DrawingType type,stringtag_t layerstack);
 	void DeleteDrawing(Drawing *drawing);
+	LayerStack* NewLayerStack(stringtag_t name);
 
 	size_t GetDrawingIndex(Drawing *drawing);
 
@@ -65,6 +68,8 @@ public:
 	inline size_t GetSymbolCount() { return m_symbols.size(); }
 	inline Drawing* GetLayout(size_t index) { assert(index < m_layouts.size()); return m_layouts[index].Get(); }
 	inline size_t GetLayoutCount() { return m_layouts.size(); }
+	LayerStack* GetLayerStack(stringtag_t layerstack_name);
+	inline size_t GetLayerStackCount() { return m_layerstacks.size(); }
 
 	inline void SetName(const std::string &name) {m_name = name;}
 	inline void SetFilePath(const std::string &filename) {m_file_name = filename;}

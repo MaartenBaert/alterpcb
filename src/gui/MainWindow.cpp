@@ -22,19 +22,21 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "LibraryManager.h"
 #include "LibraryViewer.h"
 #include "ParameterViewer.h"
+#include "LayerManager.h"
+#include "LayerViewer.h"
 
 #include "DrawingViewer.h"
 #include "dialogs/LibraryConfigDialog.h"
+#include "dialogs/LayerConfigDialog.h"
 
 const QString MainWindow::WINDOW_TITLE = "AlterPCB";
 
 MainWindow::MainWindow(LibraryManager* library_manager) {
-
 	setWindowTitle(WINDOW_TITLE);
 	m_library_manager = library_manager;
+	m_layer_manager = new LayerManager(this);
 	m_library_config_dialog = NULL;
-
-	Editor *editor = new Editor();
+	m_layer_config_dialog = NULL;
 
 	QMenuBar *menubar = new QMenuBar(this);
 	{
@@ -54,7 +56,8 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 		QMenu *menu_edit = menubar->addMenu(tr("&Edit"));
 		QAction *act_open_library_manager = menu_edit->addAction(tr("Library Manager"));
 		connect(act_open_library_manager, SIGNAL (triggered(bool)), this, SLOT (OpenLibraryConfigDialog()));
-		menu_edit->addAction("Test");
+		QAction *act_open_layer_manager = menu_edit->addAction(tr("Layer Manager"));
+		connect(act_open_layer_manager, SIGNAL (triggered(bool)), this, SLOT (OpenLayerConfigDialog()));
 		menu_edit->addAction("Test");
 	}
 
@@ -65,43 +68,41 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 
 	setMenuBar(menubar);
 
-	ParameterViewer *parameter_viewer;
+
 	{
 		QDockWidget *dock = new QDockWidget(tr("Parameters"), this);
 		dock->setObjectName("dock_parameters");
-		parameter_viewer = new ParameterViewer(dock);
-		dock->setWidget(parameter_viewer);
+		m_parameter_viewer = new ParameterViewer(dock,this);
+		dock->setWidget(m_parameter_viewer);
 		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 		addDockWidget(Qt::RightDockWidgetArea, dock);
 		menu_view_showhide->addAction(dock->toggleViewAction());
 	}
 
-	QTreeView *layer_viewer;
 	{
 		QDockWidget *dock = new QDockWidget(tr("Layers"), this);
 		dock->setObjectName("dock_layers");
-		layer_viewer = new QTreeView(dock);
-		layer_viewer->setUniformRowHeights(true);
-		dock->setWidget(layer_viewer);
+		m_layer_viewer = new LayerViewer(dock,this);
+		dock->setWidget(m_layer_viewer);
 		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 		addDockWidget(Qt::LeftDockWidgetArea, dock);
 		menu_view_showhide->addAction(dock->toggleViewAction());
 	}
 
-	QTreeView *library_viewer;
 	{
 		QDockWidget *dock = new QDockWidget(tr("Libraries"), this);
 		dock->setObjectName("dock_libraries");
-		library_viewer = new LibraryViewer(dock);
-		library_viewer->setModel(library_manager);
-		library_viewer->hideColumn(1); //TODO remove once the searchable lib viewer is made with a proxy model (IF this is not there, the drag and drop is broken)
-		dock->setWidget(library_viewer);
+		m_library_viewer = new LibraryViewer(dock,this);
+		m_library_viewer->setModel(m_library_manager);
+		m_library_viewer->hideColumn(1); //TODO remove once the searchable lib viewer is made with a proxy model (IF this is not there, the drag and drop is broken)
+		dock->setWidget(m_library_viewer);
 		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 		addDockWidget(Qt::LeftDockWidgetArea, dock);
 		menu_view_showhide->addAction(dock->toggleViewAction());
 	}
 
-	setCentralWidget(editor);
+	m_document_viewer = new DocumentViewer(this,this);
+	setCentralWidget(m_document_viewer);
 
 	QToolBar *toolbar = new QToolBar(this);
 	toolbar->setMovable(false);
@@ -149,5 +150,23 @@ void MainWindow::CloseLibraryConfigDialog()
 	if(m_library_config_dialog != NULL) {
 		m_library_config_dialog->deleteLater();
 		m_library_config_dialog = NULL;
+	}
+}
+
+void MainWindow::OpenLayerConfigDialog()
+{
+	if(m_layer_config_dialog == NULL) {
+		m_layer_config_dialog = new LayerConfigDialog(this,m_layer_manager);
+		m_layer_config_dialog->show();
+	} else {
+		m_layer_config_dialog->raise();
+	}
+}
+
+void MainWindow::CloseLayerConfigDialog()
+{
+	if(m_layer_config_dialog != NULL) {
+		m_layer_config_dialog->deleteLater();
+		m_layer_config_dialog = NULL;
 	}
 }

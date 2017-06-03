@@ -24,6 +24,7 @@ stamp-h1
 build/
 build-debug/
 build-release/
+build-alterpcb-Desktop-Debug/
 src/alterpcb
 
 private-*

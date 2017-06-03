@@ -21,20 +21,34 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include "Basics.h"
-#include "Editor.h"
+#include "DocumentViewer.h"
+#include "LayerManager.h"
+#include "LayerViewer.h"
+#include "LibraryManager.h"
+#include "LibraryViewer.h"
+#include "ParameterViewer.h"
 
 #include <QtGui>
 
-class LibraryManager;
 class LibraryConfigDialog;
+class LayerConfigDialog;
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
 
 private:
 	static const QString WINDOW_TITLE;
+	DocumentViewer *m_document_viewer;
+	LayerManager *m_layer_manager;
+	LayerViewer *m_layer_viewer;
 	LibraryManager *m_library_manager;
+	LibraryViewer *m_library_viewer;
+	ParameterViewer *m_parameter_viewer;
+
+
 	LibraryConfigDialog *m_library_config_dialog;
+	LayerConfigDialog *m_layer_config_dialog;
+
 
 private:
 	// member variables here
@@ -43,8 +57,14 @@ public:
 	MainWindow(LibraryManager* library_manager);
 	~MainWindow();
 
+	inline LayerManager *GetLayerManager() {return m_layer_manager;}
+	inline LibraryManager *GetLibraryManager() {return m_library_manager;}
+	inline DocumentViewer *GetDocumentViewer() {return m_document_viewer;}
+
 public slots:
 	void OpenLibraryConfigDialog();
 	void CloseLibraryConfigDialog();
+	void OpenLayerConfigDialog();
+	void CloseLayerConfigDialog();
 
 };

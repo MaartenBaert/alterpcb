@@ -20,35 +20,21 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include "Basics.h"
+#include "CoreBasics.h"
+
 #include <QtGui>
 
-enum FoldButtonSTATE {
-	FoldButtonSTATE_FOLDED,
-	FoldButtonSTATE_UNFOLDED,
-	FoldButtonSTATE_DISABLED
-};
+class MainWindow;
 
-class FoldButton : public QPushButton {
+class LayerViewer : public QTreeView {
 	Q_OBJECT
 
-private:
-	FoldButtonSTATE m_state;
-	bool m_hover = false;
-
 public:
-	FoldButton(QWidget *parent);
-	~FoldButton();
-
-	void setButtonState(FoldButtonSTATE state);
-	void enterEvent(QEvent *event);
-	void leaveEvent(QEvent *event);
+	LayerViewer(QWidget *parent, MainWindow *main_window);
 
 private slots:
-	void onClick();
-
-private:
-	void toggle_state();
-	void paintEvent(QPaintEvent *event);
-
-
+	void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected) override;
 };
+
+

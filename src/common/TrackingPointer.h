@@ -191,9 +191,10 @@ size_t IndexInVector(const std::vector<TrackingPointer<T>> &vec, T *ptr) {
 
 template<typename T>
 void DeleteFromVector(std::vector<TrackingPointer<T>> &vec, size_t index) {
-	if(index != vec.size() - 1)
+	/*if(index != vec.size() - 1)
 		vec[index] = std::move(vec.back());
-	vec.pop_back();
+	vec.pop_back();*/
+	vec.erase(vec.begin() + index);
 }
 
 template<typename T>

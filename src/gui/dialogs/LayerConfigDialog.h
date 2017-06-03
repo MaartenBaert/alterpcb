@@ -18,34 +18,22 @@ You should have received a copy of the GNU General Public License
 along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Drawing.h"
+#pragma once
 
-Drawing::Drawing(Library *parent, stringtag_t name, DrawingType type, stringtag_t layerstack) : LibraryTreeItem(LIBRARYTREEITEMTYPE_DRAWING){
-	m_parent = parent;
-	m_name = name;
-	m_type = type;
-	m_layerstack = layerstack;
-}
+#include <QtGui>
 
-void Drawing::HistoryClear() {
-	m_history.clear();
-	m_history.emplace_back(false);
-}
+class MainWindow;
+class LayerManager;
 
-void Drawing::HistoryRevert() {
-	//TODO//
-}
+class LayerConfigDialog : public QDialog {
+	Q_OBJECT
 
-void Drawing::HistoryPush(bool soft) {
-	UNUSED(soft);
-	//TODO//
-}
+private:
+	MainWindow *m_parent;
 
-void Drawing::HistoryUndo() {
-	//TODO//
-}
+public:
+	LayerConfigDialog(MainWindow *parent,LayerManager *layer_manager);
+	virtual void closeEvent(QCloseEvent *event) override;
+};
 
-void Drawing::HistoryRedo() {
-	//TODO//
-}
 

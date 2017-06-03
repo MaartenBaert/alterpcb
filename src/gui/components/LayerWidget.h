@@ -22,11 +22,27 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtGui>
 
-class KeyValueEditor : public QWidget {
+class LayerManager;
+
+class LayerWidget: public QWidget
+{
 	Q_OBJECT
 
+private:
+	LayerManager *m_layer_mananger;
+
+	static const int LAYOUT_TOTAL_WIDTH = 200;
+	static const int LAYOUT_TOTAL_SPACING = 20;
+
+	static const int LAYOUT_METAL_HEIGHT = 20;
+	const QColor LAYOUT_METAL_COLOR = QColor(128, 255, 255);
+	static const int LAYOUT_DIE_HEIGHT = 20;
+	const QColor LAYOUT_DIE_COLOR = QColor(128, 255, 255);
+
 public:
-	KeyValueEditor(QWidget *parent, const QString &key, const QString &value, bool hasChildren, int key_width = 100);
+	LayerWidget(QWidget *parent, LayerManager* layer_manager);
+
+protected:
+	virtual void paintEvent(QPaintEvent* event)	override;
 
 };
-

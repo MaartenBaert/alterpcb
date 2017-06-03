@@ -178,7 +178,7 @@ private:
 	template<typename K>
 	inline index_t FindAt(hash_t hash, const K &key) const {
 		for(index_t i = m_buckets[hash].m_hashlink; i != INDEX_NONE; i = m_data[i].m_hashlink) {
-			if(m_data[i] == key)
+			if(static_cast<const T&>(m_data[i]) == key)
 				return i;
 		}
 		return INDEX_NONE;
