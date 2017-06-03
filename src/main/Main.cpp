@@ -261,6 +261,30 @@ int main(int argc, char *argv[]) {
 		LayerStack *layerstack2 = lib1->NewLayerStack(StringRegistry::NewTag("2layerpcb"));
 		layerstack2->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top1"),QColor(0,100,0),LAYERTEXTURE_SOLID));
 		layerstack2->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top2"),QColor(0,255,50),LAYERTEXTURE_SOLID));
+
+		Cow<VData::Dict> params1;
+		{
+			VData::Dict &dict = params1.New();
+			dict.EmplaceBack(StringRegistry::NewTag("x"),10);
+			dict.EmplaceBack(StringRegistry::NewTag("y"),0);
+			dict.EmplaceBack(StringRegistry::NewTag("R"),530);
+		}
+
+		Cow<VData::Dict> params2;
+		{
+			VData::Dict &dict = params2.New();
+			dict.EmplaceBack(StringRegistry::NewTag("x"),10);
+			dict.EmplaceBack(StringRegistry::NewTag("y"),12.5);
+			dict.EmplaceBack(StringRegistry::NewTag("H"),45);
+			dict.EmplaceBack(StringRegistry::NewTag("W"),152);
+		}
+
+		std::vector<Cow<Shape>> shapes;
+		shapes.emplace_back(std::make_shared<Shape>(StringRegistry::NewTag("round-shape"),std::move(params1)));
+		shapes.emplace_back(std::make_shared<Shape>(StringRegistry::NewTag("square-shape"),std::move(params2)));
+
+		lib1->GetLayout(0)->HistoryPush(std::move(shapes),false);
+
 	}
 
 	LoadIcons();

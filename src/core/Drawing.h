@@ -35,11 +35,13 @@ class Library;
 class DrawingHistory {
 
 private:
-	bool m_soft;
 	std::vector<Cow<Shape>> m_shapes;
+	bool m_soft;
 
 public:
-	inline DrawingHistory(bool soft) : m_soft(soft) {}
+	inline DrawingHistory() {}
+	inline DrawingHistory(std::vector<Cow<Shape>> &&shapes, bool soft)
+		: m_shapes(std::move(shapes)), m_soft(soft) {}
 
 	// default copy and assignment
 	DrawingHistory(const DrawingHistory&) = default;
@@ -62,6 +64,7 @@ private:
 	DrawingType m_type;
 	std::vector<DrawingHistory> m_history;
 	size_t m_history_position;
+	size_t m_max_history_position = 10;
 	stringtag_t m_layerstack;
 
 public:
@@ -71,9 +74,9 @@ public:
 	Drawing(const Drawing&) = delete;
 	Drawing& operator=(const Drawing&) = delete;
 
-	void HistoryClear();
+	void HistoryClear(std::vector<Cow<Shape>> &&shapes);
 	void HistoryRevert();
-	void HistoryPush(bool soft = false);
+	void HistoryPush(std::vector<Cow<Shape>> &&shapes, bool soft = false);
 	void HistoryUndo();
 	void HistoryRedo();
 
@@ -84,7 +87,7 @@ public:
 	inline DrawingType GetType() const { return m_type; }
 	inline stringtag_t GetLayerStack() const { return m_layerstack; }
 
-	inline       std::vector<Cow<Shape>>& GetShapes()       { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
+	//inline       std::vector<Cow<Shape>>& GetShapes()       { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
 	inline const std::vector<Cow<Shape>>& GetShapes() const { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
 
 	inline void SetName(stringtag_t name) { m_name = name; }

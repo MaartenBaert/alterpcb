@@ -131,6 +131,7 @@ void DocumentViewer::OnActiveDocumentChange(int index)
 		m_active_document = m_documents[index].Get();
 	}
 	m_main_window->GetLayerManager()->AfterDocumentChange();
+	m_main_window->GetParameterViewer()->UpdateParameters();
 }
 
 void DocumentViewer::paintEvent(QPaintEvent *event)

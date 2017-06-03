@@ -1,8 +1,12 @@
 #include "ParameterViewer.h"
 #include "StringRegistry.h"
+#include "MainWindow.h"
+#include "Drawing.h"
 #include "Icons.h"
+#include "Json.h"
 #include <sstream>
 #include <iostream>
+
 
 ParameterViewer::ParameterViewer(QWidget *parent, MainWindow *mainwindow) : QAbstractScrollArea(parent) {
 	m_mainwindow = mainwindow;
@@ -22,93 +26,10 @@ ParameterViewer::ParameterViewer(QWidget *parent, MainWindow *mainwindow) : QAbs
 
 	UpdateRange();
 
-	loadTestParam();
 }
 
 ParameterViewer::~ParameterViewer() {}
 
-
-void ParameterViewer::loadTestParam()
-{
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
-
-
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Layer"),VData("Copper-top"),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("X"),VData(78.44),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Y"),VData(45.4156),false,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Radius"),VData(5.6),true,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Width"),VData(10),false,false,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Mirror"),VData(true),true,true,false);
-	m_parameters.EmplaceBack(StringRegistry::NewTag("Angle"),VData(45),true,false,true);
-
-
-
-
-	for(index_t i = 0 ; i < m_parameters.GetSize(); ++i) {
-		QLineEdit *valuebox = new QLineEdit(viewport());
-		if(m_parameters[i].m_mergeable){
-			std::stringstream s;
-			s << m_parameters[i].m_value;
-			valuebox->setText(QString::fromStdString(s.str()));
-		}
-		else {
-			valuebox->setText("...");
-			if(m_parameters[i].m_expanded){
-				ExpandParameter(i);
-			}
-		}
-		this->AddWidget(i,valuebox);
-	}
-
-}
 
 static QSize GetWidgetSize(QWidget* widget)
 {
@@ -128,57 +49,57 @@ static QSize GetWidgetSize(QWidget* widget)
 
 index_t ParameterViewer::GetWidgetCount()
 {
-	return m_widgets.size();
+	return m_parameters.GetSize();
 }
 
 QWidget* ParameterViewer::GetWidget(index_t index)
 {
-	assert(index < m_widgets.size());
-	return m_widgets[index];
+	assert(index < m_parameters.GetSize());
+	return m_parameters[index].m_widget;
 }
 
-void ParameterViewer::AddWidget(index_t index, QWidget* widget)
-{
-	assert(index <= m_widgets.size());
-	assert(widget->parent() == viewport());
+//void ParameterViewer::AddWidget(index_t index, QWidget* widget)
+//{
+//	assert(index <= m_parameters.GetSize());
+//	assert(widget->parent() == viewport());
 
-	widget->setAutoFillBackground(true);
-	widget->setBackgroundRole(QPalette::Window);
-	if(widget->focusPolicy() == Qt::NoFocus)
-		widget->setFocusPolicy(Qt::ClickFocus);
-	widget->show();
+//	widget->setAutoFillBackground(true);
+//	widget->setBackgroundRole(QPalette::Window);
+//	if(widget->focusPolicy() == Qt::NoFocus)
+//		widget->setFocusPolicy(Qt::ClickFocus);
+//	widget->show();
 
-	m_widgets.insert(m_widgets.begin() + index, widget);
-	UpdateFocusChain();
-	UpdateRange();
-	UpdateLayout();
+//	m_widgets.insert(m_widgets.begin() + index, widget);
+//	UpdateFocusChain();
+//	UpdateRange();
+//	UpdateLayout();
 
-}
+//}
 
-void ParameterViewer::RemoveWidget(index_t index)
-{
-	assert(index < m_widgets.size());
+//void ParameterViewer::RemoveWidget(index_t index)
+//{
+//	assert(index < m_parameters.GetSize());
 
-	delete m_widgets[index];
-	m_widgets.erase(m_widgets.begin() + index);
-	UpdateFocusChain();
-	UpdateRange();
-	UpdateLayout();
+//	delete m_widgets[index];
+//	m_widgets.erase(m_widgets.begin() + index);
+//	UpdateFocusChain();
+//	UpdateRange();
+//	UpdateLayout();
 
-}
+//}
 
-void ParameterViewer::MoveWidget(index_t from, index_t to)
-{
-	assert(from < m_widgets.size());
-	assert(to < m_widgets.size());
+//void ParameterViewer::MoveWidget(index_t from, index_t to)
+//{
+//	assert(from < m_parameters.GetSize());
+//	assert(to < m_parameters.GetSize());
 
-	QWidget *widget = m_widgets[from];
-	m_widgets.erase(m_widgets.begin() + from);
-	m_widgets.insert(m_widgets.begin() + to, widget);
-	UpdateFocusChain();
-	UpdateLayout();
+//	QWidget *widget = m_widgets[from];
+//	m_widgets.erase(m_widgets.begin() + from);
+//	m_widgets.insert(m_widgets.begin() + to, widget);
+//	UpdateFocusChain();
+//	UpdateLayout();
 
-}
+//}
 
 void ParameterViewer::MakeVisible(QWidget* widget)
 {
@@ -198,6 +119,76 @@ void ParameterViewer::MakeVisible(QWidget* widget)
 			verticalScrollBar()->setValue(visible_rect.top() + widget_rect.bottom() - visible_rect.bottom());
 		}
 	}
+}
+
+void ParameterViewer::UpdateParameters()
+{
+	const std::vector<Cow<::Shape>>& shapes = m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->GetShapes();
+	HashTable<ParameterEntry, ParameterHasher> new_parameters;
+
+	// make new m_parameter
+	// copy existing widgets + expanded info
+	for(index_t i = 0 ; i < shapes.size(); ++i) {
+		const ::Shape &shaperef = shapes[i].Ref();
+		VData::Dict params = shaperef.GetParams().Ref();
+
+		for(index_t j = 0 ; j < params.GetSize(); ++j) {
+			// does the parameter already exist in new_parameter
+			//		if Yes is it mergable or not
+			//			if No set bools + change widget text
+			// if No does the parameter already exist in m_parameters
+			//		if Yes copy widget pointer + expanded
+			//		if No make widget
+
+			std::pair<index_t, bool> added = new_parameters.TryEmplaceBack(params[j].Key(),params[j].Key(),params[j].Value(),true,true,false,nullptr);
+
+			if(!added.second) { // parameter exists
+				if(new_parameters[added.first].m_value != params[j].Value()) { // not mergable
+					new_parameters[added.first].m_mergeable = false;
+					static_cast<QLineEdit*>(new_parameters[added.first].m_widget)->setText("...");
+				}
+			}
+			else {
+				index_t index = m_parameters.Find(params[j].Key());
+				if(index == INDEX_NONE) {
+					QLineEdit *valuebox = new QLineEdit(viewport());
+					std::string str;
+					Json::ToString(params[j].Value(),str);
+					valuebox->setText(QString::fromStdString(str));
+					valuebox->setAutoFillBackground(true);
+					valuebox->setBackgroundRole(QPalette::Window);
+					if(valuebox->focusPolicy() == Qt::NoFocus)
+						valuebox->setFocusPolicy(Qt::ClickFocus);
+					valuebox->show();
+					new_parameters[added.first].m_widget = valuebox;
+				}
+				else { // copy widget pointer
+					new_parameters[added.first].m_widget = m_parameters[index].m_widget;
+					new_parameters[added.first].m_expanded = m_parameters[index].m_expanded;
+					m_parameters[index].m_widget = NULL;
+				}
+			}
+		}
+
+	}
+
+	// remove unused widgets
+	for(index_t i = 0 ; i < m_parameters.GetSize(); ++i) {
+		if(m_parameters[i].m_widget != NULL) {
+			m_parameters[i].m_widget->deleteLater();
+			for(index_t j = 0 ; j < m_parameters[i].m_subparameters.size(); ++j) {
+				m_parameters[i].m_subparameters[j].m_widget->deleteLater();
+			}
+		}
+	}
+
+	// copy new parameters to m_parameter
+	m_parameters = std::move(new_parameters);
+
+	UpdateFocusChain();
+	UpdateRange();
+	UpdateLayout();
+
 }
 
 bool ParameterViewer::viewportEvent(QEvent* event)
@@ -244,9 +235,9 @@ void ParameterViewer::paintEvent(QPaintEvent *event)
 	int y = -verticalScrollBar()->value();
 	y = y + LAYOUT_VSPACING;
 
-	for(index_t i = 0; i < m_widgets.size(); ++i)
+	for(index_t i = 0; i < m_parameters.GetSize(); ++i)
 	{
-		QSize size = GetWidgetSize(m_widgets[i]);
+		QSize size = GetWidgetSize(m_parameters[i].m_widget);
 
 		// INDEX FOLDBUTTON
 		{
@@ -261,7 +252,7 @@ void ParameterViewer::paintEvent(QPaintEvent *event)
 				opt_foldbutton.state |= QStyle::State_Children;
 			}
 
-			if(i < m_widgets.size()-1){
+			if(i < m_parameters.GetSize()-1){
 				opt_foldbutton.state |= QStyle::State_Sibling;
 			}
 
@@ -325,7 +316,7 @@ void ParameterViewer::paintEvent(QPaintEvent *event)
 			for(index_t j = 0; j < m_parameters[i].m_subparameters.size(); ++j){
 
 				// SUBINDEX FOLDBUTTON
-				if(i < m_widgets.size()-1){
+				if(i < m_parameters.GetSize()-1){
 					QStyleOptionButton opt_foldbutton;
 					opt_foldbutton.state = QStyle::State_Active | QStyle::State_Enabled | QStyle::State_Sibling;
 					opt_foldbutton.rect = QRect(0,y-LAYOUT_VSPACING/2,LAYOUT_FOLDBUTTONWIDTH,size.height()+LAYOUT_VSPACING);
@@ -499,9 +490,9 @@ void ParameterViewer::UpdateFocusChain()
 	QWidget *current_widget;
 	QWidget *next_widget;
 
-	for(index_t i = 0; i < m_widgets.size(); ++i) {
+	for(index_t i = 0; i < m_parameters.GetSize(); ++i) {
 
-		current_widget = m_widgets[i];
+		current_widget = m_parameters[i].m_widget;
 		if(!m_parameters[i].m_mergeable && m_parameters[i].m_expanded){
 			next_widget = m_parameters[i].m_subparameters[0].m_widget;
 			setTabOrder(current_widget,next_widget);
@@ -514,8 +505,8 @@ void ParameterViewer::UpdateFocusChain()
 			current_widget = m_parameters[i].m_subparameters.back().m_widget;
 		}
 		else{
-			if(i != m_widgets.size()-1){
-				next_widget = m_widgets[i+1];
+			if(i != m_parameters.GetSize()-1){
+				next_widget = m_parameters[i+1].m_widget;
 				setTabOrder(current_widget,next_widget);
 			}
 		}
@@ -524,8 +515,8 @@ void ParameterViewer::UpdateFocusChain()
 
 void ParameterViewer::UpdateRange() {
 	int height = LAYOUT_VSPACING;
-	for(index_t i = 0; i < m_widgets.size(); ++i) {
-		QSize size = GetWidgetSize(m_widgets[i]);
+	for(index_t i = 0; i < m_parameters.GetSize(); ++i) {
+		QSize size = GetWidgetSize(m_parameters[i].m_widget);
 		height += size.height() + LAYOUT_VSPACING;
 
 		if(!m_parameters[i].m_mergeable && m_parameters[i].m_expanded){
@@ -544,14 +535,14 @@ void ParameterViewer::UpdateLayout() {
 	int y = -verticalScrollBar()->value();
 
 	y = y + LAYOUT_VSPACING;
-	for(index_t i = 0; i < m_widgets.size(); ++i)
+	for(index_t i = 0; i < m_parameters.GetSize(); ++i)
 	{
-		QSize size = GetWidgetSize(m_widgets[i]);
+		QSize size = GetWidgetSize(m_parameters[i].m_widget);
 
-		m_widgets[i]->setGeometry(LAYOUT_LABELWIDTH+LAYOUT_FOLDBUTTONWIDTH+4*LAYOUT_HSPACING+LAYOUT_OVERRIDEBUTTONWIDTH, y, viewport()->width()-LAYOUT_LABELWIDTH-LAYOUT_FOLDBUTTONWIDTH-5*LAYOUT_HSPACING-LAYOUT_OVERRIDEBUTTONWIDTH, size.height());
-		m_widgets[i]->setContentsMargins(0,0,0,0);
+		m_parameters[i].m_widget->setGeometry(LAYOUT_LABELWIDTH+LAYOUT_FOLDBUTTONWIDTH+4*LAYOUT_HSPACING+LAYOUT_OVERRIDEBUTTONWIDTH, y, viewport()->width()-LAYOUT_LABELWIDTH-LAYOUT_FOLDBUTTONWIDTH-5*LAYOUT_HSPACING-LAYOUT_OVERRIDEBUTTONWIDTH, size.height());
+		m_parameters[i].m_widget->setContentsMargins(0,0,0,0);
 		if(!m_parameters[i].m_override) {
-			static_cast<QLineEdit*>(m_widgets[i])->setEnabled(false);
+			static_cast<QLineEdit*>(m_parameters[i].m_widget)->setEnabled(false);
 		}
 
 		y += size.height()+LAYOUT_VSPACING;
@@ -578,9 +569,9 @@ void ParameterViewer::positionToIndex(const QPoint &pos)
 
 	y = y + LAYOUT_VSPACING/2;
 	index_t i = 0;
-	while(i < m_widgets.size() && m_current_index == INDEX_NONE)
+	while(i < m_parameters.GetSize() && m_current_index == INDEX_NONE)
 	{
-		QSize size = GetWidgetSize(m_widgets[i]);
+		QSize size = GetWidgetSize(m_parameters[i].m_widget);
 		y += size.height()+LAYOUT_VSPACING;
 
 		if(pos.y() < y){

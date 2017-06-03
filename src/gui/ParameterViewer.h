@@ -52,11 +52,12 @@ struct ParameterEntry {
 	bool m_override;
 	bool m_mergeable;
 	bool m_expanded;
+	QWidget *m_widget;
 	std::vector<SubParameterEntry> m_subparameters;
-	inline ParameterEntry(stringtag_t name, const VData &value, bool override, bool mergeable, bool folded)
-		: m_name(name), m_value(value), m_override(override), m_mergeable(mergeable), m_expanded(folded) {}
-	inline ParameterEntry(stringtag_t name, VData &&value, bool override, bool mergeable, bool folded)
-		: m_name(name), m_value(std::move(value)), m_override(override), m_mergeable(mergeable), m_expanded(folded) {}
+	inline ParameterEntry(stringtag_t name, const VData &value, bool override, bool mergeable, bool folded,QWidget *widget)
+		: m_name(name), m_value(value), m_override(override), m_mergeable(mergeable), m_expanded(folded), m_widget(widget) {}
+	inline ParameterEntry(stringtag_t name, VData &&value, bool override, bool mergeable, bool folded,QWidget *widget)
+		: m_name(name), m_value(std::move(value)), m_override(override), m_mergeable(mergeable), m_expanded(folded), m_widget(widget) {}
 };
 
 //******************************************************************************************//
@@ -81,8 +82,6 @@ class ParameterViewer : public QAbstractScrollArea {
 
 private:
 	MainWindow *m_mainwindow;
-	std::vector<QWidget*> m_widgets;
-	std::vector<Shape*> m_selected_shapes;
 	HashTable<ParameterEntry, ParameterHasher> m_parameters;
 	HOVER_REGION m_hover_region;
 	bool m_button_pressed;
@@ -103,11 +102,12 @@ public:
 	index_t GetWidgetCount();
 	QWidget* GetWidget(index_t index);
 
-	void AddWidget(index_t index, QWidget* widget);
-	void RemoveWidget(index_t index);
-	void MoveWidget(index_t from, index_t to);
+//	void AddWidget(index_t index, QWidget* widget);
+//	void RemoveWidget(index_t index);
+//	void MoveWidget(index_t from, index_t to);
 
 	void MakeVisible(QWidget* widget);
+	void UpdateParameters();
 
 protected:
 	virtual bool viewportEvent(QEvent* event) override;
@@ -133,7 +133,6 @@ private:
 	void changeHoverRegion(HOVER_REGION hover_region);
 	void ensureWidgetVisible(QWidget *childWidget);
 
-	void loadTestParam();
 };
 
 

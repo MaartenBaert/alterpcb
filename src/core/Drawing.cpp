@@ -25,27 +25,49 @@ Drawing::Drawing(Library *parent, stringtag_t name, DrawingType type, stringtag_
 	m_name = name;
 	m_type = type;
 	m_layerstack = layerstack;
+
+	std::vector<Cow<Shape>> shapes;
+	HistoryClear(std::move(shapes));
 }
 
-void Drawing::HistoryClear() {
+void Drawing::HistoryClear(std::vector<Cow<Shape>> &&shapes) {
 	m_history.clear();
-	m_history.emplace_back(false);
+	m_history.emplace_back(std::move(shapes),false);
+
+	m_history_position = 0;
 }
 
 void Drawing::HistoryRevert() {
 	//TODO//
 }
 
-void Drawing::HistoryPush(bool soft) {
-	UNUSED(soft);
-	//TODO//
+void Drawing::HistoryPush(std::vector<Cow<Shape>> &&shapes, bool soft) {
+	m_history.resize(m_history_position+1);
+
+	if(soft && m_history.back().IsSoft()) {
+		m_history.pop_back();
+		m_history.emplace_back(std::move(shapes), soft);
+	}
+	else {
+		m_history.emplace_back(std::move(shapes), soft);
+
+		if(m_history.size() > m_max_history_position) {
+			m_history.erase(m_history.begin());
+		}
+	}
+
+	m_history_position = m_history.size() - 1;
 }
 
 void Drawing::HistoryUndo() {
-	//TODO//
+	if(m_history_position > 0) {
+		m_history_position = m_history_position - 1;
+	}
 }
 
 void Drawing::HistoryRedo() {
-	//TODO//
+	if(m_history_position < m_history.size()-1) {
+		m_history_position = m_history_position + 1;
+	}
 }
 

@@ -60,6 +60,7 @@ public:
 	inline LayerManager *GetLayerManager() {return m_layer_manager;}
 	inline LibraryManager *GetLibraryManager() {return m_library_manager;}
 	inline DocumentViewer *GetDocumentViewer() {return m_document_viewer;}
+	inline ParameterViewer *GetParameterViewer() {return m_parameter_viewer;}
 
 public slots:
 	void OpenLibraryConfigDialog();
