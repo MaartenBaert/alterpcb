@@ -22,6 +22,11 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <memory>
 
+/*
+A type of smart pointer which automatically sets itself to NULL when its target is deleted.
+Similar to std::weak_ptr, but without the requirement that the target is managed by std::shared_ptr.
+*/
+
 template<typename T>
 class SafePointer;
 

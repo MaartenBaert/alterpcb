@@ -191,10 +191,14 @@ size_t IndexInVector(const std::vector<TrackingPointer<T>> &vec, T *ptr) {
 
 template<typename T>
 void DeleteFromVector(std::vector<TrackingPointer<T>> &vec, size_t index) {
-	/*if(index != vec.size() - 1)
-		vec[index] = std::move(vec.back());
-	vec.pop_back();*/
 	vec.erase(vec.begin() + index);
+}
+
+template<typename T>
+void DeleteFromVectorUnordered(std::vector<TrackingPointer<T>> &vec, size_t index) {
+	if(index != vec.size() - 1)
+		vec[index] = std::move(vec.back());
+	vec.pop_back();
 }
 
 template<typename T>
@@ -208,7 +212,7 @@ template<typename T>
 TrackingPointer<T> MoveFromVector(std::vector<TrackingPointer<T>> &vec, T *ptr) {
 	size_t index = IndexInVector(vec, ptr);
 	TrackingPointer<T> object(std::move(vec[index]));
-	vec.erase(vec.begin() + index);
+	DeleteFromVector(vec, index);
 	return object;
 }
 

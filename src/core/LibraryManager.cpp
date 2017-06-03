@@ -22,8 +22,11 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Library.h"
 #include "Drawing.h"
+#include "Shape.h"
+#include "ShapeDefinition.h"
 #include "StringRegistry.h"
 #include "Icons.h"
+
 #include <iostream>
 
 LibraryManager::LibraryManager() {
@@ -44,6 +47,16 @@ Library *LibraryManager::NewLibrary(const std::string &name, const std::string &
 
 void LibraryManager::DeleteLibrary(Library *library) {
 	DeleteFromVector(m_libraries, library);
+}
+
+void LibraryManager::AddShapeDefinition(stringtag_t name, ShapeDefinition *shape_definition) {
+	index_t index = m_shape_trackers.TryEmplaceBack(name, name).first;
+	shape_definition->InsertBack(&m_shape_trackers[index].m_shape_definitions);
+}
+
+void LibraryManager::AddShapeInstance(stringtag_t name, Shape *shape_instance) {
+	index_t index = m_shape_trackers.TryEmplaceBack(name, name).first;
+	shape_instance->InsertBack(&m_shape_trackers[index].m_shape_instances);
 }
 
 QModelIndex LibraryManager::index(int row, int column, const QModelIndex &parent) const {
