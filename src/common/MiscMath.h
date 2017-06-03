@@ -115,10 +115,8 @@ inline uint64_t FixMul64F(uint64_t a, uint64_t b) {
 	UINT128 c = (UINT128) a * (UINT128) b;
 	return c >> 64;
 #else
-	uint32_t a0 = a;
-	uint32_t a1 = a >> 32;
-	uint32_t b0 = b;
-	uint32_t b1 = b >> 32;
+	uint32_t a0 = a, a1 = a >> 32;
+	uint32_t b0 = b, b1 = b >> 32;
 	uint64_t c00 = (uint64_t) a0 * (uint64_t) b0;
 	uint64_t c01 = (uint64_t) a0 * (uint64_t) b1;
 	uint64_t c10 = (uint64_t) a1 * (uint64_t) b0;
@@ -136,14 +134,11 @@ inline uint64_t FixMul64R(uint64_t a, uint64_t b) {
 	static_assert(__SIZEOF_INT128__ == 16, "Size of 128-bit integer should be 16 bytes!");
 	static_assert(sizeof(UINT128) == 16, "Size of 128-bit integer should be 16 bytes!");
 	UINT128 c = (UINT128) a * (UINT128) b;
-	uint64_t lo = c;
-	uint64_t hi = c >> 64;
+	uint64_t lo = c, hi = c >> 64;
 	return hi + (lo >> 63);
 #else
-	uint32_t a0 = a;
-	uint32_t a1 = a >> 32;
-	uint32_t b0 = b;
-	uint32_t b1 = b >> 32;
+	uint32_t a0 = a, a1 = a >> 32;
+	uint32_t b0 = b, b1 = b >> 32;
 	uint64_t c00 = (uint64_t) a0 * (uint64_t) b0;
 	uint64_t c01 = (uint64_t) a0 * (uint64_t) b1;
 	uint64_t c10 = (uint64_t) a1 * (uint64_t) b0;

@@ -191,9 +191,9 @@ TEST_CASE("JSON floating point formatting, scientific", "[json]") {
 	format.engineering = false;
 
 	VData data = MakeVList(
-		1.234e-10, 1.234e-9, 1.234e-8, 1.234e-7, 1.234e-6, 1.234e-5, 1.234e-4,
-		1.234e-3 , 1.234e-2, 1.234e-1, 1.234e+0, 1.234e+1, 1.234e+2, 1.234e+3,
-		1.234e+4 , 1.234e+5, 1.234e+6, 1.234e+7, 1.234e+8, 1.234e+9, 1.234e+10,
+		1.234e-04, 1.234e-03, 1.234e-02, 1.234e-01, 1.234e+00, 1.234e+01, 1.234e+02,
+		1.234e+03, 1.234e+04, 1.234e+05, 1.234e+06, 1.234e+07, 1.234e+08, 1.234e+09,
+		1.234e+10, 1.234e+11, 1.234e+12, 1.234e+13, 1.234e+14, 1.234e+15, 1.234e+16,
 		0.0);
 	std::string str, ref;
 	Json::ToString(data, str, format);
@@ -214,9 +214,9 @@ TEST_CASE("JSON floating point formatting, engineering", "[json]") {
 	format.engineering = true;
 
 	VData data = MakeVList(
-		1.234e-10, 1.234e-9, 1.234e-8, 1.234e-7, 1.234e-6, 1.234e-5, 1.234e-4,
-		1.234e-3 , 1.234e-2, 1.234e-1, 1.234e+0, 1.234e+1, 1.234e+2, 1.234e+3,
-		1.234e+4 , 1.234e+5, 1.234e+6, 1.234e+7, 1.234e+8, 1.234e+9, 1.234e+10,
+		1.234e-04, 1.234e-03, 1.234e-02, 1.234e-01, 1.234e+00, 1.234e+01, 1.234e+02,
+		1.234e+03, 1.234e+04, 1.234e+05, 1.234e+06, 1.234e+07, 1.234e+08, 1.234e+09,
+		1.234e+10, 1.234e+11, 1.234e+12, 1.234e+13, 1.234e+14, 1.234e+15, 1.234e+16,
 		0.0);
 	std::string str, ref;
 	Json::ToString(data, str, format);
@@ -239,17 +239,17 @@ TEST_CASE("JSON floating point parsing", "[json]") {
 	VData data2;
 	Json::FromString(data2, "1234.5678");
 	REQUIRE(data2.GetType() == VDATA_FLOAT);
-	REQUIRE(data2.AsFloat() == 1234.5678);
+	REQUIRE(data2.AsFloat() == 1234.5678e6);
 
 	VData data3;
 	Json::FromString(data3, "1234.");
 	REQUIRE(data3.GetType() == VDATA_FLOAT);
-	REQUIRE(data3.AsFloat() == 1234.0);
+	REQUIRE(data3.AsFloat() == 1234.0e6);
 
 	VData data4;
 	Json::FromString(data4, ".1234");
 	REQUIRE(data4.GetType() == VDATA_FLOAT);
-	REQUIRE(data4.AsFloat() == 0.1234);
+	REQUIRE(data4.AsFloat() == 0.1234e6);
 
 	VData data5;
 	Json::FromString(data5, "0.");
@@ -259,12 +259,12 @@ TEST_CASE("JSON floating point parsing", "[json]") {
 	VData data6;
 	Json::FromString(data6, "100000000000000000000000000000000000000000000000000");
 	REQUIRE(data6.GetType() == VDATA_FLOAT);
-	REQUIRE(data6.AsFloat() == 1e50);
+	REQUIRE(data6.AsFloat() == 1.0e56);
 
 	VData data7;
 	Json::FromString(data7, "100000000000000000000000000000000000000000000000000e-350");
 	REQUIRE(data7.GetType() == VDATA_FLOAT);
-	REQUIRE(data7.AsFloat() == 1e-300);
+	REQUIRE(data7.AsFloat() == 1.0e-294);
 
 	VData data8;
 	Json::FromString(data8, "1e400");
@@ -279,7 +279,7 @@ TEST_CASE("JSON floating point parsing", "[json]") {
 	VData data10;
 	Json::FromString(data10, "0.9999999999999999999999999999999999999999");
 	REQUIRE(data10.GetType() == VDATA_FLOAT);
-	REQUIRE(data10.AsFloat() == 1.0);
+	REQUIRE(data10.AsFloat() == 1.0e6);
 
 }
 
