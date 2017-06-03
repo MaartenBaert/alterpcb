@@ -49,6 +49,7 @@ HEADERS += \
 	common/StringRegistry.h \
 	common/TrackingPointer.h \
 	common/VData.h \
+	common/Vector.h \
 	core/CoreBasics.h \
 	core/Document.h \
 	core/Drawing.h \
@@ -58,8 +59,10 @@ HEADERS += \
 	core/LibraryManager.h \
 	core/LibraryManagerConfigProxy.h \
 	core/LibraryTreeItem.h \
-	core/Shape.h \
+	core/ShapeData.h \
 	core/ShapeDefinition.h \
+	core/ShapeInstance.h \
+	core/ShapePrototype.h \
 	gui/DocumentViewer.h \
 	gui/DrawingViewer.h \
 	gui/GLHelper.h \
@@ -88,7 +91,9 @@ SOURCES += \
 	core/Library.cpp \
 	core/LibraryManager.cpp \
 	core/LibraryManagerConfigProxy.cpp \
-	core/Shape.cpp \
+	core/ShapeDefinition.cpp \
+	core/ShapeInstance.cpp \
+	core/ShapePrototype.cpp \
 	gui/DocumentViewer.cpp \
 	gui/DrawingViewer.cpp \
 	gui/GLHelper.cpp \

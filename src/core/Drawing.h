@@ -29,18 +29,18 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-class Shape;
+class ShapeInstance;
 class Library;
 
 class DrawingHistory {
 
 private:
-	std::vector<Cow<Shape>> m_shapes;
+	std::vector<Cow<ShapeInstance>> m_shapes;
 	bool m_soft;
 
 public:
 	inline DrawingHistory() {}
-	inline DrawingHistory(std::vector<Cow<Shape>> &&shapes, bool soft)
+	inline DrawingHistory(std::vector<Cow<ShapeInstance>> &&shapes, bool soft)
 		: m_shapes(std::move(shapes)), m_soft(soft) {}
 
 	// default copy and assignment
@@ -51,8 +51,8 @@ public:
 
 	inline bool IsSoft() const { return m_soft; }
 
-	inline       std::vector<Cow<Shape>>& GetShapes()       { return m_shapes; }
-	inline const std::vector<Cow<Shape>>& GetShapes() const { return m_shapes; }
+	inline       std::vector<Cow<ShapeInstance>>& GetShapes()       { return m_shapes; }
+	inline const std::vector<Cow<ShapeInstance>>& GetShapes() const { return m_shapes; }
 
 };
 
@@ -74,9 +74,9 @@ public:
 	Drawing(const Drawing&) = delete;
 	Drawing& operator=(const Drawing&) = delete;
 
-	void HistoryClear(std::vector<Cow<Shape>> &&shapes);
+	void HistoryClear(std::vector<Cow<ShapeInstance>> &&shapes);
 	void HistoryRevert();
-	void HistoryPush(std::vector<Cow<Shape>> &&shapes, bool soft = false);
+	void HistoryPush(std::vector<Cow<ShapeInstance>> &&shapes, bool soft = false);
 	void HistoryUndo();
 	void HistoryRedo();
 
@@ -88,14 +88,14 @@ public:
 	inline stringtag_t GetLayerStack() const { return m_layerstack; }
 
 	//inline       std::vector<Cow<Shape>>& GetShapes()       { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
-	inline const std::vector<Cow<Shape>>& GetShapes() const { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
+	inline const std::vector<Cow<ShapeInstance>>& GetShapes() const { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
 
 	inline void SetName(stringtag_t name) { m_name = name; }
 
 };
 
-struct DrawingCompare {
+/*struct DrawingCompare {
 	inline bool operator()(const TrackingPointer<Drawing> &a, const TrackingPointer<Drawing> &b) const {
 		return StringRegistry::GetString(a->GetName()) < StringRegistry::GetString(b->GetName());
 	}
-};
+};*/

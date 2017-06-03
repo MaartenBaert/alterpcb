@@ -20,10 +20,9 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include "Basics.h"
 #include "CoreBasics.h"
 #include "SafePointer.h"
-
-#include <cassert>
 
 #include <vector>
 

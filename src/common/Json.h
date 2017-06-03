@@ -49,12 +49,26 @@ struct Format {
 	inline Format() : multiline(true), precision(17), engineering(false) {}
 };
 
+extern Format DEFAULT_FORMAT;
+
 void FromStream(VData &data, std::streambuf *stream);
 void FromString(VData &data, const std::string &str);
 void FromFile(VData &data, const std::string &filename);
 
-void ToStream(const VData &data, std::streambuf *stream, const Format &format = Format());
-void ToString(const VData &data, std::string &str, const Format &format = Format());
-void ToFile(const VData &data, const std::string &filename, const Format &format = Format());
+void ToStream(const VData &data, std::streambuf *stream, const Format &format = DEFAULT_FORMAT);
+void ToString(const VData &data, std::string &str, const Format &format = DEFAULT_FORMAT);
+void ToFile(const VData &data, const std::string &filename, const Format &format = DEFAULT_FORMAT);
+
+// convenience functions, possibly slower
+inline VData FromString(const std::string &str) {
+	VData data;
+	FromString(data, str);
+	return data;
+}
+inline std::string ToString(const VData &data, const Format &format = DEFAULT_FORMAT) {
+	std::string str;
+	ToString(data, str, format);
+	return str;
+}
 
 }

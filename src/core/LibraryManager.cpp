@@ -22,8 +22,9 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Library.h"
 #include "Drawing.h"
-#include "Shape.h"
 #include "ShapeDefinition.h"
+#include "ShapeInstance.h"
+#include "ShapePrototype.h"
 #include "StringRegistry.h"
 #include "Icons.h"
 
@@ -54,9 +55,14 @@ void LibraryManager::AddShapeDefinition(stringtag_t name, ShapeDefinition *shape
 	shape_definition->InsertBack(&m_shape_trackers[index].m_shape_definitions);
 }
 
-void LibraryManager::AddShapeInstance(stringtag_t name, Shape *shape_instance) {
+void LibraryManager::AddShapeInstance(stringtag_t name, ShapeInstance *shape_instance) {
 	index_t index = m_shape_trackers.TryEmplaceBack(name, name).first;
 	shape_instance->InsertBack(&m_shape_trackers[index].m_shape_instances);
+}
+
+void LibraryManager::AddShapePrototype(stringtag_t name, ShapePrototype *shape_prototype) {
+	index_t index = m_shape_trackers.TryEmplaceBack(name, name).first;
+	shape_prototype->InsertBack(&m_shape_trackers[index].m_shape_prototypes);
 }
 
 QModelIndex LibraryManager::index(int row, int column, const QModelIndex &parent) const {

@@ -1,9 +1,14 @@
 #include "ParameterViewer.h"
-#include "StringRegistry.h"
-#include "MainWindow.h"
+
 #include "Drawing.h"
 #include "Icons.h"
 #include "Json.h"
+#include "MainWindow.h"
+#include "ShapeDefinition.h"
+#include "ShapeInstance.h"
+#include "ShapePrototype.h"
+#include "StringRegistry.h"
+
 #include <sstream>
 #include <iostream>
 
@@ -123,16 +128,19 @@ void ParameterViewer::MakeVisible(QWidget* widget)
 
 void ParameterViewer::UpdateParameters()
 {
-	const std::vector<Cow<::Shape>>& shapes = m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->GetShapes();
+	const std::vector<Cow<ShapeInstance>>& shapes = m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->GetShapes();
 	HashTable<ParameterEntry, ParameterHasher> new_parameters;
 
 	// make new m_parameter
 	// copy existing widgets + expanded info
 	for(index_t i = 0 ; i < shapes.size(); ++i) {
-		const ::Shape &shaperef = shapes[i].Ref();
-		VData::Dict params = shaperef.GetParams().Ref();
+		const ShapeInstance &shaperef = shapes[i].Ref();
+		const ShapePrototype &shaperef2 = shaperef.GetShapePrototype().Ref();
 
-		for(index_t j = 0 ; j < params.GetSize(); ++j) {
+		ShapeDefinition *shape_definition = NULL; //TODO// get this from LibraryManager
+		const EffectiveParameters &params = shaperef2.GetEffectiveParameters(shape_definition);
+
+		for(index_t j = 0 ; j < params.size(); ++j) {
 			// does the parameter already exist in new_parameter
 			//		if Yes is it mergable or not
 			//			if No set bools + change widget text
@@ -140,20 +148,22 @@ void ParameterViewer::UpdateParameters()
 			//		if Yes copy widget pointer + expanded
 			//		if No make widget
 
-			std::pair<index_t, bool> added = new_parameters.TryEmplaceBack(params[j].Key(),params[j].Key(),params[j].Value(),true,true,false,nullptr);
+			std::pair<index_t, bool> added = new_parameters.TryEmplaceBack(
+						params[j].GetName(), params[j].GetName(), params[j].GetValue(), params[j].IsOverride(),
+						true, false, nullptr);
 
 			if(!added.second) { // parameter exists
-				if(new_parameters[added.first].m_value != params[j].Value()) { // not mergable
+				if(new_parameters[added.first].m_value != params[j].GetValue()) { // not mergable
 					new_parameters[added.first].m_mergeable = false;
 					static_cast<QLineEdit*>(new_parameters[added.first].m_widget)->setText("...");
 				}
 			}
 			else {
-				index_t index = m_parameters.Find(params[j].Key());
+				index_t index = m_parameters.Find(params[j].GetName());
 				if(index == INDEX_NONE) {
 					QLineEdit *valuebox = new QLineEdit(viewport());
 					std::string str;
-					Json::ToString(params[j].Value(),str);
+					Json::ToString(params[j].GetValue(),str);
 					valuebox->setText(QString::fromStdString(str));
 					valuebox->setAutoFillBackground(true);
 					valuebox->setBackgroundRole(QPalette::Window);

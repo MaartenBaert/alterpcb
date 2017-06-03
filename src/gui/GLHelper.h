@@ -34,40 +34,6 @@ CLASS_GLTHING(GLgs, m_obj = glCreateShader(GL_GEOMETRY_SHADER), glDeleteShader(m
 CLASS_GLTHING(GLfs, m_obj = glCreateShader(GL_FRAGMENT_SHADER), glDeleteShader(m_obj));
 CLASS_GLTHING(GLsp, m_obj = glCreateProgram(), glDeleteProgram(m_obj));
 
-struct GLvec2 {
-	float x, y;
-	inline GLvec2() {}
-	inline GLvec2(float x, float y) : x(x), y(y) {}
-	inline GLvec2(const Vertex& v) : x(v.x), y(v.y) {}
-	inline operator float*() { return &x; }
-};
-
-struct GLvec3 {
-	float x, y, z;
-	inline GLvec3() {}
-	inline GLvec3(float x, float y, float z) : x(x), y(y), z(z) {}
-	inline operator float*() { return &x; }
-};
-
-struct GLvec4 {
-	float x, y, z, w;
-	inline GLvec4() {}
-	inline GLvec4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w) {}
-	inline GLvec4(const Color &color) : x(color.r), y(color.g), z(color.b), w(color.a) {}
-	inline operator float*() { return &x; }
-};
-
-static_assert(sizeof(GLvec2) == sizeof(float) * 2, "Invalid GLvec2 struct!");
-static_assert(sizeof(GLvec3) == sizeof(float) * 3, "Invalid GLvec3 struct!");
-static_assert(sizeof(GLvec4) == sizeof(float) * 4, "Invalid GLvec4 struct!");
-
-inline GLvec4 ColorToVec(const QColor &color) {
-	return GLvec4(color.redF(), color.greenF(), color.blueF(), color.alphaF());
-}
-inline GLvec4 ColorToVec(const Color &color) {
-	return GLvec4(color.r, color.g, color.b, color.a);
-}
-
 std::string AddLineNumbers(const char *source);
 
 void CompileVS(GLvs &vs, const char *source);

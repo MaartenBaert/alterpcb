@@ -20,7 +20,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "Shape.h"
+#include "ShapeInstance.h"
 #include "VData.h"
 #include "HashTable.h"
 

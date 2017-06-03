@@ -24,14 +24,16 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 // these are temporary, for testing:
 #include "Drawing.h"
+#include "Icons.h"
 #include "Json.h"
-#include "Library.h"
-#include "LibraryManager.h"
-#include "Shape.h"
-#include "VData.h"
 #include "LayerManager.h"
 #include "LayerStack.h"
-#include "Icons.h"
+#include "Library.h"
+#include "LibraryManager.h"
+#include "ShapeDefinition.h"
+#include "ShapeInstance.h"
+#include "ShapePrototype.h"
+#include "VData.h"
 
 // these are temporary, for testing:
 #include <cfenv>
@@ -262,26 +264,28 @@ int main(int argc, char *argv[]) {
 		layerstack2->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top1"),QColor(0,100,0),LAYERTEXTURE_SOLID));
 		layerstack2->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top2"),QColor(0,255,50),LAYERTEXTURE_SOLID));
 
-		Cow<VData::Dict> params1;
-		{
-			VData::Dict &dict = params1.New();
-			dict.EmplaceBack(StringRegistry::NewTag("x"),10);
-			dict.EmplaceBack(StringRegistry::NewTag("y"),0);
-			dict.EmplaceBack(StringRegistry::NewTag("R"),530);
-		}
+		VData::Dict params1;
+		params1.EmplaceBack(StringRegistry::NewTag("x"), 10);
+		params1.EmplaceBack(StringRegistry::NewTag("y"), 0);
+		params1.EmplaceBack(StringRegistry::NewTag("radius"), 530);
 
-		Cow<VData::Dict> params2;
-		{
-			VData::Dict &dict = params2.New();
-			dict.EmplaceBack(StringRegistry::NewTag("x"),10);
-			dict.EmplaceBack(StringRegistry::NewTag("y"),12.5);
-			dict.EmplaceBack(StringRegistry::NewTag("H"),45);
-			dict.EmplaceBack(StringRegistry::NewTag("W"),152);
-		}
+		VData::Dict params2;
+		params2.EmplaceBack(StringRegistry::NewTag("x"), 10);
+		params2.EmplaceBack(StringRegistry::NewTag("y"), 12.5);
+		params2.EmplaceBack(StringRegistry::NewTag("width"), 45);
+		params2.EmplaceBack(StringRegistry::NewTag("height"), 152);
 
-		std::vector<Cow<Shape>> shapes;
-		shapes.emplace_back(std::make_shared<Shape>(StringRegistry::NewTag("round-shape"),std::move(params1)));
-		shapes.emplace_back(std::make_shared<Shape>(StringRegistry::NewTag("square-shape"),std::move(params2)));
+		Cow<ShapePrototype> proto1;
+		proto1.New(SRNewTag("round-shape"), std::move(params1));
+		Cow<ShapePrototype> proto2;
+		proto2.New(SRNewTag("square-shape"), std::move(params2));
+
+		ShapeTransform transform1;
+		ShapeTransform transform2;
+
+		std::vector<Cow<ShapeInstance>> shapes;
+		shapes.emplace_back(std::make_shared<ShapeInstance>(std::move(proto1), transform1, false));
+		shapes.emplace_back(std::make_shared<ShapeInstance>(std::move(proto2), transform2, true));
 
 		lib1->GetLayout(0)->HistoryPush(std::move(shapes),false);
 

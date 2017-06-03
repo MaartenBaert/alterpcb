@@ -32,13 +32,15 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 class Library;
 class Drawing;
-class Shape;
 class ShapeDefinition;
+class ShapeInstance;
+class ShapePrototype;
 
 struct ShapeTrackerEntry {
 	stringtag_t m_name;
 	LinkedList<ShapeDefinition> m_shape_definitions;
-	LinkedList<Shape> m_shape_instances;
+	LinkedList<ShapeInstance> m_shape_instances;
+	LinkedList<ShapePrototype> m_shape_prototypes;
 	inline ShapeTrackerEntry(stringtag_t name) : m_name(name) {}
 };
 
@@ -76,7 +78,8 @@ public:
 	void DeleteLibrary(Library *library);
 
 	void AddShapeDefinition(stringtag_t name, ShapeDefinition *shape_definition);
-	void AddShapeInstance(stringtag_t name, Shape *shape_instance);
+	void AddShapeInstance(stringtag_t name, ShapeInstance *shape_instance);
+	void AddShapePrototype(stringtag_t name, ShapePrototype *shape_prototype);
 
 public: // QAbstractItemModel interface
 

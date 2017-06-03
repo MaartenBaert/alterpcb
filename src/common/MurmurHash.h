@@ -22,10 +22,6 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Basics.h"
 
-#include <cstddef>
-#include <cstdint>
-#include <cstring>
-
 #include <string>
 
 namespace MurmurHash {

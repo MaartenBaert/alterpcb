@@ -26,11 +26,11 @@ Drawing::Drawing(Library *parent, stringtag_t name, DrawingType type, stringtag_
 	m_type = type;
 	m_layerstack = layerstack;
 
-	std::vector<Cow<Shape>> shapes;
+	std::vector<Cow<ShapeInstance>> shapes;
 	HistoryClear(std::move(shapes));
 }
 
-void Drawing::HistoryClear(std::vector<Cow<Shape>> &&shapes) {
+void Drawing::HistoryClear(std::vector<Cow<ShapeInstance>> &&shapes) {
 	m_history.clear();
 	m_history.emplace_back(std::move(shapes),false);
 
@@ -41,7 +41,7 @@ void Drawing::HistoryRevert() {
 	//TODO//
 }
 
-void Drawing::HistoryPush(std::vector<Cow<Shape>> &&shapes, bool soft) {
+void Drawing::HistoryPush(std::vector<Cow<ShapeInstance>> &&shapes, bool soft) {
 	m_history.resize(m_history_position+1);
 
 	if(soft && m_history.back().IsSoft()) {

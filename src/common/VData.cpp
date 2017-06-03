@@ -22,7 +22,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StringRegistry.h"
 
-const double VDATA_DECIMAL_SHIFT_SCALE = exp10(-VDATA_DECIMAL_SHIFT);
+const real_t VDATA_DECIMAL_SHIFT_SCALE = exp10(-VDATA_DECIMAL_SHIFT);
 
 std::ostream& operator<<(std::ostream &stream, const VData &data) {
 	switch(data.GetType()) {

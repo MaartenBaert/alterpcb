@@ -1,5 +1,8 @@
 #include "DrawingViewer.h"
 
+#include "MiscMath.h"
+#include "Vector.h"
+
 #include <chrono>
 #include <iostream>
 
@@ -304,9 +307,9 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 				assert(ind1 == ind2);
 				glUnmapBuffer(GL_ARRAY_BUFFER);
 			}
-			glUniform4fv(m_gl_uni_basic_color, 1, GLvec4(color_grid1));
+			glUniform4fv(m_gl_uni_basic_color, 1, color_grid1);
 			glDrawArrays(GL_LINES, 0, ind1);
-			glUniform4fv(m_gl_uni_basic_color, 1, GLvec4(color_grid2));
+			glUniform4fv(m_gl_uni_basic_color, 1, color_grid2);
 			glDrawArrays(GL_LINES, ind1, num - ind1);
 		}
 
@@ -326,7 +329,7 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 		// enable dotgrid shader
 		glUseProgram(m_gl_sp_dotgrid);
 		glUniform2fv(m_gl_uni_dotgrid_linescale, 1, GLvec2(effective_grid_step_x * view_scale, effective_grid_step_y * view_scale));
-		glUniform4fv(m_gl_uni_dotgrid_color, 1, GLvec4(color_grid3));
+		glUniform4fv(m_gl_uni_dotgrid_color, 1, color_grid3);
 		glUniform1i(m_gl_uni_dotgrid_kernel, 0);
 
 		// bind VAO and VBO
@@ -366,7 +369,7 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 	// switch to QPainter-based painting
 	QPainter painter(this);
 	painter.setFont(QFont("Monospace", 10));
-	painter.setPen(Color(1.0f, 0.0f, 0.0f));
+	painter.setPen(QColor(255, 0, 0));
 	painter.drawText(QRect(5, 5, 100, 20), Qt::AlignLeft | Qt::AlignVCenter, "Test");
 
 }

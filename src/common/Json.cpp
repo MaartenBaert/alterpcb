@@ -30,12 +30,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Json {
 
-/*
-TODO:
-- Find out why we can tolerate +/- 50 LSB errors instead of the expected +/- 5 LSB (or 10 LSB including expo10 error).
-- Write custom conversion back to int/double (ReadNumber).
-- Clean up keyword parsing.
-*/
+Format DEFAULT_FORMAT;
 
 struct ReadContext {
 	std::streambuf *stream;

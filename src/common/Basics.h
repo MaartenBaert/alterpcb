@@ -22,6 +22,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <cassert>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
 #include <cstring>
 
@@ -30,14 +31,8 @@ typedef uint32_t index_t;
 typedef uint32_t stringtag_t;
 typedef uint32_t hash_t;
 
-struct Vertex {
-	real_t x, y;
-	inline Vertex() {}
-	inline Vertex(double x, double y) : x(x), y(y) {}
-};
-
 constexpr index_t INDEX_NONE = (index_t) -1;
-constexpr index_t STRINGTAG_NONE = (stringtag_t) -1;
+constexpr stringtag_t STRINGTAG_NONE = (stringtag_t) -1;
 
 #define UNUSED(x) ((void) (x))
 

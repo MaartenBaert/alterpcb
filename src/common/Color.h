@@ -21,17 +21,20 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include "Basics.h"
-#include "MiscMath.h"
+//#include "Vector.h"
 
-#include <QtGui>
+//#include <QtGui>
 
 struct Color {
 	float r, g, b, a;
 	inline Color() {}
 	inline Color(float r, float g, float b, float a = 1.0f) : r(r), g(g), b(b), a(a) {}
-	inline Color(const QColor &color) : r(color.redF()), g(color.greenF()), b(color.blueF()), a(color.alphaF()) {}
-	inline operator QColor() const { return QColor::fromRgbF(clamp(r, 0.0f, 1.0f), clamp(g, 0.0f, 1.0f), clamp(b, 0.0f, 1.0f), clamp(a, 0.0f, 1.0f)); }
+	//inline Color(const QColor &color) : r(color.redF()), g(color.greenF()), b(color.blueF()), a(color.alphaF()) {}
+	//inline operator QColor() const { return QColor::fromRgbF(clamp(r, 0.0f, 1.0f), clamp(g, 0.0f, 1.0f), clamp(b, 0.0f, 1.0f), clamp(a, 0.0f, 1.0f)); }
+	inline operator float*() { return &r; }
 };
+
+static_assert(sizeof(Color) == sizeof(float) * 4, "Invalid Color struct!");
 
 inline Color Premultiply(const Color &color) {
 	return Color(color.r * color.a, color.g * color.a, color.b * color.a, color.a);
@@ -52,5 +55,13 @@ inline Color ToSRGB(const Color &color, bool dark = true) {
 inline Color FromSRGB(const Color &color, bool dark = true) {
 	return Color(FromSRGB(color.r), FromSRGB(color.g), FromSRGB(color.b), (dark)? FromSRGB(color.a) : 1.0f - FromSRGB(1.0f - color.a));
 }
+
+/*inline GLvec4 ColorToVec(const QColor &color) {
+	return GLvec4(color.redF(), color.greenF(), color.blueF(), color.alphaF());
+}*/
+
+/*inline GLvec4 ColorToVec(const Color &color) {
+	return GLvec4(color.r, color.g, color.b, color.a);
+}*/
 
 Color LumaInvert(const Color &color, bool invert = true);

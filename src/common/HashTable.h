@@ -24,8 +24,6 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "MiscMath.h"
 #include "MurmurHash.h"
 
-#include <cstdint>
-
 #include <utility>
 #include <vector>
 
