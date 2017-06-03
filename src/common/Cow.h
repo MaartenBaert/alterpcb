@@ -78,7 +78,7 @@ public:
 	}
 
 	// The preferred way to create new objects if you already have the pointer. It behaves like calling MakeCow()
-	// followed UniqueBypass() to get a reference to the object you just created.
+	// followed by UniqueBypass() to get a reference to the object you just created.
 	template<typename... Args>
 	inline T& New(Args&&... args) {
 		m_data = std::make_shared<T>(std::forward<Args>(args)...);

@@ -8,13 +8,13 @@ Document::Document(DocumentViewer *document_editor, Drawing *drawing)
 	m_document_editor = document_editor;
 	m_drawing = drawing;
 
-	LayerStack *layerstack = getLayerStack();
+	LayerStack *layerstack = GetLayerStack();
 	for(index_t i = 0 ; i < layerstack->GetLogicalLayerSize(); ++i) {
 		m_layerstackattributes.EmplaceBack(layerstack->GetLogicalLayer(i)->m_name,true,true);
 	}
 }
 
-LayerStack *Document::getLayerStack()
+LayerStack *Document::GetLayerStack()
 {
 	return m_drawing->GetParent()->GetLayerStack(m_drawing->GetLayerStack());
 }

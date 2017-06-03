@@ -178,7 +178,7 @@ private:
 	template<typename K>
 	inline index_t FindAt(hash_t hash, const K &key) const {
 		for(index_t i = m_buckets[hash].m_hashlink; i != INDEX_NONE; i = m_data[i].m_hashlink) {
-			if(static_cast<const T&>(m_data[i]) == key)
+			if(m_hasher.Equal(m_data[i], key))
 				return i;
 		}
 		return INDEX_NONE;
@@ -203,13 +203,13 @@ private:
 
 	template<typename K>
 	inline hash_t Hash1(const K &key) const {
-		hash_t hash = MurmurHash::HashFinish(m_hasher(HASH_SEED1, key));
+		hash_t hash = MurmurHash::HashFinish(m_hasher.Hash(HASH_SEED1, key));
 		return MurmurHash::HashTruncate(hash, m_bits - 1);
 	}
 
 	template<typename K>
 	inline hash_t Hash2(const K &key) const {
-		hash_t hash = MurmurHash::HashFinish(m_hasher(HASH_SEED2, key));
+		hash_t hash = MurmurHash::HashFinish(m_hasher.Hash(HASH_SEED2, key));
 		return MurmurHash::HashTruncate(hash, m_bits - 1) | (1 << (m_bits - 1));
 	}
 

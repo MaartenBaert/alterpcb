@@ -53,30 +53,26 @@ struct ParameterEntry {
 	bool m_mergeable;
 	bool m_expanded;
 	std::vector<SubParameterEntry> m_subparameters;
-
 	inline ParameterEntry(stringtag_t name, const VData &value, bool override, bool mergeable, bool folded)
 		: m_name(name), m_value(value), m_override(override), m_mergeable(mergeable), m_expanded(folded) {}
 	inline ParameterEntry(stringtag_t name, VData &&value, bool override, bool mergeable, bool folded)
 		: m_name(name), m_value(std::move(value)), m_override(override), m_mergeable(mergeable), m_expanded(folded) {}
-
-	inline bool operator==(const ParameterEntry &other) const {
-		return m_name == other.m_name;
-	}
-	inline bool operator==(stringtag_t other) const {
-		return m_name == other;
-	}
 };
 
 //******************************************************************************************//
 struct ParameterHasher {
-	inline hash_t operator()(hash_t hash, const ParameterEntry &value) const {
+	inline bool Equal(const ParameterEntry &a, const ParameterEntry &b) const {
+		return a.m_name == b.m_name;
+	}
+	inline bool Equal(const ParameterEntry &a, stringtag_t b) const {
+		return a.m_name == b;
+	}
+	inline hash_t Hash(hash_t hash, const ParameterEntry &value) const {
 		return MurmurHash::HashData(hash, value.m_name);
 	}
-
-	inline hash_t operator()(hash_t hash, stringtag_t value) const {
+	inline hash_t Hash(hash_t hash, stringtag_t value) const {
 		return MurmurHash::HashData(hash, value);
 	}
-
 };
 
 //******************************************************************************************//

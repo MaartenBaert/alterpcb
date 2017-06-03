@@ -46,8 +46,10 @@ enum VDataType {
 class VDataDictEntry;
 
 struct VDataDictHasher {
-	hash_t operator()(hash_t hash, const VDataDictEntry &value) const;
-	hash_t operator()(hash_t hash, stringtag_t value) const;
+	bool Equal(const VDataDictEntry &a, const VDataDictEntry &b) const;
+	bool Equal(const VDataDictEntry &a, stringtag_t b) const;
+	hash_t Hash(hash_t hash, const VDataDictEntry &value) const;
+	hash_t Hash(hash_t hash, stringtag_t value) const;
 };
 
 // C++11 allows us to put non-POD types in unions, but we have to call the constructors and destructors manually.
@@ -313,20 +315,21 @@ public:
 	inline VData& Value() { return m_value; }
 	inline const VData& Value() const { return m_value; }
 
-	inline bool operator==(const VDataDictEntry &other) const {
-		return m_key == other.m_key;
-	}
-	inline bool operator==(stringtag_t &other) const {
-		return m_key == other;
-	}
-
 };
 
-inline hash_t VDataDictHasher::operator()(hash_t hash, const VDataDictEntry &value) const {
+inline bool VDataDictHasher::Equal(const VDataDictEntry &a, const VDataDictEntry &b) const {
+	return a.Key() == b.Key();
+}
+
+inline bool VDataDictHasher::Equal(const VDataDictEntry &a, stringtag_t b) const {
+	return a.Key() == b;
+}
+
+inline hash_t VDataDictHasher::Hash(hash_t hash, const VDataDictEntry &value) const {
 	return MurmurHash::HashData(hash, value.Key());
 }
 
-inline hash_t VDataDictHasher::operator()(hash_t hash, stringtag_t value) const {
+inline hash_t VDataDictHasher::Hash(hash_t hash, stringtag_t value) const {
 	return MurmurHash::HashData(hash, value);
 }
 

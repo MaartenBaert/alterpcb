@@ -92,10 +92,10 @@ QVariant LayerManager::data(const QModelIndex &index, int role) const
 	}
 	else if(role == Qt::CheckStateRole && index.column() > 0){
 		if(index.column() == 1){
-			return GetDocument()->GetSelectable(item_ptr->m_name) ? Qt::Checked : Qt::Unchecked;
+			return GetDocument()->GetLayerSelectable(item_ptr->m_name) ? Qt::Checked : Qt::Unchecked;
 		}
 		if(index.column() == 2){
-			return GetDocument()->GetVisible(item_ptr->m_name) ? Qt::Checked : Qt::Unchecked;
+			return GetDocument()->GetLayerVisible(item_ptr->m_name) ? Qt::Checked : Qt::Unchecked;
 		}
 		else{
 			return QVariant();
@@ -168,13 +168,13 @@ bool LayerManager::setData(const QModelIndex &index, const QVariant &value, int 
 	if(role == Qt::CheckStateRole && index.column() > 0){
 		if(index.column() == 1){
 			layoutAboutToBeChanged();
-			GetDocument()->SetSelectable(item_ptr->m_name,!GetDocument()->GetSelectable(item_ptr->m_name));
+			GetDocument()->SetLayerSelectable(item_ptr->m_name,!GetDocument()->GetLayerSelectable(item_ptr->m_name));
 			layoutChanged();
 			return true;
 		}
 		if(index.column() == 2){
 			layoutAboutToBeChanged();
-			GetDocument()->SetVisible(item_ptr->m_name,!GetDocument()->GetVisible(item_ptr->m_name));
+			GetDocument()->SetLayerVisible(item_ptr->m_name,!GetDocument()->GetLayerVisible(item_ptr->m_name));
 			layoutChanged();
 			return true;
 		}
@@ -199,7 +199,7 @@ LayerStack *LayerManager::GetLayerStack() const
 		return NULL;
 	}
 	else{
-		return m_main_window->GetDocumentViewer()->GetActiveDocument()->getLayerStack();
+		return m_main_window->GetDocumentViewer()->GetActiveDocument()->GetLayerStack();
 	}
 
 }

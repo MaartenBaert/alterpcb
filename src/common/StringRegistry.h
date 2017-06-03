@@ -51,26 +51,25 @@ public:
 		return m_string;
 	}
 
-	inline bool operator==(const StringRegistryEntry &other) const {
-		return m_string == other.m_string;
-	}
-	inline bool operator==(const std::string &other) const {
-		return m_string == other;
-	}
-	inline bool operator==(const char *other) const {
-		return m_string == other;
-	}
-
 };
 
 struct StringRegistryHasher {
-	inline hash_t operator()(hash_t hash, const StringRegistryEntry &value) const {
+	inline bool Equal(const StringRegistryEntry &a, const StringRegistryEntry &b) const {
+		return a.GetString() == b.GetString();
+	}
+	inline bool Equal(const StringRegistryEntry &a, const std::string &b) const {
+		return a.GetString() == b;
+	}
+	inline bool Equal(const StringRegistryEntry &a, const char *b) const {
+		return a.GetString() == b;
+	}
+	inline hash_t Hash(hash_t hash, const StringRegistryEntry &value) const {
 		return MurmurHash::HashData(hash, value.GetString().data(), value.GetString().size());
 	}
-	inline hash_t operator()(hash_t hash, const std::string &value) const {
+	inline hash_t Hash(hash_t hash, const std::string &value) const {
 		return MurmurHash::HashData(hash, value.data(), value.size());
 	}
-	inline hash_t operator()(hash_t hash, const char *value) const {
+	inline hash_t Hash(hash_t hash, const char *value) const {
 		return MurmurHash::HashData(hash, value, strlen(value));
 	}
 };

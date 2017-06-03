@@ -29,56 +29,52 @@ class Drawing;
 class DocumentViewer;
 class LayerStack;
 
-struct LayerStackAttributesEntry{
+struct LayerStackAttributesEntry {
 	stringtag_t m_name;
 	bool m_visible;
 	bool m_selectable;
-
-	inline LayerStackAttributesEntry(stringtag_t name, bool visable, bool selectable)
-		: m_name(name), m_visible(visable), m_selectable(selectable) {}
-
-	inline bool operator==(const LayerStackAttributesEntry &other) const {
-		return m_name == other.m_name;
-	}
-	inline bool operator==(stringtag_t other) const {
-		return m_name == other;
-	}
+	inline LayerStackAttributesEntry(stringtag_t name, bool visible, bool selectable)
+		: m_name(name), m_visible(visible), m_selectable(selectable) {}
 };
 
 struct LayerStackAttributesHasher {
-	inline hash_t operator()(hash_t hash, const LayerStackAttributesEntry &value) const {
+	inline bool Equal(const LayerStackAttributesEntry &a, const LayerStackAttributesEntry &b) const {
+		return a.m_name == b.m_name;
+	}
+	inline bool Equal(const LayerStackAttributesEntry &a, stringtag_t b) const {
+		return a.m_name == b;
+	}
+	inline hash_t Hash(hash_t hash, const LayerStackAttributesEntry &value) const {
 		return MurmurHash::HashData(hash, value.m_name);
 	}
-
-	inline hash_t operator()(hash_t hash, stringtag_t value) const {
+	inline hash_t Hash(hash_t hash, stringtag_t value) const {
 		return MurmurHash::HashData(hash, value);
 	}
-
 };
 
-class Document : public TrackingTarget<Document>
-{
+class Document : public TrackingTarget<Document> {
+
 private:
 	Drawing *m_drawing;
 	DocumentViewer *m_document_editor;
 	HashTable<LayerStackAttributesEntry, LayerStackAttributesHasher> m_layerstackattributes;
 
 public:
-	Document(DocumentViewer *document_editor,Drawing *drawing);
+	Document(DocumentViewer *document_editor, Drawing *drawing);
 
 	// noncopyable
 	Document(const Document&) = delete;
 	Document& operator=(const Document&) = delete;
 
-	LayerStack *getLayerStack();
-	inline Drawing *GetDrawing() {return m_drawing;}
-	inline bool GetSelectable(stringtag_t str_tag) { return m_layerstackattributes[GetIndex(str_tag)].m_selectable; }
-	inline void SetSelectable(stringtag_t str_tag, bool selectable) { m_layerstackattributes[GetIndex(str_tag)].m_selectable = selectable; }
-	inline bool GetVisible(stringtag_t str_tag) { return m_layerstackattributes[GetIndex(str_tag)].m_visible; }
-	inline void SetVisible(stringtag_t str_tag, bool visable) { m_layerstackattributes[GetIndex(str_tag)].m_visible = visable; }
+	LayerStack* GetLayerStack();
+	inline Drawing* GetDrawing() { return m_drawing; }
+	inline bool GetLayerSelectable(stringtag_t str_tag) { return m_layerstackattributes[GetLayerIndex(str_tag)].m_selectable; }
+	inline void SetLayerSelectable(stringtag_t str_tag, bool selectable) { m_layerstackattributes[GetLayerIndex(str_tag)].m_selectable = selectable; }
+	inline bool GetLayerVisible(stringtag_t str_tag) { return m_layerstackattributes[GetLayerIndex(str_tag)].m_visible; }
+	inline void SetLayerVisible(stringtag_t str_tag, bool visable) { m_layerstackattributes[GetLayerIndex(str_tag)].m_visible = visable; }
 
 private:
-	inline index_t GetIndex(stringtag_t str_tag) {
+	inline index_t GetLayerIndex(stringtag_t str_tag) {
 		index_t index = m_layerstackattributes.Find(str_tag);
 		assert(index != INDEX_NONE);
 		return index;
@@ -88,8 +84,7 @@ private:
 
 struct DocumentPointer {
 	Document *m_ptr;
-
-	inline DocumentPointer() {m_ptr = NULL;}
+	inline DocumentPointer() : m_ptr(NULL) {}
 	inline DocumentPointer(Document *ptr): m_ptr(ptr) {}
 };
 
