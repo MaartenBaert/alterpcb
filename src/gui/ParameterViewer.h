@@ -29,7 +29,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 class MainWindow;
 
-enum HOVER_REGION {
+enum HoverRegion {
 	HOVER_REGION_NONE,
 	HOVER_REGION_FOLDBUTTON,
 	HOVER_REGION_SELECTBUTTON,
@@ -83,7 +83,7 @@ class ParameterViewer : public QAbstractScrollArea {
 private:
 	MainWindow *m_mainwindow;
 	HashTable<ParameterEntry, ParameterHasher> m_parameters;
-	HOVER_REGION m_hover_region;
+	HoverRegion m_hover_region;
 	bool m_button_pressed;
 	index_t m_current_index;
 	index_t m_current_subindex;
@@ -129,8 +129,8 @@ private:
 	void positionToIndex(const QPoint &pos);
 	void ExpandParameter(index_t index);
 	void UnexpandParameter(index_t index);
-	HOVER_REGION getHoverRegion(const QPoint &pos);
-	void changeHoverRegion(HOVER_REGION hover_region);
+	HoverRegion getHoverRegion(const QPoint &pos);
+	void changeHoverRegion(HoverRegion hover_region);
 	void ensureWidgetVisible(QWidget *childWidget);
 
 };

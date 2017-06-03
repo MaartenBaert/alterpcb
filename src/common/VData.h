@@ -30,6 +30,11 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
+// The internal representation of floating point numbers is shifted by a number of decimals. This allows us to store
+// common values such as 0.1 and 0.254 exactly, which avoids a lot of problems with rounding errors. The JSON parser is
+// aware of this shift and is able to do the necessary string/float conversions without loss of accuracy.
+constexpr uint32_t VDATA_DECIMAL_SHIFT = 6;
+
 // These are the corresponding Python typenames. They don't match with the C++ types.
 enum VDataType {
 	VDATA_NULL,

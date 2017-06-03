@@ -21,6 +21,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include "Basics.h"
+#include "LinkedList.h"
 #include "VData.h"
 
 #include <string>
@@ -31,7 +32,7 @@ struct ShapeTransform {
 	bool m_mirror, m_flip;
 };
 
-class Shape {
+class Shape : public LinkedListElement<Shape> {
 
 private:
 	stringtag_t m_name;

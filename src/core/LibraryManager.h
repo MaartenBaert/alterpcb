@@ -20,21 +20,49 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "TrackingPointer.h"
 #include "Basics.h"
 #include "CoreBasics.h"
+#include "HashTable.h"
+#include "LinkedList.h"
+#include "TrackingPointer.h"
 
 #include <vector>
 
 #include <QtGui>
 
 class Library;
+class Drawing;
+class Shape;
+class ShapeDefinition;
+
+struct ShapeTrackerEntry {
+	stringtag_t m_name;
+	LinkedList<ShapeDefinition> m_shape_definitions;
+	LinkedList<Shape> m_shape_instances;
+	inline ShapeTrackerEntry(stringtag_t name) : m_name(name) {}
+};
+
+struct ShapeTrackerHasher {
+	inline bool Equal(const ShapeTrackerEntry &a, const ShapeTrackerEntry &b) const {
+		return a.m_name == b.m_name;
+	}
+	inline bool Equal(const ShapeTrackerEntry &a, stringtag_t b) const {
+		return a.m_name == b;
+	}
+	inline hash_t Hash(hash_t hash, const ShapeTrackerEntry &value) const {
+		return MurmurHash::HashData(hash, value.m_name);
+	}
+	inline hash_t Hash(hash_t hash, stringtag_t value) const {
+		return MurmurHash::HashData(hash, value);
+	}
+};
 
 class LibraryManager : public QAbstractItemModel {
 	Q_OBJECT
 
 private:
 	std::vector<TrackingPointer<Library>> m_libraries;
+	HashTable<ShapeTrackerEntry, ShapeTrackerHasher> m_shape_trackers;
 
 public:
 	LibraryManager();
@@ -46,6 +74,11 @@ public:
 
 	Library* NewLibrary(const std::string &name, const std::string &filename, LibraryType type);
 	void DeleteLibrary(Library *library);
+
+	void AddShapeDefinition(stringtag_t name, ShapeDefinition *shape_definition);
+	void AddShapeInstance(stringtag_t name, Shape *shape_instance);
+
+public: // QAbstractItemModel interface
 
 	// basic model access
 	QModelIndex index(int row, int column,const QModelIndex &parent = QModelIndex()) const override;

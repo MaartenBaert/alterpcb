@@ -642,7 +642,7 @@ void ParameterViewer::UnexpandParameter(index_t index)
 	}
 }
 
-HOVER_REGION ParameterViewer::getHoverRegion(const QPoint &pos)
+HoverRegion ParameterViewer::getHoverRegion(const QPoint &pos)
 {
 	positionToIndex(pos);
 	if(m_current_index != INDEX_NONE && pos.x() < LAYOUT_FOLDBUTTONWIDTH+3*LAYOUT_HSPACING+LAYOUT_LABELWIDTH+LAYOUT_OVERRIDEBUTTONWIDTH){
@@ -677,7 +677,7 @@ HOVER_REGION ParameterViewer::getHoverRegion(const QPoint &pos)
 	}
 }
 
-void ParameterViewer::changeHoverRegion(HOVER_REGION hover_region)
+void ParameterViewer::changeHoverRegion(HoverRegion hover_region)
 {
 	if(m_hover_region != hover_region){
 		m_hover_region = hover_region;

@@ -22,6 +22,8 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StringRegistry.h"
 
+const double VDATA_DECIMAL_SHIFT_SCALE = exp10(-VDATA_DECIMAL_SHIFT);
+
 std::ostream& operator<<(std::ostream &stream, const VData &data) {
 	switch(data.GetType()) {
 		case VDATA_NULL: {
@@ -37,7 +39,7 @@ std::ostream& operator<<(std::ostream &stream, const VData &data) {
 			break;
 		}
 		case VDATA_FLOAT: {
-			stream << data.AsFloat();
+			stream << (data.AsFloat() * VDATA_DECIMAL_SHIFT_SCALE);
 			break;
 		}
 		case VDATA_STRING: {

@@ -41,6 +41,7 @@ HEADERS += \
 	common/EnumTranslator.h \
 	common/HashTable.h \
 	common/Json.h \
+	common/LinkedList.h \
 	common/MiscMath.h \
 	common/MurmurHash.h \
 	common/SafePointer.h \
@@ -58,6 +59,7 @@ HEADERS += \
 	core/LibraryManagerConfigProxy.h \
 	core/LibraryTreeItem.h \
 	core/Shape.h \
+	core/ShapeDefinition.h \
 	gui/DocumentViewer.h \
 	gui/DrawingViewer.h \
 	gui/GLHelper.h \

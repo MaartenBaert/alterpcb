@@ -303,14 +303,13 @@ inline void ReadNameOrNumber(ReadContext &context, VData &data) {
 		Decimal dec;
 		dec.negative = (prefix == '-');
 		dec.type = FLOATTYPE_NORMAL;
-		dec.expo = 0;
+		dec.expo = VDATA_DECIMAL_SHIFT;
 		dec.mant = 0;
 
-		int c2 = PeekCharRaw(context);
-		bool digit_before_point = (c2 >= '0' && c2 <= '9');
+		bool starts_with_point = (c == '.');
 		bool point = false, limit = false;
 		for( ; ; ) {
-			c2 = PeekCharRaw(context);
+			int c2 = PeekCharRaw(context);
 			if(c2 >= '0' && c2 <= '9') {
 				ReadCharRaw(context);
 				if(limit) {
@@ -337,13 +336,13 @@ inline void ReadNameOrNumber(ReadContext &context, VData &data) {
 			}
 		}
 
-		// make sure that the number isn't just a dot
-		if(!digit_before_point && dec.expo == 0) {
+		// make sure that the number isn't just a decimal point
+		if(starts_with_point && dec.expo == VDATA_DECIMAL_SHIFT) {
 			context.Error(1, "Unexpected decimal point.");
 		}
 
 		// try to read exponent
-		c2 = PeekCharRaw(context);
+		int c2 = PeekCharRaw(context);
 		if(c2 == 'e' || c2 == 'E') {
 			ReadCharRaw(context);
 
@@ -401,7 +400,7 @@ inline void ReadNameOrNumber(ReadContext &context, VData &data) {
 
 		} else {
 			uint64_t lim = (dec.negative)? (uint64_t) INT64_MAX + 1 : (uint64_t) INT64_MAX;
-			if(!point && dec.expo == 0 && dec.mant <= lim) {
+			if(!point && dec.expo == VDATA_DECIMAL_SHIFT && dec.mant <= lim) {
 				data = (dec.negative)? -(int64_t) dec.mant : (int64_t) dec.mant;
 			} else {
 				data = FromDecimal(dec);
@@ -447,9 +446,8 @@ inline void WriteFloat(WriteContext &context, double value) {
 				}
 				return;
 			}
-			int32_t expo = dec.expo + (int32_t) (context.format.precision - 1);
-			assert(expo >= -360);
-			assert(expo <= 360);
+			int32_t expo = dec.expo - VDATA_DECIMAL_SHIFT + (int32_t) (context.format.precision - 1);
+			assert(expo >= -360 && expo <= 360);
 			int32_t decimals;
 			char buffer[DECIMAL_BUFFER_SIZE];
 			char *ptr = buffer + DECIMAL_BUFFER_SIZE;
@@ -515,10 +513,6 @@ inline void WriteFloat(WriteContext &context, double value) {
 			break;
 		}
 	}
-
-	//auto p = DecimalToString(buffer, dec, context.format.precision, context.format.engineering);
-
-
 }
 
 // ==================== JSON Reading ====================

@@ -20,33 +20,16 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-enum LibraryType {
-	LIBRARYTYPE_JSON,
-	LIBRARYTYPE_PYTHON,
+#include "Basics.h"
+#include "CoreBasics.h"
+#include "LinkedList.h"
+
+class Shape;
+
+class ShapeDefinition : public LinkedListElement<ShapeDefinition> {
+
+public:
+	virtual void Flatten(Shape *shape) = 0;
+	virtual void Triangulate(Shape *shape) = 0;
+
 };
-
-enum DrawingType {
-	DRAWINGTYPE_SCHEMATIC,
-	DRAWINGTYPE_SYMBOL,
-	DRAWINGTYPE_LAYOUT,
-};
-
-/*enum ShapeType {
-	SHAPETYPE_UNDEFINED,
-	SHAPETYPE_PRIMITIVE,
-	SHAPETYPE_JSON,
-	SHAPETYPE_PYTHON,
-};*/
-
-enum LibraryTreeItemType {
-	LIBRARYTREEITEMTYPE_LIBRARY,
-	LIBRARYTREEITEMTYPE_DRAWING,
-};
-
-enum DropLocation {
-	DROPLOCATION_BEFORE,
-	DROPLOCATION_ON_BEFORE,
-	DROPLOCATION_ON_AFTER,
-	DROPLOCATION_AFTER,
-};
-
