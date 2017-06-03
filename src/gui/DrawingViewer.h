@@ -59,7 +59,9 @@ public:
 protected:
 	virtual void initializeGL() override;
 	virtual void resizeGL(int width, int height) override;
-	virtual void paintEvent(QPaintEvent* event) override;
+	virtual void paintEvent(QPaintEvent *event) override;
+
+	virtual void mouseMoveEvent(QMouseEvent *event) override;
 
 private slots:
 	void OnDark();

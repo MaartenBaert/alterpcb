@@ -56,7 +56,7 @@ static const char* SOURCE_FS_DOTGRID = R"(
 
 //TODO// this is just for testing
 Vertex grid_origin = {10.0, 5.0};
-real_t grid_angle = 0.2;
+real_t grid_angle = 0.0;
 
 Vertex TransformCoordinate(const Vertex &v, const Vertex &origin, real_t angle) {
 	real_t angle_sin = sin(ToRadians(angle)), angle_cos = cos(ToRadians(angle));
@@ -219,7 +219,7 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 	//TODO// replace this with actual view data
 	real_t view_x = 0.0;
 	real_t view_y = 0.0;
-	real_t view_scale = 5.0;
+	real_t view_scale = 10.0;
 	real_t view_xmin = view_x - width() / (2.0 * view_scale);
 	real_t view_xmax = view_x + width() / (2.0 * view_scale);
 	real_t view_ymin = view_y - height() / (2.0 * view_scale);
@@ -255,7 +255,7 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 
 	// draw grid
 	//auto t1 = std::chrono::high_resolution_clock::now();
-	bool linegrid = false;
+	bool linegrid = true;
 	if(linegrid) {
 
 		// enable basic shader
@@ -369,6 +369,12 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 	painter.setPen(Color(1.0f, 0.0f, 0.0f));
 	painter.drawText(QRect(5, 5, 100, 20), Qt::AlignLeft | Qt::AlignVCenter, "Test");
 
+}
+
+void DrawingViewer::mouseMoveEvent(QMouseEvent *event) {
+	UNUSED(event);
+	grid_angle += 0.2;
+	update();
 }
 
 void DrawingViewer::OnDark() {
