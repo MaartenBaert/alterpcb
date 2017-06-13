@@ -24,7 +24,8 @@ tests {
 	SOURCES += \
 		tests/Main.cpp \
 		tests/TestDecimal.cpp \
-		tests/TestJson.cpp
+		tests/TestJson.cpp \
+		tests/TestVData.cpp
 
 } else {
 
