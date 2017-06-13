@@ -53,6 +53,9 @@ class ShapePrototype;
 struct ShapeTransform {
 	real_t m_x, m_y, m_angle;
 	bool m_mirror, m_flip;
+	inline ShapeTransform() {}
+	inline ShapeTransform(real_t x, real_t y, real_t angle, bool mirror, bool flip)
+		: m_x(x), m_y(y), m_angle(angle), m_mirror(mirror), m_flip(flip) {}
 };
 
 class ShapeInstance : public LinkedListElement<ShapeInstance> {
@@ -63,13 +66,21 @@ private:
 	bool m_selected;
 
 public:
+	inline ShapeInstance(const Cow<ShapePrototype>& shape_prototype, bool selected)
+		: m_shape_prototype(shape_prototype), m_transform(0.0, 0.0, 0.0, false, false), m_selected(selected) {}
+	inline ShapeInstance(Cow<ShapePrototype>&& shape_prototype, bool selected)
+		: m_shape_prototype(std::move(shape_prototype)), m_transform(0.0, 0.0, 0.0, false, false), m_selected(selected) {}
 	inline ShapeInstance(const Cow<ShapePrototype>& shape_prototype, const ShapeTransform& transform, bool selected)
 		: m_shape_prototype(shape_prototype), m_transform(transform), m_selected(selected) {}
 	inline ShapeInstance(Cow<ShapePrototype>&& shape_prototype, const ShapeTransform& transform, bool selected)
 		: m_shape_prototype(std::move(shape_prototype)), m_transform(transform), m_selected(selected) {}
 
+	// noncopyable
+	ShapeInstance(const ShapeInstance&) = delete;
+	ShapeInstance& operator=(const ShapeInstance&) = delete;
+
 	inline const ShapeTransform& GetTransform() const { return m_transform; }
 	inline const Cow<ShapePrototype>& GetShapePrototype() const { return m_shape_prototype; }
-	inline bool IsSelected() { return m_selected; }
+	inline bool IsSelected() const { return m_selected; }
 
 };

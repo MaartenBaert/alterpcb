@@ -75,9 +75,9 @@ public:
 
 	void Reserve(index_t capacity) {
 		m_data.reserve(capacity);
-		if(capacity > (1 << m_bits)) {
+		if(capacity > ((index_t) 1 << m_bits)) {
 			++m_bits;
-			while(capacity > (1 << m_bits)) {
+			while(capacity > ((index_t) 1 << m_bits)) {
 				++m_bits;
 			}
 			Rehash();
