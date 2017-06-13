@@ -74,6 +74,51 @@ std::ostream& operator<<(std::ostream &stream, const VData &data) {
 	return stream;
 }
 
+int VDataCompare(const VData &a, const VData &b) {
+	if(a.GetType() != b.GetType())
+		return (int) a.GetType() - (int) b.GetType();
+	switch(a.GetType()) {
+		case VDATA_NULL: return 0;
+		case VDATA_BOOL: return (int) a.AsBool() - (int) b.AsBool();
+		case VDATA_INT: return (a.AsInt() < b.AsInt())? -1 : (a.AsInt() > b.AsInt())? 1 : 0;
+		case VDATA_FLOAT: return (a.AsFloat() < b.AsFloat())? -1 : (a.AsFloat() > b.AsFloat())? 1 : 0;
+		case VDATA_STRING: return a.AsString().compare(b.AsString());
+		case VDATA_LIST: {
+			const VData::List &ref1 = a.AsList(), &ref2 = b.AsList();
+			if(ref1.size() < ref2.size())
+				return -1;
+			if(ref1.size() > ref2.size())
+				return 1;
+			for(size_t i = 0; i < ref1.size(); ++i) {
+				int res = VDataCompare(ref1[i], ref2[i]);
+				if(res != 0)
+					return res;
+			}
+			return 0;
+		}
+		case VDATA_DICT: {
+			const VData::Dict &ref1 = a.AsDict(), &ref2 = b.AsDict();
+			if(ref1.GetSize() < ref2.GetSize())
+				return -1;
+			if(ref1.GetSize() > ref2.GetSize())
+				return 1;
+			for(size_t i = 0; i < ref1.GetSize(); ++i) {
+				if(ref1[i].Key() < ref2[i].Key())
+					return -1;
+				if(ref1[i].Key() > ref2[i].Key())
+					return 1;
+				int res = VDataCompare(ref1[i].Value(), ref2[i].Value());
+				if(res != 0)
+					return res;
+			}
+			return 0;
+		}
+	}
+	// this should never be reached
+	assert(false);
+	return 0;
+}
+
 bool operator==(const VData &a, const VData &b) {
 	if(a.GetType() != b.GetType())
 		return false;

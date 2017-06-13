@@ -340,11 +340,14 @@ inline hash_t VDataDictHasher::Hash(hash_t hash, stringtag_t value) const {
 
 std::ostream& operator<<(std::ostream &stream, const VData &data);
 
+int VDataCompare(const VData &a, const VData &b);
 bool operator==(const VData &a, const VData &b);
 
-inline bool operator!=(const VData &a, const VData &b) {
-	return !(a == b);
-}
+inline bool operator!=(const VData &a, const VData &b) { return !(a == b); }
+inline bool operator<(const VData &a, const VData &b) { return (VDataCompare(a, b) < 0); }
+inline bool operator>(const VData &a, const VData &b) { return (VDataCompare(a, b) > 0); }
+inline bool operator<=(const VData &a, const VData &b) { return (VDataCompare(a, b) <= 0); }
+inline bool operator>=(const VData &a, const VData &b) { return (VDataCompare(a, b) >= 0); }
 
 inline void ExtendVList(VData::List&) {}
 
