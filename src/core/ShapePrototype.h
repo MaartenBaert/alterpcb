@@ -45,6 +45,10 @@ public:
 	inline ShapePrototype(stringtag_t name, VData::Dict &&parameters)
 		: m_name(name), m_parameters(std::move(parameters)), m_triangulation_valid(false) {}
 
+	// noncopyable
+	ShapePrototype(const ShapePrototype&) = delete;
+	ShapePrototype& operator=(const ShapePrototype&) = delete;
+
 	inline stringtag_t GetName() const { return m_name; }
 	inline const VData::Dict& GetParameters() const { return m_parameters; }
 

@@ -41,9 +41,10 @@ enum HoverRegion {
 //******************************************************************************************//
 struct SubParameterEntry {
 	index_t m_num_shapes;
+	VData m_value;
 	QWidget *m_widget;
 
-	inline SubParameterEntry(index_t num_shapes,QWidget *widget) : m_num_shapes(num_shapes), m_widget(widget) {}
+	inline SubParameterEntry(index_t num_shapes,const VData &value,QWidget *widget) : m_num_shapes(num_shapes), m_value(value), m_widget(widget) {}
 };
 
 struct ParameterEntry {
@@ -58,6 +59,12 @@ struct ParameterEntry {
 		: m_name(name), m_value(value), m_override(override), m_mergeable(mergeable), m_expanded(folded), m_widget(widget) {}
 	inline ParameterEntry(stringtag_t name, VData &&value, bool override, bool mergeable, bool folded,QWidget *widget)
 		: m_name(name), m_value(std::move(value)), m_override(override), m_mergeable(mergeable), m_expanded(folded), m_widget(widget) {}
+};
+
+struct ParameterNameValuePair {
+	stringtag_t m_name;
+	VData m_value;
+	inline ParameterNameValuePair(stringtag_t name, VData value) : m_name(name), m_value(value) {}
 };
 
 //******************************************************************************************//
@@ -102,12 +109,8 @@ public:
 	index_t GetWidgetCount();
 	QWidget* GetWidget(index_t index);
 
-//	void AddWidget(index_t index, QWidget* widget);
-//	void RemoveWidget(index_t index);
-//	void MoveWidget(index_t from, index_t to);
-
-	void MakeVisible(QWidget* widget);
 	void UpdateParameters();
+	ParameterNameValuePair GetParameterNameValue(QWidget *widget);
 
 protected:
 	virtual bool viewportEvent(QEvent* event) override;
@@ -132,6 +135,9 @@ private:
 	HoverRegion getHoverRegion(const QPoint &pos);
 	void changeHoverRegion(HoverRegion hover_region);
 	void ensureWidgetVisible(QWidget *childWidget);
+
+public slots:
+	void OnParameterChange();
 
 };
 

@@ -79,6 +79,8 @@ LayerStack *Library::GetLayerStack(stringtag_t layerstack_name)
 		}
 	}
 
+	return (new LayerStack(STRINGTAG_NONE));
+
 	// should not be reached
 	assert(false);
 	return 0;

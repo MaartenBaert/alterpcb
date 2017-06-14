@@ -11,6 +11,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <map>
 
 
 ParameterViewer::ParameterViewer(QWidget *parent, MainWindow *mainwindow) : QAbstractScrollArea(parent) {
@@ -63,123 +64,68 @@ QWidget* ParameterViewer::GetWidget(index_t index)
 	return m_parameters[index].m_widget;
 }
 
-//void ParameterViewer::AddWidget(index_t index, QWidget* widget)
-//{
-//	assert(index <= m_parameters.GetSize());
-//	assert(widget->parent() == viewport());
-
-//	widget->setAutoFillBackground(true);
-//	widget->setBackgroundRole(QPalette::Window);
-//	if(widget->focusPolicy() == Qt::NoFocus)
-//		widget->setFocusPolicy(Qt::ClickFocus);
-//	widget->show();
-
-//	m_widgets.insert(m_widgets.begin() + index, widget);
-//	UpdateFocusChain();
-//	UpdateRange();
-//	UpdateLayout();
-
-//}
-
-//void ParameterViewer::RemoveWidget(index_t index)
-//{
-//	assert(index < m_parameters.GetSize());
-
-//	delete m_widgets[index];
-//	m_widgets.erase(m_widgets.begin() + index);
-//	UpdateFocusChain();
-//	UpdateRange();
-//	UpdateLayout();
-
-//}
-
-//void ParameterViewer::MoveWidget(index_t from, index_t to)
-//{
-//	assert(from < m_parameters.GetSize());
-//	assert(to < m_parameters.GetSize());
-
-//	QWidget *widget = m_widgets[from];
-//	m_widgets.erase(m_widgets.begin() + from);
-//	m_widgets.insert(m_widgets.begin() + to, widget);
-//	UpdateFocusChain();
-//	UpdateLayout();
-
-//}
-
-void ParameterViewer::MakeVisible(QWidget* widget)
-{
-	assert(viewport()->isAncestorOf(widget));
-	QRect widget_rect(widget->mapTo(viewport(), QPoint(0, verticalScrollBar()->value())), widget->size());
-	QRect visible_rect(QPoint(0, verticalScrollBar()->value()), viewport()->size());
-	if(widget_rect.height() > visible_rect.height()) {
-		if(widget_rect.top() > visible_rect.top()) {
-			verticalScrollBar()->setValue(widget_rect.top());
-		} else if(widget_rect.bottom() < visible_rect.bottom()) {
-			verticalScrollBar()->setValue(visible_rect.top() + widget_rect.bottom() - visible_rect.bottom());
-		}
-	} else {
-		if(widget_rect.top() < visible_rect.top()) {
-			verticalScrollBar()->setValue(widget_rect.top());
-		} else if(widget_rect.bottom() > visible_rect.bottom()) {
-			verticalScrollBar()->setValue(visible_rect.top() + widget_rect.bottom() - visible_rect.bottom());
-		}
-	}
-}
-
 void ParameterViewer::UpdateParameters()
 {
-	const std::vector<Cow<ShapeInstance>>& shapes = m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->GetShapes();
 	HashTable<ParameterEntry, ParameterHasher> new_parameters;
 
-	// make new m_parameter
-	// copy existing widgets + expanded info
-	for(index_t i = 0 ; i < shapes.size(); ++i) {
-		const ShapeInstance &shaperef = shapes[i].Ref();
-		const ShapePrototype &shaperef2 = shaperef.GetShapePrototype().Ref();
+	if(m_mainwindow->GetDocumentViewer()->HasActiveDocument()) {
+		const std::vector<Cow<ShapeInstance>>& shapes = m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->GetShapes();
 
-		ShapeDefinition *shape_definition = NULL; //TODO// get this from LibraryManager
-		const EffectiveParameters &params = shaperef2.GetEffectiveParameters(shape_definition);
 
-		for(index_t j = 0 ; j < params.size(); ++j) {
-			// does the parameter already exist in new_parameter
-			//		if Yes is it mergable or not
-			//			if No set bools + change widget text
-			// if No does the parameter already exist in m_parameters
-			//		if Yes copy widget pointer + expanded
-			//		if No make widget
+		// make new m_parameter
+		// copy existing widgets + expanded info
+		for(index_t i = 0 ; i < shapes.size(); ++i) {
+			const ShapeInstance &shapeinstance = shapes[i].Ref();
 
-			std::pair<index_t, bool> added = new_parameters.TryEmplaceBack(
-						params[j].GetName(), params[j].GetName(), params[j].GetValue(), params[j].IsOverride(),
-						true, false, nullptr);
+			if(shapeinstance.IsSelected()) {
+				const ShapePrototype &shapeprototype = shapeinstance.GetShapePrototype().Ref();
 
-			if(!added.second) { // parameter exists
-				if(new_parameters[added.first].m_value != params[j].GetValue()) { // not mergable
-					new_parameters[added.first].m_mergeable = false;
-					static_cast<QLineEdit*>(new_parameters[added.first].m_widget)->setText("...");
-				}
-			}
-			else {
-				index_t index = m_parameters.Find(params[j].GetName());
-				if(index == INDEX_NONE) {
-					QLineEdit *valuebox = new QLineEdit(viewport());
-					std::string str;
-					Json::ToString(params[j].GetValue(),str);
-					valuebox->setText(QString::fromStdString(str));
-					valuebox->setAutoFillBackground(true);
-					valuebox->setBackgroundRole(QPalette::Window);
-					if(valuebox->focusPolicy() == Qt::NoFocus)
-						valuebox->setFocusPolicy(Qt::ClickFocus);
-					valuebox->show();
-					new_parameters[added.first].m_widget = valuebox;
-				}
-				else { // copy widget pointer
-					new_parameters[added.first].m_widget = m_parameters[index].m_widget;
-					new_parameters[added.first].m_expanded = m_parameters[index].m_expanded;
-					m_parameters[index].m_widget = NULL;
+				ShapeDefinition *shape_definition = NULL; //TODO// get this from LibraryManager
+				const EffectiveParameters &params = shapeprototype.GetEffectiveParameters(shape_definition);
+
+				for(index_t j = 0 ; j < params.size(); ++j) {
+					// does the parameter already exist in new_parameter
+					//		if Yes is it mergable or not
+					//			if No set bools + change widget text
+					// if No does the parameter already exist in m_parameters
+					//		if Yes copy widget pointer + expanded
+					//		if No make widget
+
+					std::pair<index_t, bool> added = new_parameters.TryEmplaceBack(
+								params[j].GetName(), params[j].GetName(), params[j].GetValue(), params[j].IsOverride(),
+								true, false, nullptr);
+
+					if(!added.second) { // parameter exists
+						if(new_parameters[added.first].m_value != params[j].GetValue()) { // not mergable
+							new_parameters[added.first].m_mergeable = false;
+							new_parameters[added.first].m_value = VData("...");
+							static_cast<QLineEdit*>(new_parameters[added.first].m_widget)->setText("...");
+						}
+					}
+					else {
+						index_t index = m_parameters.Find(params[j].GetName());
+						if(index == INDEX_NONE) {
+							QLineEdit *valuebox = new QLineEdit(viewport());
+							connect(valuebox,SIGNAL(editingFinished()),this,SLOT(OnParameterChange()));
+							std::string str;
+							Json::ToString(params[j].GetValue(),str);
+							valuebox->setText(QString::fromStdString(str));
+							valuebox->setAutoFillBackground(true);
+							valuebox->setBackgroundRole(QPalette::Window);
+							if(valuebox->focusPolicy() == Qt::NoFocus)
+								valuebox->setFocusPolicy(Qt::ClickFocus);
+							valuebox->show();
+							new_parameters[added.first].m_widget = valuebox;
+						}
+						else { // copy widget pointer
+							new_parameters[added.first].m_widget = m_parameters[index].m_widget;
+							new_parameters[added.first].m_expanded = m_parameters[index].m_expanded;
+							m_parameters[index].m_widget = NULL;
+						}
+					}
 				}
 			}
 		}
-
 	}
 
 	// remove unused widgets
@@ -199,6 +145,39 @@ void ParameterViewer::UpdateParameters()
 	UpdateRange();
 	UpdateLayout();
 
+}
+
+ParameterNameValuePair ParameterViewer::GetParameterNameValue(QWidget *widget)
+{
+	stringtag_t param_name = STRINGTAG_NONE;
+	VData param_value;
+	for(index_t i = 0; i < m_parameters.GetSize(); ++i)
+	{
+		if(!m_parameters[i].m_mergeable && m_parameters[i].m_expanded){
+			for(index_t j = 0; j < m_parameters[i].m_subparameters.size(); ++j){
+				if(m_parameters[i].m_subparameters[j].m_widget == widget){
+					param_name = m_parameters[i].m_name;
+					param_value = m_parameters[i].m_subparameters[j].m_value;
+				}
+
+				if(param_name != STRINGTAG_NONE ){
+					break;
+				}
+			}
+
+		}
+
+		if(m_parameters[i].m_widget == widget){
+			param_name = m_parameters[i].m_name;
+			param_value = m_parameters[i].m_value;
+		}
+
+		if(param_name != STRINGTAG_NONE ){
+			break;
+		}
+	}
+
+	return ParameterNameValuePair(param_name,param_value);
 }
 
 bool ParameterViewer::viewportEvent(QEvent* event)
@@ -611,24 +590,41 @@ void ParameterViewer::ExpandParameter(index_t index)
 	if(!m_parameters[index].m_mergeable){
 		m_parameters[index].m_expanded = true;
 
-		// TODO replace with shape search
-		QLineEdit *widget = new QLineEdit(viewport());
-		widget->setText("fgdfg");
-		widget->setAutoFillBackground(true);
-		widget->setBackgroundRole(QPalette::Window);
-		if(widget->focusPolicy() == Qt::NoFocus)
-			widget->setFocusPolicy(Qt::ClickFocus);
-		widget->show();
-		m_parameters[index].m_subparameters.emplace_back(1,widget);
+		const std::vector<Cow<ShapeInstance>>& shapes = m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->GetShapes();
 
-		QLineEdit *widget2 = new QLineEdit(viewport());
-		widget2->setText("x");
-		widget2->setAutoFillBackground(true);
-		widget2->setBackgroundRole(QPalette::Window);
-		if(widget2->focusPolicy() == Qt::NoFocus)
-			widget2->setFocusPolicy(Qt::ClickFocus);
-		widget2->show();
-		m_parameters[index].m_subparameters.emplace_back(3,widget2);
+		std::map<VData,size_t> values;
+
+		for(index_t i = 0 ; i < shapes.size(); ++i) {
+			const ShapeInstance &shaperef = shapes[i].Ref();
+			const ShapePrototype &shaperef2 = shaperef.GetShapePrototype().Ref();
+
+			ShapeDefinition *shape_definition = NULL; //TODO// get this from LibraryManager
+			const EffectiveParameters &params = shaperef2.GetEffectiveParameters(shape_definition);
+
+			for(index_t j = 0 ; j < params.size(); ++j) {
+				if(params[j].GetName() == m_parameters[index].m_name) {
+					VData value = params[j].GetValue();
+					if(!values.emplace(value,1).second) {
+						values[value] = values[value] + 1;
+					}
+				}
+			}
+
+		}
+
+		for(auto const &ent : values) {
+			QLineEdit *widget = new QLineEdit(viewport());
+			connect(widget,SIGNAL(editingFinished()),this,SLOT(OnParameterChange()));
+			std::string str;
+			Json::ToString(ent.first,str);
+			widget->setText(QString::fromStdString(str));
+			widget->setAutoFillBackground(true);
+			widget->setBackgroundRole(QPalette::Window);
+			if(widget->focusPolicy() == Qt::NoFocus)
+				widget->setFocusPolicy(Qt::ClickFocus);
+			widget->show();
+			m_parameters[index].m_subparameters.emplace_back(ent.second,ent.first,widget);
+		}
 
 		UpdateLayout();
 		UpdateFocusChain();
@@ -704,6 +700,81 @@ void ParameterViewer::ensureWidgetVisible(QWidget *childWidget)
 	}
 	if(rect.y() + rect.height() > viewport()->height()) {
 		verticalScrollBar()->setValue(verticalScrollBar()->value() + rect.y() + rect.height() - viewport()->height());
+	}
+}
+
+void ParameterViewer::OnParameterChange()
+{
+	QObject* obj = sender();
+	QLineEdit* emitter = static_cast<QLineEdit*>(obj);
+
+	if(emitter->isModified()) {
+		ParameterNameValuePair param_namevalue = GetParameterNameValue(emitter);
+		//Update the model
+
+		VData newvalue;
+		try {
+			Json::FromString(newvalue, emitter->text().toStdString());
+		} catch(Json::ParseError &ex) {
+			std::cerr << "[ParameterViewer::OnParameterChange] JSON parse error: " << ex.what() << std::endl;
+			return;
+		}
+
+		const std::vector<Cow<ShapeInstance>>& shapes = m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->GetShapes();
+		std::vector<Cow<ShapeInstance>> new_shapes;
+
+		// make new m_parameter
+		// copy existing widgets + expanded info
+		for(index_t i = 0 ; i < shapes.size(); ++i) {
+			const ShapeInstance &shapeinstance = shapes[i].Ref();
+			bool param_found = false;
+
+			if(shapeinstance.IsSelected()) {
+				const ShapePrototype &shapeprototype = shapeinstance.GetShapePrototype().Ref();
+
+				ShapeDefinition *shape_definition = NULL; //TODO// get this from LibraryManager
+				const EffectiveParameters &params = shapeprototype.GetEffectiveParameters(shape_definition);
+
+				for(index_t j = 0 ; j < params.size(); ++j) {
+					if(params[j].GetName() == param_namevalue.m_name && (params[j].GetValue() == param_namevalue.m_value || param_namevalue.m_value == VData("..."))) {
+						param_found = true;
+
+						const VData::Dict &old_parameters = shapeprototype.GetParameters(); //TODO// replace with transformed parameters
+						VData::Dict new_parameters;
+						new_parameters.Reserve(old_parameters.GetSize() + 1);
+
+						bool found = false;
+						for(index_t k = 0; k < old_parameters.GetSize(); ++k) {
+							const VDataDictEntry &entry = old_parameters[k];
+							if(entry.Key() == param_namevalue.m_name) {
+								new_parameters.EmplaceBack(param_namevalue.m_name, newvalue);
+								found = true;
+							} else {
+								new_parameters.EmplaceBack(entry.Key(), entry.Value());
+							}
+						}
+						if(!found) {
+							new_parameters.EmplaceBack(param_namevalue.m_name, newvalue);
+						}
+
+						Cow<ShapePrototype> new_shapeprototype(std::make_shared<ShapePrototype>(shapeprototype.GetName(), new_parameters));
+						Cow<ShapeInstance> new_shapeinstance(std::make_shared<ShapeInstance>(std::move(new_shapeprototype), shapeinstance.IsSelected()));
+
+						new_shapes.emplace_back(std::move(new_shapeinstance));
+
+						break;
+					}
+				}
+
+			}
+			if(!param_found) { // if parameter changed is not in params --> copy shape
+				new_shapes.emplace_back(shapes[i]);
+			}
+
+		}
+		m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->HistoryPush(std::move(new_shapes),false);
+		emitter->setModified(false);
+		//TODO focus on drawing viewer...
 	}
 }
 

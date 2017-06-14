@@ -275,17 +275,27 @@ int main(int argc, char *argv[]) {
 		params2.EmplaceBack(StringRegistry::NewTag("width"), 45);
 		params2.EmplaceBack(StringRegistry::NewTag("height"), 152);
 
+		VData::Dict params3;
+		params3.EmplaceBack(StringRegistry::NewTag("x"), 10);
+		params3.EmplaceBack(StringRegistry::NewTag("y"), 12.5);
+		params3.EmplaceBack(StringRegistry::NewTag("width"), 45);
+		params3.EmplaceBack(StringRegistry::NewTag("height"), 152);
+
 		Cow<ShapePrototype> proto1;
 		proto1.New(SRNewTag("round-shape"), std::move(params1));
 		Cow<ShapePrototype> proto2;
 		proto2.New(SRNewTag("square-shape"), std::move(params2));
+		Cow<ShapePrototype> proto3;
+		proto3.New(SRNewTag("square-shape2"), std::move(params3));
 
 		ShapeTransform transform1;
 		ShapeTransform transform2;
+		ShapeTransform transform3;
 
 		std::vector<Cow<ShapeInstance>> shapes;
-		shapes.emplace_back(std::make_shared<ShapeInstance>(std::move(proto1), transform1, false));
+		shapes.emplace_back(std::make_shared<ShapeInstance>(std::move(proto1), transform1, true));
 		shapes.emplace_back(std::make_shared<ShapeInstance>(std::move(proto2), transform2, true));
+		shapes.emplace_back(std::make_shared<ShapeInstance>(std::move(proto3), transform3, true));
 
 		lib1->GetLayout(0)->HistoryPush(std::move(shapes),false);
 

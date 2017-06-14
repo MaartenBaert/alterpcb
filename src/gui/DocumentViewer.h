@@ -53,6 +53,7 @@ public:
 	void OpenDrawing(Drawing *drawing);
 
 public:
+	inline bool HasActiveDocument() {if(m_active_document == NULL){return false;} else{return true;}}
 	inline Document* GetActiveDocument() { return m_active_document; }
 
 private:
