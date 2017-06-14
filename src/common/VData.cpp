@@ -24,6 +24,9 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 const real_t VDATA_DECIMAL_SHIFT_SCALE = exp10(-VDATA_DECIMAL_SHIFT);
 
+// This is purely for convenience (e.g. for debugging), it doesn't produce 100% correct results in all cases.
+// For example, strings are not escaped, floats may be printed with minor rounding errors, ...
+// Use Json::ToStream or Json::ToString when accurate results are required.
 std::ostream& operator<<(std::ostream &stream, const VData &data) {
 	switch(data.GetType()) {
 		case VDATA_NULL: {
@@ -74,21 +77,31 @@ std::ostream& operator<<(std::ostream &stream, const VData &data) {
 	return stream;
 }
 
+inline int IntCompare(int64_t  a, int64_t  b) {
+	return (a == b)? 0 : (a < b)? -1 : 1;
+}
+
+inline int FloatCompare(real_t a, real_t b) {
+	// this is necessary to produce consistent results for NaN and infinity
+	int64_t ai = MemCast<int64_t>(a), bi = MemCast<int64_t>(b);
+	ai ^= (ai >> 63) & INT64_MAX;
+	bi ^= (bi >> 63) & INT64_MAX;
+	return (ai == bi)? 0 : (ai < bi)? -1 : 1;
+}
+
 int VDataCompare(const VData &a, const VData &b) {
 	if(a.GetType() != b.GetType())
 		return (int) a.GetType() - (int) b.GetType();
 	switch(a.GetType()) {
 		case VDATA_NULL: return 0;
 		case VDATA_BOOL: return (int) a.AsBool() - (int) b.AsBool();
-		case VDATA_INT: return (a.AsInt() < b.AsInt())? -1 : (a.AsInt() > b.AsInt())? 1 : 0;
-		case VDATA_FLOAT: return (a.AsFloat() < b.AsFloat())? -1 : (a.AsFloat() > b.AsFloat())? 1 : 0;
+		case VDATA_INT: return IntCompare(a.AsInt(), b.AsInt());
+		case VDATA_FLOAT: return FloatCompare(a.AsFloat(), b.AsFloat());
 		case VDATA_STRING: return a.AsString().compare(b.AsString());
 		case VDATA_LIST: {
 			const VData::List &ref1 = a.AsList(), &ref2 = b.AsList();
-			if(ref1.size() < ref2.size())
-				return -1;
-			if(ref1.size() > ref2.size())
-				return 1;
+			if(ref1.size() != ref2.size())
+				return (ref1.size() < ref2.size())? -1 : 1;
 			for(size_t i = 0; i < ref1.size(); ++i) {
 				int res = VDataCompare(ref1[i], ref2[i]);
 				if(res != 0)
@@ -98,15 +111,11 @@ int VDataCompare(const VData &a, const VData &b) {
 		}
 		case VDATA_DICT: {
 			const VData::Dict &ref1 = a.AsDict(), &ref2 = b.AsDict();
-			if(ref1.GetSize() < ref2.GetSize())
-				return -1;
-			if(ref1.GetSize() > ref2.GetSize())
-				return 1;
+			if(ref1.GetSize() != ref2.GetSize())
+				return (ref1.GetSize() < ref2.GetSize())? -1 : 1;
 			for(size_t i = 0; i < ref1.GetSize(); ++i) {
-				if(ref1[i].Key() < ref2[i].Key())
-					return -1;
-				if(ref1[i].Key() > ref2[i].Key())
-					return 1;
+				if(ref1[i].Key() != ref2[i].Key())
+					return (ref1[i].Key() < ref2[i].Key())? -1 : 1;
 				int res = VDataCompare(ref1[i].Value(), ref2[i].Value());
 				if(res != 0)
 					return res;
@@ -126,7 +135,7 @@ bool operator==(const VData &a, const VData &b) {
 		case VDATA_NULL: return true;
 		case VDATA_BOOL: return (a.AsBool() == b.AsBool());
 		case VDATA_INT: return (a.AsInt() == b.AsInt());
-		case VDATA_FLOAT: return (a.AsFloat() == b.AsFloat());
+		case VDATA_FLOAT: return (MemCast<int64_t>(a.AsFloat()) == MemCast<int64_t>(b.AsFloat()));
 		case VDATA_STRING: return (a.AsString() == b.AsString());
 		case VDATA_LIST: {
 			const VData::List &ref1 = a.AsList(), &ref2 = b.AsList();
