@@ -39,7 +39,11 @@ private:
 	bool m_soft;
 
 public:
-	inline DrawingHistory() {}
+	inline DrawingHistory() {
+		assert(false); // should never be called, but std::vector::resize() needs a default constructor
+	}
+	inline DrawingHistory(bool soft)
+		: m_soft(soft) {}
 	inline DrawingHistory(std::vector<Cow<ShapeInstance>> &&shapes, bool soft)
 		: m_shapes(std::move(shapes)), m_soft(soft) {}
 
@@ -49,9 +53,13 @@ public:
 	DrawingHistory& operator=(const DrawingHistory&) = default;
 	DrawingHistory& operator=(DrawingHistory&&) = default;
 
+	inline void Replace(std::vector<Cow<ShapeInstance>> &&shapes, bool soft) {
+		m_shapes = std::move(shapes);
+		m_soft = soft;
+	}
+
 	inline bool IsSoft() const { return m_soft; }
 
-	inline       std::vector<Cow<ShapeInstance>>& GetShapes()       { return m_shapes; }
 	inline const std::vector<Cow<ShapeInstance>>& GetShapes() const { return m_shapes; }
 
 };
@@ -62,10 +70,12 @@ private:
 	Library *m_parent;
 	stringtag_t m_name;
 	DrawingType m_type;
+	stringtag_t m_layerstack;
+
 	std::vector<DrawingHistory> m_history;
 	size_t m_history_position;
-	size_t m_max_history_position = 10;
-	stringtag_t m_layerstack;
+
+	static constexpr size_t HISTORY_SIZE = 20; // TODO: make this a user preference
 
 public:
 	Drawing(Library *parent, stringtag_t name, DrawingType type, stringtag_t layerstack);
@@ -75,7 +85,6 @@ public:
 	Drawing& operator=(const Drawing&) = delete;
 
 	void HistoryClear(std::vector<Cow<ShapeInstance>> &&shapes);
-	void HistoryRevert();
 	void HistoryPush(std::vector<Cow<ShapeInstance>> &&shapes, bool soft = false);
 	void HistoryUndo();
 	void HistoryRedo();
@@ -87,8 +96,10 @@ public:
 	inline DrawingType GetType() const { return m_type; }
 	inline stringtag_t GetLayerStack() const { return m_layerstack; }
 
-	//inline       std::vector<Cow<Shape>>& GetShapes()       { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
-	inline const std::vector<Cow<ShapeInstance>>& GetShapes() const { assert(!m_history.empty()); return m_history[m_history_position].GetShapes(); }
+	inline const std::vector<Cow<ShapeInstance>>& GetShapes() const {
+		assert(m_history_position < m_history.size());
+		return m_history[m_history_position].GetShapes();
+	}
 
 	inline void SetName(stringtag_t name) { m_name = name; }
 
