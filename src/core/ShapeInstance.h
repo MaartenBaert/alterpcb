@@ -24,6 +24,8 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "LinkedList.h"
 #include "VData.h"
 
+#include "ShapeTransform.h"
+
 /*
 The problem:
 Shapes need to be flattened for rendering and some other actions. But flattening is potentially very slow, because the
@@ -50,14 +52,6 @@ The selection state and transform are added by ShapeInstance and deduplicated ag
 
 class ShapePrototype;
 
-struct ShapeTransform {
-	real_t m_x, m_y, m_angle;
-	bool m_mirror, m_flip;
-	inline ShapeTransform() {}
-	inline ShapeTransform(real_t x, real_t y, real_t angle, bool mirror, bool flip)
-		: m_x(x), m_y(y), m_angle(angle), m_mirror(mirror), m_flip(flip) {}
-};
-
 class ShapeInstance : public LinkedListElement<ShapeInstance> {
 
 private:
@@ -67,9 +61,9 @@ private:
 
 public:
 	inline ShapeInstance(const Cow<ShapePrototype>& shape_prototype, bool selected)
-		: m_shape_prototype(shape_prototype), m_transform(0.0, 0.0, 0.0, false, false), m_selected(selected) {}
+		: m_shape_prototype(shape_prototype), m_transform(Vertex(0.0, 0.0), 0.0, false, false), m_selected(selected) {}
 	inline ShapeInstance(Cow<ShapePrototype>&& shape_prototype, bool selected)
-		: m_shape_prototype(std::move(shape_prototype)), m_transform(0.0, 0.0, 0.0, false, false), m_selected(selected) {}
+		: m_shape_prototype(std::move(shape_prototype)), m_transform(Vertex(0.0, 0.0), 0.0, false, false), m_selected(selected) {}
 	inline ShapeInstance(const Cow<ShapePrototype>& shape_prototype, const ShapeTransform& transform, bool selected)
 		: m_shape_prototype(shape_prototype), m_transform(transform), m_selected(selected) {}
 	inline ShapeInstance(Cow<ShapePrototype>&& shape_prototype, const ShapeTransform& transform, bool selected)

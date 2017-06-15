@@ -64,6 +64,7 @@ HEADERS += \
 	core/ShapeDefinition.h \
 	core/ShapeInstance.h \
 	core/ShapePrototype.h \
+	core/ShapeTransform.h \
 	gui/DocumentViewer.h \
 	gui/DrawingViewer.h \
 	gui/GLHelper.h \
