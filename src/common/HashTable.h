@@ -76,10 +76,7 @@ public:
 	void Reserve(index_t capacity) {
 		m_data.reserve(capacity);
 		if(capacity > ((index_t) 1 << m_bits)) {
-			++m_bits;
-			while(capacity > ((index_t) 1 << m_bits)) {
-				++m_bits;
-			}
+			m_bits = CeilLog2(capacity);
 			Rehash();
 		}
 	}
@@ -225,6 +222,14 @@ public:
 	inline const T& operator[](index_t i) const {
 		assert(i < m_data.size());
 		return m_data[i];
+	}
+	inline T& Front() {
+		assert(!m_data.empty());
+		return m_data.front();
+	}
+	inline const T& Front() const {
+		assert(!m_data.empty());
+		return m_data.front();
 	}
 	inline T& Back() {
 		assert(!m_data.empty());
