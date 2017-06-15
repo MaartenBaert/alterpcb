@@ -54,23 +54,6 @@ public:
 	Cow& operator=(const Cow&) = default;
 	Cow& operator=(Cow&&) = default;
 
-	// casting copy and assignment
-	// requires polymorphism
-	/*template<typename U>
-	inline Cow(const Cow<U> &other)
-		: m_data(other.m_data) {}
-	template<typename U>
-	inline Cow(Cow<U> &&other)
-		: m_data(std::move(other.m_data)) {}
-	template<typename U>
-	inline Cow& operator=(const Cow<U> &other) {
-		m_data = other.m_data;
-	}
-	template<typename U>
-	inline Cow& operator=(Cow<U> &&other) {
-		m_data = std::move(other.m_data);
-	}*/
-
 	// null pointer creation and assignment
 	inline Cow(std::nullptr_t) {}
 	inline Cow& operator=(std::nullptr_t) {

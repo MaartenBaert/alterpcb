@@ -139,28 +139,32 @@ public:
 	}
 
 	inline VData& operator=(const VData &other) {
-		Destruct();
-		switch(other.m_type) {
-			case VDATA_NULL: ConstructNull(); break;
-			case VDATA_BOOL: ConstructBool(other.m_value_bool); break;
-			case VDATA_INT: ConstructInt(other.m_value_int); break;
-			case VDATA_FLOAT: ConstructFloat(other.m_value_float); break;
-			case VDATA_STRING: ConstructString(other.m_value_string); break;
-			case VDATA_LIST: ConstructList(other.m_value_list); break;
-			case VDATA_DICT: ConstructDict(other.m_value_dict); break;
+		if(this != &other) {
+			Destruct();
+			switch(other.m_type) {
+				case VDATA_NULL: ConstructNull(); break;
+				case VDATA_BOOL: ConstructBool(other.m_value_bool); break;
+				case VDATA_INT: ConstructInt(other.m_value_int); break;
+				case VDATA_FLOAT: ConstructFloat(other.m_value_float); break;
+				case VDATA_STRING: ConstructString(other.m_value_string); break;
+				case VDATA_LIST: ConstructList(other.m_value_list); break;
+				case VDATA_DICT: ConstructDict(other.m_value_dict); break;
+			}
 		}
 		return *this;
 	}
 	inline VData& operator=(VData &&other) {
-		Destruct();
-		switch(other.m_type) {
-			case VDATA_NULL: ConstructNull(); break;
-			case VDATA_BOOL: ConstructBool(other.m_value_bool); break;
-			case VDATA_INT: ConstructInt(other.m_value_int); break;
-			case VDATA_FLOAT: ConstructFloat(other.m_value_float); break;
-			case VDATA_STRING: ConstructString(std::move(other.m_value_string)); break;
-			case VDATA_LIST: ConstructList(std::move(other.m_value_list)); other.Destruct(); break;
-			case VDATA_DICT: ConstructDict(std::move(other.m_value_dict)); other.Destruct(); break;
+		if(this != &other) {
+			Destruct();
+			switch(other.m_type) {
+				case VDATA_NULL: ConstructNull(); break;
+				case VDATA_BOOL: ConstructBool(other.m_value_bool); break;
+				case VDATA_INT: ConstructInt(other.m_value_int); break;
+				case VDATA_FLOAT: ConstructFloat(other.m_value_float); break;
+				case VDATA_STRING: ConstructString(std::move(other.m_value_string)); break;
+				case VDATA_LIST: ConstructList(std::move(other.m_value_list)); other.Destruct(); break;
+				case VDATA_DICT: ConstructDict(std::move(other.m_value_dict)); other.Destruct(); break;
+			}
 		}
 		return *this;
 	}

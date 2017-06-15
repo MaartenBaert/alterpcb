@@ -69,18 +69,20 @@ public:
 		}
 	}
 	LinkedList& operator=(LinkedList &&other) noexcept {
-		assert(LinkedListHook<T>::m_prev == this);
-		assert(LinkedListHook<T>::m_next == this);
-		if(&other == other.LinkedListHook<T>::m_prev) {
-			LinkedListHook<T>::m_prev = this;
-			LinkedListHook<T>::m_next = this;
-		} else {
-			LinkedListHook<T>::m_prev = other.LinkedListHook<T>::m_prev;
-			LinkedListHook<T>::m_next = other.LinkedListHook<T>::m_next;
-			LinkedListHook<T>::m_prev->m_next = this;
-			LinkedListHook<T>::m_next->m_prev = this;
-			other.LinkedListHook<T>::m_prev = &other;
-			other.LinkedListHook<T>::m_next = &other;
+		if(this != &other) {
+			assert(LinkedListHook<T>::m_prev == this);
+			assert(LinkedListHook<T>::m_next == this);
+			if(&other == other.LinkedListHook<T>::m_prev) {
+				LinkedListHook<T>::m_prev = this;
+				LinkedListHook<T>::m_next = this;
+			} else {
+				LinkedListHook<T>::m_prev = other.LinkedListHook<T>::m_prev;
+				LinkedListHook<T>::m_next = other.LinkedListHook<T>::m_next;
+				LinkedListHook<T>::m_prev->m_next = this;
+				LinkedListHook<T>::m_next->m_prev = this;
+				other.LinkedListHook<T>::m_prev = &other;
+				other.LinkedListHook<T>::m_next = &other;
+			}
 		}
 	}
 
@@ -124,18 +126,20 @@ public:
 		}
 	}
 	LinkedListElement& operator=(LinkedListElement &&other) noexcept {
-		LinkedListHook<T>::m_prev->m_next = LinkedListHook<T>::m_next;
-		LinkedListHook<T>::m_next->m_prev = LinkedListHook<T>::m_prev;
-		if(&other == other.LinkedListHook<T>::m_prev) {
-			LinkedListHook<T>::m_prev = this;
-			LinkedListHook<T>::m_next = this;
-		} else {
-			LinkedListHook<T>::m_prev = other.LinkedListHook<T>::m_prev;
-			LinkedListHook<T>::m_next = other.LinkedListHook<T>::m_next;
-			LinkedListHook<T>::m_prev->m_next = this;
-			LinkedListHook<T>::m_next->m_prev = this;
-			other.LinkedListHook<T>::m_prev = &other;
-			other.LinkedListHook<T>::m_next = &other;
+		if(this != &other) {
+			LinkedListHook<T>::m_prev->m_next = LinkedListHook<T>::m_next;
+			LinkedListHook<T>::m_next->m_prev = LinkedListHook<T>::m_prev;
+			if(&other == other.LinkedListHook<T>::m_prev) {
+				LinkedListHook<T>::m_prev = this;
+				LinkedListHook<T>::m_next = this;
+			} else {
+				LinkedListHook<T>::m_prev = other.LinkedListHook<T>::m_prev;
+				LinkedListHook<T>::m_next = other.LinkedListHook<T>::m_next;
+				LinkedListHook<T>::m_prev->m_next = this;
+				LinkedListHook<T>::m_next->m_prev = this;
+				other.LinkedListHook<T>::m_prev = &other;
+				other.LinkedListHook<T>::m_next = &other;
+			}
 		}
 	}
 
