@@ -75,14 +75,14 @@ inline char ReadChar(ReadContext &context) {
 	int c = ReadCharRaw(context);
 	if(c == EOF)
 		context.Error(0, "Unexpected end of input");
-	return c;
+	return (char) c;
 }
 
 inline char PeekChar(ReadContext &context) {
 	int c = PeekCharRaw(context);
 	if(c == EOF)
 		context.Error(0, "Unexpected end of input");
-	return c;
+	return (char) c;
 }
 
 inline void SkipWhitespace(ReadContext &context) {
@@ -417,7 +417,7 @@ inline void WriteInt(WriteContext &context, int64_t value) {
 	// convert to string
 	char buf[20], *buf2 = buf + sizeof(buf);
 	do {
-		*(--buf2) = '0' + value2 % 10;
+		*(--buf2) = (char) ('0' + (uint32_t) (value2 % 10));
 		value2 /= 10;
 	} while(value2 != 0);
 	if(negative)
@@ -455,7 +455,7 @@ inline void WriteFloat(WriteContext &context, double value) {
 				bool expo_negative = (expo < 0);
 				uint32_t expo_abs = (expo_negative)? -expo : expo;
 				do {
-					*(--ptr) = '0' + expo_abs % 10;
+					*(--ptr) = (char) ('0' + (uint32_t) (expo_abs % 10));
 					expo_abs /= 10;
 				} while(expo_abs != 0);
 				*(--ptr) = (expo_negative)? '-' : '+';
@@ -465,16 +465,16 @@ inline void WriteFloat(WriteContext &context, double value) {
 			if(decimals > 0) {
 				while(decimals != 1) {
 					--decimals;
-					uint32_t digit = mant % 10;
+					uint32_t digit = (uint32_t) (mant % 10);
 					mant /= 10;
 					if(digit != 0) {
-						*(--ptr) = '0' + digit;
+						*(--ptr) = (char) ('0' + digit);
 						break;
 					}
 				}
 				while(decimals != 0) {
 					--decimals;
-					*(--ptr) = '0' + mant % 10;
+					*(--ptr) = (char) ('0' + (uint32_t) (mant % 10));
 					mant /= 10;
 				}
 			} else {
@@ -486,7 +486,7 @@ inline void WriteFloat(WriteContext &context, double value) {
 				*(--ptr) = '0';
 			}
 			do {
-				*(--ptr) = '0' + mant % 10;
+				*(--ptr) = (char) ('0' + (uint32_t) (mant % 10));
 				mant /= 10;
 			} while(mant != 0);
 			if(dec.negative)

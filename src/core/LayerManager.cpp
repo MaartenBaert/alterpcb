@@ -46,7 +46,7 @@ int LayerManager::rowCount(const QModelIndex &parent) const
 {
 	UNUSED(parent);
 	if(!parent.isValid() && GetDocument() != NULL){
-		return GetLayerStack()->GetLogicalLayerSize();
+		return (int) GetLayerStack()->GetLogicalLayerSize();
 	}
 	else{
 		return 0;

@@ -32,7 +32,7 @@ struct GLvec2 {
 	float x, y;
 	inline GLvec2() {}
 	inline GLvec2(float x, float y) : x(x), y(y) {}
-	inline GLvec2(const Vertex& v) : x(v.x), y(v.y) {}
+	inline GLvec2(const Vertex& v) : x((float) v.x), y((float) v.y) {}
 	inline operator float*() { return &x; }
 };
 

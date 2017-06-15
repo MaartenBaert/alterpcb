@@ -22,8 +22,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Basics.h"
 #include "CoreBasics.h"
-
-#include <QtGui>
+#include "Qt.h"
 
 class MainWindow;
 

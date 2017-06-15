@@ -20,11 +20,12 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "StringRegistry.h"
-#include "LayerStack.h"
+#include "Basics.h"
 #include "Document.h"
+#include "LayerStack.h"
+#include "Qt.h"
+#include "StringRegistry.h"
 
-#include <QtGui>
 #include <vector>
 
 class MainWindow;

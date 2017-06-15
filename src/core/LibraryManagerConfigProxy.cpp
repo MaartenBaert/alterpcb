@@ -38,7 +38,7 @@ int LibraryManagerConfigProxy::rowCount(const QModelIndex &parent) const {
 	if(parent.isValid())
 		return 0;
 
-	return (static_cast<LibraryManager*>(sourceModel()))->GetLibraryCount();
+	return (int) (static_cast<LibraryManager*>(sourceModel()))->GetLibraryCount();
 }
 
 int LibraryManagerConfigProxy::columnCount(const QModelIndex &parent) const {

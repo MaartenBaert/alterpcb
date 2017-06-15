@@ -20,12 +20,12 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
+#include "HashTable.h"
+#include "Qt.h"
 #include "ShapeInstance.h"
 #include "VData.h"
-#include "HashTable.h"
 
 #include <vector>
-#include <QtGui>
 
 class MainWindow;
 

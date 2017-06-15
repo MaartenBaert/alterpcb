@@ -113,7 +113,7 @@ int VDataCompare(const VData &a, const VData &b) {
 			const VData::Dict &ref1 = a.AsDict(), &ref2 = b.AsDict();
 			if(ref1.GetSize() != ref2.GetSize())
 				return (ref1.GetSize() < ref2.GetSize())? -1 : 1;
-			for(size_t i = 0; i < ref1.GetSize(); ++i) {
+			for(index_t i = 0; i < ref1.GetSize(); ++i) {
 				if(ref1[i].Key() != ref2[i].Key())
 					return (ref1[i].Key() < ref2[i].Key())? -1 : 1;
 				int res = VDataCompare(ref1[i].Value(), ref2[i].Value());
@@ -151,7 +151,7 @@ bool operator==(const VData &a, const VData &b) {
 			const VData::Dict &ref1 = a.AsDict(), &ref2 = b.AsDict();
 			if(ref1.GetSize() != ref2.GetSize())
 				return false;
-			for(size_t i = 0; i < ref1.GetSize(); ++i) {
+			for(index_t i = 0; i < ref1.GetSize(); ++i) {
 				if(ref1[i].Key() != ref2[i].Key())
 					return false;
 				if(ref1[i].Value() != ref2[i].Value())

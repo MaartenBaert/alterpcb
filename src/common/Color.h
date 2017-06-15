@@ -23,8 +23,6 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "Basics.h"
 //#include "Vector.h"
 
-//#include <QtGui>
-
 struct Color {
 	float r, g, b, a;
 	inline Color() {}
@@ -41,11 +39,11 @@ inline Color Premultiply(const Color &color) {
 }
 
 inline float ToSRGB(float x) {
-	return (x < 0.04045f / 12.92f)? 12.92f * x : 1.055f * pow(x, 1.0f / 2.4f) - 0.055f;
+	return (x < 0.04045f / 12.92f)? 12.92f * x : 1.055f * powf(x, 1.0f / 2.4f) - 0.055f;
 }
 
 inline float FromSRGB(float x) {
-	return (x < 0.04045f)? (1.0f / 12.92f) * x : pow((x + 0.055f) / 1.055f, 2.4f);
+	return (x < 0.04045f)? (1.0f / 12.92f) * x : powf((x + 0.055f) / 1.055f, 2.4f);
 }
 
 inline Color ToSRGB(const Color &color, bool dark = true) {

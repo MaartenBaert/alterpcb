@@ -23,10 +23,9 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "Basics.h"
 #include "CoreBasics.h"
 #include "SafePointer.h"
+#include "Qt.h"
 
 #include <vector>
-
-#include <QtGui>
 
 class LibraryTreeItem : public SafeTarget<LibraryTreeItem> {
 

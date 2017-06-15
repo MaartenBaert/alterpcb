@@ -20,10 +20,12 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "TrackingPointer.h"
-#include <vector>
-#include <QtGui>
+#include "Basics.h"
 #include "HashTable.h"
+#include "Qt.h"
+#include "TrackingPointer.h"
+
+#include <vector>
 
 class Drawing;
 class DocumentViewer;

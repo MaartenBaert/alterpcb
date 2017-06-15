@@ -20,12 +20,11 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include <QtGui>
+#include "Qt.h"
 
 class LayerManager;
 
-class LayerWidget: public QWidget
-{
+class LayerWidget: public QWidget {
 	Q_OBJECT
 
 private:

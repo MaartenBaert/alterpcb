@@ -24,11 +24,10 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "CoreBasics.h"
 #include "HashTable.h"
 #include "LinkedList.h"
+#include "Qt.h"
 #include "TrackingPointer.h"
 
 #include <vector>
-
-#include <QtGui>
 
 class Library;
 class Drawing;

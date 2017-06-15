@@ -20,9 +20,9 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include <QtGui>
+#include "Qt.h"
 
-class LibraryManagerConfigProxy : public  QAbstractProxyModel {
+class LibraryManagerConfigProxy : public QAbstractProxyModel {
 	Q_OBJECT
 
 public:

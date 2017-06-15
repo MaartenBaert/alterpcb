@@ -27,8 +27,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "LibraryManager.h"
 #include "LibraryViewer.h"
 #include "ParameterViewer.h"
-
-#include <QtGui>
+#include "Qt.h"
 
 class LibraryConfigDialog;
 class LayerConfigDialog;

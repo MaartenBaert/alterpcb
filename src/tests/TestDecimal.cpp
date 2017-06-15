@@ -148,7 +148,7 @@ TEST_CASE("Decimal reverse round-trip", "[decimal]") {
 		Decimal val1;
 		val1.type = FLOATTYPE_NORMAL;
 		val1.negative = false;
-		val1.expo = dist_expo(rng);
+		val1.expo = (int32_t) dist_expo(rng);
 		val1.mant = dist_mant(rng);
 		double temp = FromDecimal(val1);
 		Decimal val2 = ToDecimal(temp, 15);

@@ -2,12 +2,7 @@
 
 #include "Basics.h"
 #include "Color.h"
-
-#include <GL/glew.h>
-
-#include <QtGui>
-#include <QtOpenGL/QGLFormat>
-#include <QtOpenGL/QGLWidget>
+#include "Qt.h"
 
 #define CLASS_GLTHING(Thing, NewThing, DeleteThing) \
 	class Thing { \

@@ -613,7 +613,7 @@ double FromDecimal(Decimal dec) {
 			uint64_t mant2 = FixMul64F(dec.mant, mult);
 
 			// calculate shift
-			uint32_t bittest = mant2 >> 59;
+			uint32_t bittest = (uint32_t) (mant2 >> 59);
 			uint32_t shift = 0;
 			if(bittest >= ((uint32_t) 1 << 4)) { shift +=  4; bittest >>=  4; }
 			if(bittest >= ((uint32_t) 1 << 2)) { shift +=  2; bittest >>=  2; }

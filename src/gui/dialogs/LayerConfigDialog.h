@@ -20,7 +20,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include <QtGui>
+#include "Qt.h"
 
 class MainWindow;
 class LayerManager;
@@ -34,6 +34,5 @@ private:
 public:
 	LayerConfigDialog(MainWindow *parent,LayerManager *layer_manager);
 	virtual void closeEvent(QCloseEvent *event) override;
+
 };
-
-

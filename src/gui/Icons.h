@@ -19,7 +19,8 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #pragma once
-#include <QtGui>
+
+#include "Qt.h"
 
 extern QIcon g_icon_layermanager_layer_solid, g_icon_layermanager_layer_vstripe_light;
 extern QIcon g_icon_librarymanager_library, g_icon_librarymanager_layout, g_icon_librarymanager_symbol, g_icon_librarymanager_schematic, g_icon_librarymanager_script;
