@@ -19,6 +19,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "Library.h"
+#include "LibraryManager.h"
 
 #include "Drawing.h"
 #include "LayerStack.h"
@@ -79,7 +80,7 @@ LayerStack *Library::GetLayerStack(stringtag_t layerstack_name)
 		}
 	}
 
-	return (new LayerStack(STRINGTAG_NONE));
+	return m_parent->GetEmplyLayerStack();
 
 	// should not be reached
 	assert(false);

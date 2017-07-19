@@ -21,6 +21,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "LibraryManager.h"
 
 #include "Library.h"
+#include "LayerStack.h"
 #include "Drawing.h"
 #include "ShapeDefinition.h"
 #include "ShapeInstance.h"
@@ -42,12 +43,13 @@ Library *LibraryManager::NewLibrary(const std::string &name, const std::string &
 	TrackingPointer<Library> library(new Library(this, name, filename, type));
 	Library *ptr = library.Get();
 	m_libraries.emplace_back(std::move(library));
-
+	m_empty_layerstack = new LayerStack(STRINGTAG_NONE);
 	return ptr;
 }
 
 void LibraryManager::DeleteLibrary(Library *library) {
 	DeleteFromVector(m_libraries, library);
+	delete m_empty_layerstack;
 }
 
 void LibraryManager::AddShapeDefinition(stringtag_t name, ShapeDefinition *shape_definition) {
