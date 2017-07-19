@@ -264,16 +264,16 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 		// enable basic shader
 		glUseProgram(m_gl_sp_basic);
 		glUniform2fv(m_gl_uni_basic_center, 1, GLvec2(0.0f, 0.0f));
-		glUniform2fv(m_gl_uni_basic_scale, 1, GLvec2(view_scale * 2.0 / (real_t) width(), view_scale * 2.0 / (real_t) height()));
+		glUniform2fv(m_gl_uni_basic_scale, 1, GLvec2((float) (view_scale * 2.0 / (real_t) width()), (float) (view_scale * 2.0 / (real_t) height())));
 
 		// bind VAO and VBO
 		glBindVertexArray(m_gl_vao_basic);
 		glBindBuffer(GL_ARRAY_BUFFER, m_gl_vbo_basic);
 
-		int32_t xi_min = lrint(gridbox_xmin / effective_grid_step_x + 0.4);
-		int32_t xi_max = lrint(gridbox_xmax / effective_grid_step_x - 0.4);
-		int32_t yi_min = lrint(gridbox_ymin / effective_grid_step_y + 0.4);
-		int32_t yi_max = lrint(gridbox_ymax / effective_grid_step_y - 0.4);
+		int32_t xi_min = (int32_t) lrint(gridbox_xmin / effective_grid_step_x + 0.4);
+		int32_t xi_max = (int32_t) lrint(gridbox_xmax / effective_grid_step_x - 0.4);
+		int32_t yi_min = (int32_t) lrint(gridbox_ymin / effective_grid_step_y + 0.4);
+		int32_t yi_max = (int32_t) lrint(gridbox_ymax / effective_grid_step_y - 0.4);
 		index_t num = 2 * (std::max(0, xi_max - xi_min + 1) + std::max(0, yi_max - yi_min + 1));
 		if(num != 0) {
 			index_t ind1 = 0, ind2 = num;
@@ -328,7 +328,7 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 
 		// enable dotgrid shader
 		glUseProgram(m_gl_sp_dotgrid);
-		glUniform2fv(m_gl_uni_dotgrid_linescale, 1, GLvec2(effective_grid_step_x * view_scale, effective_grid_step_y * view_scale));
+		glUniform2fv(m_gl_uni_dotgrid_linescale, 1, GLvec2((float) (effective_grid_step_x * view_scale), (float) (effective_grid_step_y * view_scale)));
 		glUniform4fv(m_gl_uni_dotgrid_color, 1, color_grid3);
 		glUniform1i(m_gl_uni_dotgrid_kernel, 0);
 

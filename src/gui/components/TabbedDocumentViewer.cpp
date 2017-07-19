@@ -89,28 +89,28 @@ void TabbedDocumentViewer::updateLayout(void){
 	updateGeometry();
 }
 
-void TabbedDocumentViewer::resizeEvent(QResizeEvent *e)
+void TabbedDocumentViewer::resizeEvent(QResizeEvent *event)
 {
-	QWidget::resizeEvent(e);
+	QWidget::resizeEvent(event);
 	updateLayout();
 }
 
-bool TabbedDocumentViewer::event(QEvent *ev)
+bool TabbedDocumentViewer::event(QEvent *event)
 {
-	if (ev->type() == QEvent::LayoutRequest){
+	if (event->type() == QEvent::LayoutRequest){
 		updateLayout();
 	}
-	return QWidget::event(ev);
+	return QWidget::event(event);
 }
 
-void TabbedDocumentViewer::changeEvent(QEvent *ev)
+void TabbedDocumentViewer::changeEvent(QEvent *event)
 {
-	if (ev->type() == QEvent::StyleChange
+	if (event->type() == QEvent::StyleChange
 #ifdef Q_WS_MAC
 			|| ev->type() == QEvent::MacSizeChange
 #endif
 			){
 		updateLayout();
 	}
-	QWidget::changeEvent(ev);
+	QWidget::changeEvent(event);
 }

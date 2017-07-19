@@ -2,12 +2,7 @@
 
 #include "Basics.h"
 #include "Color.h"
-
-#include <GL/glew.h>
-
-#include <QtGui>
-#include <QtOpenGL/QGLFormat>
-#include <QtOpenGL/QGLWidget>
+#include "Qt.h"
 
 #define CLASS_GLTHING(Thing, NewThing, DeleteThing) \
 	class Thing { \
@@ -16,10 +11,10 @@
 	public: \
 		inline Thing() { m_obj = 0; } \
 		inline Thing(const Thing&) = delete; \
-		inline Thing(Thing&& other) { m_obj = other.m_obj; other.m_obj = 0; } \
+		inline Thing(Thing &&other) { m_obj = other.m_obj; other.m_obj = 0; } \
 		inline ~Thing() { Delete(); } \
 		inline Thing& operator=(const Thing&) = delete; \
-		inline Thing& operator=(Thing&& other) { Delete(); m_obj = other.m_obj; other.m_obj = 0; return *this; } \
+		inline Thing& operator=(Thing &&other) { if(this != &other) { Delete(); m_obj = other.m_obj; other.m_obj = 0; } return *this; } \
 		inline void New() { Delete(); NewThing; } \
 		inline void Delete() { if(m_obj != 0) { DeleteThing; m_obj = 0; } } \
 		inline operator GLuint() { return m_obj; } \

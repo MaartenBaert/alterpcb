@@ -114,7 +114,7 @@ QModelIndex LibraryManager::parent(const QModelIndex &index) const {
 		case LIBRARYTREEITEMTYPE_DRAWING: { // parent is a library
 			Drawing *drawing = static_cast<Drawing*>(item_ptr);
 			Library *library = drawing->GetParent();
-			return createIndex(IndexInVector(m_libraries, library), 0, static_cast<LibraryTreeItem*>(library));
+			return createIndex((int) IndexInVector(m_libraries, library), 0, static_cast<LibraryTreeItem*>(library));
 		}
 	}
 
@@ -128,14 +128,14 @@ int LibraryManager::rowCount(const QModelIndex &parent) const {
 
 	// is parent the root?
 	if(!parent.isValid())
-		return GetLibraryCount();
+		return (int) GetLibraryCount();
 
 	// what type of parent is this?
 	LibraryTreeItem *parent_ptr = (LibraryTreeItem*) parent.internalPointer();
 	switch(parent_ptr->GetTreeItemType()) {
 		case LIBRARYTREEITEMTYPE_LIBRARY: {
 			Library *library = static_cast<Library*>(parent_ptr);
-			return library->GetLayoutCount();
+			return (int) library->GetLayoutCount();
 		}
 		case LIBRARYTREEITEMTYPE_DRAWING: {
 			return 0;
@@ -322,7 +322,7 @@ bool LibraryManager::dropLocation(const QMimeData *data, Qt::DropAction action, 
 			case LIBRARYTREEITEMTYPE_LIBRARY: {
 				Library *library = static_cast<Library*>(parent_ptr);
 				size_t index = IndexInVector(m_libraries, library);
-				row = (location <= DROPLOCATION_ON_BEFORE)? index : index + 1;
+				row = (location <= DROPLOCATION_ON_BEFORE)? (int) index : (int) (index + 1);
 				column = 0;
 				parent = QModelIndex();
 				return true;
@@ -331,7 +331,7 @@ bool LibraryManager::dropLocation(const QMimeData *data, Qt::DropAction action, 
 				Drawing *drawing = static_cast<Drawing*>(parent_ptr);
 				Library *library = drawing->GetParent();
 				size_t index = IndexInVector(m_libraries, library);
-				row = index + 1;
+				row = (int) (index + 1);
 				column = 0;
 				parent = QModelIndex();
 				return true;
@@ -420,13 +420,13 @@ void LibraryManager::UpdatePersistentModelIndices() {
 		switch(item_ptr->GetTreeItemType()) {
 			case LIBRARYTREEITEMTYPE_LIBRARY: {
 				Library *library = static_cast<Library*>(item_ptr);
-				row = IndexInVector(m_libraries, library);
+				row = (int) IndexInVector(m_libraries, library);
 				break;
 			}
 			case LIBRARYTREEITEMTYPE_DRAWING: {
 				Drawing *drawing = static_cast<Drawing*>(item_ptr);
 				Library *library = drawing->GetParent();
-				row = library->GetDrawingIndex(drawing);
+				row = (int) library->GetDrawingIndex(drawing);
 				break;
 			}
 		}
@@ -437,4 +437,5 @@ void LibraryManager::UpdatePersistentModelIndices() {
 
 	// presumably Qt optimizes this internally
 	changePersistentIndexList(oldlist, newlist);
+
 }

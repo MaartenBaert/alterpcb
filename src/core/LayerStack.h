@@ -20,11 +20,10 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "TrackingPointer.h"
+#include "Basics.h"
+#include "Qt.h"
 #include "StringRegistry.h"
-
-#include <QtGui>
-
+#include "TrackingPointer.h"
 
 enum LAYERTEXTURE{
 	LAYERTEXTURE_SOLID,

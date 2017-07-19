@@ -20,54 +20,46 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Drawing.h"
 
-Drawing::Drawing(Library *parent, stringtag_t name, DrawingType type, stringtag_t layerstack) : LibraryTreeItem(LIBRARYTREEITEMTYPE_DRAWING){
+Drawing::Drawing(Library *parent, stringtag_t name, DrawingType type, stringtag_t layerstack)
+	: LibraryTreeItem(LIBRARYTREEITEMTYPE_DRAWING) {
+
 	m_parent = parent;
 	m_name = name;
 	m_type = type;
 	m_layerstack = layerstack;
 
-	std::vector<Cow<ShapeInstance>> shapes;
-	HistoryClear(std::move(shapes));
+	m_history.emplace_back(false);
+	m_history_position = 0;
+
 }
 
 void Drawing::HistoryClear(std::vector<Cow<ShapeInstance>> &&shapes) {
 	m_history.clear();
-	m_history.emplace_back(std::move(shapes),false);
-
+	m_history.emplace_back(std::move(shapes), false);
 	m_history_position = 0;
 }
 
-void Drawing::HistoryRevert() {
-	//TODO//
-}
-
 void Drawing::HistoryPush(std::vector<Cow<ShapeInstance>> &&shapes, bool soft) {
-	m_history.resize(m_history_position+1);
-
+	m_history.resize(m_history_position + 1);
 	if(soft && m_history.back().IsSoft()) {
-		m_history.pop_back();
+		m_history.back().Replace(std::move(shapes), soft);
+	} else {
 		m_history.emplace_back(std::move(shapes), soft);
-	}
-	else {
-		m_history.emplace_back(std::move(shapes), soft);
-
-		if(m_history.size() > m_max_history_position) {
+		if(m_history.size() > HISTORY_SIZE) {
 			m_history.erase(m_history.begin());
 		}
+		m_history_position = m_history.size() - 1;
 	}
-
-	m_history_position = m_history.size() - 1;
 }
 
 void Drawing::HistoryUndo() {
 	if(m_history_position > 0) {
-		m_history_position = m_history_position - 1;
+		--m_history_position;
 	}
 }
 
 void Drawing::HistoryRedo() {
-	if(m_history_position < m_history.size()-1) {
-		m_history_position = m_history_position + 1;
+	if(m_history_position < m_history.size() - 1) {
+		++m_history_position;
 	}
 }
-

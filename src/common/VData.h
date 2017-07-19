@@ -33,7 +33,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 // The internal representation of floating point numbers is shifted by a number of decimals. This allows us to store
 // common values such as 0.1 and 0.254 exactly, which avoids a lot of problems with rounding errors. The JSON parser is
 // aware of this shift and is able to do the necessary string/float conversions without loss of accuracy.
-constexpr uint32_t VDATA_DECIMAL_SHIFT = 6;
+constexpr int32_t VDATA_DECIMAL_SHIFT = 6;
 
 // These are the corresponding Python typenames. They don't match with the C++ types.
 enum VDataType {
@@ -139,28 +139,32 @@ public:
 	}
 
 	inline VData& operator=(const VData &other) {
-		Destruct();
-		switch(other.m_type) {
-			case VDATA_NULL: ConstructNull(); break;
-			case VDATA_BOOL: ConstructBool(other.m_value_bool); break;
-			case VDATA_INT: ConstructInt(other.m_value_int); break;
-			case VDATA_FLOAT: ConstructFloat(other.m_value_float); break;
-			case VDATA_STRING: ConstructString(other.m_value_string); break;
-			case VDATA_LIST: ConstructList(other.m_value_list); break;
-			case VDATA_DICT: ConstructDict(other.m_value_dict); break;
+		if(this != &other) {
+			Destruct();
+			switch(other.m_type) {
+				case VDATA_NULL: ConstructNull(); break;
+				case VDATA_BOOL: ConstructBool(other.m_value_bool); break;
+				case VDATA_INT: ConstructInt(other.m_value_int); break;
+				case VDATA_FLOAT: ConstructFloat(other.m_value_float); break;
+				case VDATA_STRING: ConstructString(other.m_value_string); break;
+				case VDATA_LIST: ConstructList(other.m_value_list); break;
+				case VDATA_DICT: ConstructDict(other.m_value_dict); break;
+			}
 		}
 		return *this;
 	}
 	inline VData& operator=(VData &&other) {
-		Destruct();
-		switch(other.m_type) {
-			case VDATA_NULL: ConstructNull(); break;
-			case VDATA_BOOL: ConstructBool(other.m_value_bool); break;
-			case VDATA_INT: ConstructInt(other.m_value_int); break;
-			case VDATA_FLOAT: ConstructFloat(other.m_value_float); break;
-			case VDATA_STRING: ConstructString(std::move(other.m_value_string)); break;
-			case VDATA_LIST: ConstructList(std::move(other.m_value_list)); other.Destruct(); break;
-			case VDATA_DICT: ConstructDict(std::move(other.m_value_dict)); other.Destruct(); break;
+		if(this != &other) {
+			Destruct();
+			switch(other.m_type) {
+				case VDATA_NULL: ConstructNull(); break;
+				case VDATA_BOOL: ConstructBool(other.m_value_bool); break;
+				case VDATA_INT: ConstructInt(other.m_value_int); break;
+				case VDATA_FLOAT: ConstructFloat(other.m_value_float); break;
+				case VDATA_STRING: ConstructString(std::move(other.m_value_string)); break;
+				case VDATA_LIST: ConstructList(std::move(other.m_value_list)); other.Destruct(); break;
+				case VDATA_DICT: ConstructDict(std::move(other.m_value_dict)); other.Destruct(); break;
+			}
 		}
 		return *this;
 	}

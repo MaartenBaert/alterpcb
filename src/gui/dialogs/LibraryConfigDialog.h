@@ -20,9 +20,9 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include <QtGui>
+#include "FilepathDelegate.h"
 #include "LibraryManager.h"
-#include "gui/components/FilepathDelegate.h"
+#include "Qt.h"
 
 class MainWindow;
 

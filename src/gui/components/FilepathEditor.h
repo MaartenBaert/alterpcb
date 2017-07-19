@@ -20,32 +20,33 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include <QtGui>
+#include "Qt.h"
 
-class FilepathLineEdit : public QLineEdit
-{
+class FilepathLineEdit : public QLineEdit {
 	Q_OBJECT
+
 private:
 	QPalette *m_palette;
 
 public:
-
 	FilepathLineEdit(QWidget *parent = 0);
 
 private slots:
 	void onTextChanged();
+
 };
 
 
-class FilepathEditor : public QWidget
-{
+class FilepathEditor : public QWidget {
 	Q_OBJECT
+
 private:
 	FilepathLineEdit m_lineedit;
 
 public:
 	FilepathEditor(QWidget *parent = 0);
 	void setText(QString text);
+
 	inline const QString getFileName() const { return m_lineedit.text(); }
 
 signals:
@@ -53,6 +54,5 @@ signals:
 
 private slots:
 	void openFileBrowser();
+
 };
-
-

@@ -1,7 +1,7 @@
 #include "Basics.h"
 #include "StringRegistry.h"
 
-#include <QtGui>
+#include "Qt.h"
 
 #define CATCH_CONFIG_RUNNER
 #include "catch.hpp"

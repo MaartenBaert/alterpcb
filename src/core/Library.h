@@ -20,10 +20,10 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "TrackingPointer.h"
 #include "Basics.h"
 #include "CoreBasics.h"
 #include "LibraryTreeItem.h"
+#include "TrackingPointer.h"
 
 #include <string>
 #include <vector>

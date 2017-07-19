@@ -20,34 +20,19 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "Basics.h"
-#include "CoreBasics.h"
-#include "Qt.h"
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wfloat-conversion"
+#endif
 
-class MainWindow;
+// GLEW must be included before Qt and OpenGL
+#include <GL/glew.h>
 
-class LibraryViewer : public QTreeView {
-	Q_OBJECT
+#include <QtGui>
+#include <QtOpenGL/QGLFormat>
+#include <QtOpenGL/QGLWidget>
 
-private:
-	MainWindow *m_main_window;
-	QRect m_drop_indicator_rect;
-
-public:
-	LibraryViewer(QWidget *parent, MainWindow *main_window);
-	~LibraryViewer();
-
-	void dragEnterEvent(QDragEnterEvent *event);
-	void dragMoveEvent(QDragMoveEvent *event);
-	void dragLeaveEvent(QDragLeaveEvent *event);
-	void dropEvent(QDropEvent *event);
-	void paintEvent(QPaintEvent *event);
-
-private:
-	DropLocation getDropLocation(QRect &index_rect, QPoint pos);
-
-private slots:
-	void OnDoubleClick(const QModelIndex &index);
-	void OnRightClick(const QPoint &point);
-
-};
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif

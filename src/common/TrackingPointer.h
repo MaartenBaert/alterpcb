@@ -88,11 +88,11 @@ public:
 			m_ptr->SetTrackingTargetInternal(NULL);
 	}
 
-	inline TrackingPointer& operator=(TrackingPointer &&ptr) noexcept {
+	inline TrackingPointer& operator=(TrackingPointer &&other) noexcept {
 		// self-assignment ok
 		if(m_ptr)
 			m_ptr->SetTrackingTargetInternal(NULL);
-		m_ptr = std::move(ptr.m_ptr);
+		m_ptr = std::move(other.m_ptr);
 		if(m_ptr)
 			m_ptr->SetTrackingTargetInternal(this);
 		return *this;
@@ -196,8 +196,7 @@ void DeleteFromVector(std::vector<TrackingPointer<T>> &vec, size_t index) {
 
 template<typename T>
 void DeleteFromVectorUnordered(std::vector<TrackingPointer<T>> &vec, size_t index) {
-	if(index != vec.size() - 1)
-		vec[index] = std::move(vec.back());
+	vec[index] = std::move(vec.back());
 	vec.pop_back();
 }
 
@@ -236,7 +235,7 @@ void BulkInsertIntoVector(std::vector<TrackingPointer<T>> &vec, std::vector<Trac
 	for(size_t i = 0; i < target_index; ++i) {
 		if(vec[i] == nullptr) {
 			++space_before;
-		} else if(space_before != 0) {
+		} else {
 			vec[i - space_before] = std::move(vec[i]);
 		}
 	}
@@ -244,7 +243,7 @@ void BulkInsertIntoVector(std::vector<TrackingPointer<T>> &vec, std::vector<Trac
 		--i;
 		if(vec[i] == nullptr) {
 			++space_after;
-		} else if(space_after != 0) {
+		} else {
 			vec[i + space_after] = std::move(vec[i]);
 		}
 	}

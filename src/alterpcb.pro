@@ -8,11 +8,11 @@ LIBS += -lGL -lGLEW
 INCLUDEPATH += common core gui gui/components gui/dialogs
 DEPENDPATH += common core gui gui/components gui/dialogs
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 -Wconversion
 QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 
 RESOURCES += \
-        resources_icons.qrc
+		resources_icons.qrc
 
 ########## Warning: Everything below this line is auto-generated and will be overwritten! ##########
 
@@ -45,6 +45,7 @@ HEADERS += \
 	common/LinkedList.h \
 	common/MiscMath.h \
 	common/MurmurHash.h \
+	common/Qt.h \
 	common/SafePointer.h \
 	common/StringHelper.h \
 	common/StringRegistry.h \
@@ -64,6 +65,7 @@ HEADERS += \
 	core/ShapeDefinition.h \
 	core/ShapeInstance.h \
 	core/ShapePrototype.h \
+	core/ShapeTransform.h \
 	gui/DocumentViewer.h \
 	gui/DrawingViewer.h \
 	gui/GLHelper.h \

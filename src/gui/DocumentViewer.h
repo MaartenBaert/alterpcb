@@ -21,12 +21,10 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
 #include "Basics.h"
-#include "TabbedDocumentViewer.h"
 #include "Document.h"
+#include "Qt.h"
+#include "TabbedDocumentViewer.h"
 #include "TrackingPointer.h"
-
-#include <QWidget>
-#include <QtGui>
 
 class Drawing;
 class MainWindow;

@@ -56,7 +56,7 @@ private:
 	std::vector<Entry> m_data;
 
 public:
-	inline HashTable(index_t capacity = 16, const Hasher &hasher = Hasher())
+	inline HashTable(size_t capacity = 16, const Hasher &hasher = Hasher())
 		: m_bits(std::max<index_t>(4, CeilLog2(capacity))), m_hasher(hasher) {
 		m_data.reserve(capacity);
 		Rehash();
@@ -76,10 +76,7 @@ public:
 	void Reserve(index_t capacity) {
 		m_data.reserve(capacity);
 		if(capacity > ((index_t) 1 << m_bits)) {
-			++m_bits;
-			while(capacity > ((index_t) 1 << m_bits)) {
-				++m_bits;
-			}
+			m_bits = CeilLog2(capacity);
 			Rehash();
 		}
 	}
@@ -126,7 +123,7 @@ public:
 		if(res2 != INDEX_NONE)
 			return std::make_pair(res2, false);
 		m_data.emplace_back(std::forward<Args>(args)...);
-		index_t res = m_data.size() - 1;
+		index_t res = (index_t) (m_data.size() - 1);
 		AddHash(hash1, hash2, res);
 		Resize();
 		return std::make_pair(res, true);
@@ -150,7 +147,7 @@ public:
 	template<typename... Args>
 	inline index_t EmplaceBack(Args&&... args) {
 		m_data.emplace_back(std::forward<Args>(args)...);
-		index_t res = m_data.size() - 1;
+		index_t res = (index_t) (m_data.size() - 1);
 		AddHash(Hash1(m_data[res]), Hash2(m_data[res]), res);
 		Resize();
 		return res;
@@ -216,7 +213,7 @@ public:
 		return m_bits;
 	}
 	inline index_t GetSize() const {
-		return m_data.size();
+		return (index_t) m_data.size();
 	}
 	inline T& operator[](index_t i) {
 		assert(i < m_data.size());
@@ -225,6 +222,14 @@ public:
 	inline const T& operator[](index_t i) const {
 		assert(i < m_data.size());
 		return m_data[i];
+	}
+	inline T& Front() {
+		assert(!m_data.empty());
+		return m_data.front();
+	}
+	inline const T& Front() const {
+		assert(!m_data.empty());
+		return m_data.front();
 	}
 	inline T& Back() {
 		assert(!m_data.empty());

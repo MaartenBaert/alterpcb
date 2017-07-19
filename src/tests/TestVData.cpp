@@ -24,6 +24,8 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "catch.hpp"
 
+#include <limits>
+
 TEST_CASE("VData relational operators", "[vdata]") {
 
 	// example data from Wikipedia
@@ -77,5 +79,32 @@ TEST_CASE("VData relational operators", "[vdata]") {
 	REQUIRE((data1 > data3) == true);
 	REQUIRE((data1 <= data3) == false);
 	REQUIRE((data1 >= data3) == true);
+
+}
+
+TEST_CASE("VData float relational operators", "[vdata]") {
+
+	const double DOUBLE_ZERO_POS = MemCast<double>(UINT64_C(0x0000000000000000));
+	const double DOUBLE_ZERO_NEG = MemCast<double>(UINT64_C(0x8000000000000000));
+	const double DOUBLE_INF_POS = std::numeric_limits<double>::infinity();
+	const double DOUBLE_INF_NEG = -std::numeric_limits<double>::infinity();
+	const double DOUBLE_NAN = std::numeric_limits<double>::quiet_NaN();
+
+	std::vector<VData> data;
+	if(MemCast<uint64_t>(DOUBLE_NAN) >> 63) { // NaN is negative
+		data = {DOUBLE_NAN, DOUBLE_INF_NEG, -4.0e80, -5.7, -0.047, -2.3e-150, DOUBLE_ZERO_NEG, DOUBLE_ZERO_POS, 2.3e-150, 0.047, 5.7, 4.0e80, DOUBLE_INF_POS};
+	} else { // NaN is positive
+		data = {DOUBLE_INF_NEG, -4.0e80, -5.7, -0.047, -2.3e-150, DOUBLE_ZERO_NEG, DOUBLE_ZERO_POS, 2.3e-150, 0.047, 5.7, 4.0e80, DOUBLE_INF_POS, DOUBLE_NAN};
+	}
+
+	for(size_t i = 0; i < data.size() - 1; ++i) {
+		for(size_t j = i + 1; j < data.size(); ++j) {
+			REQUIRE_FALSE(data[i] == data[j]);
+			REQUIRE(data[i] < data[j]);
+			REQUIRE_FALSE(data[i] > data[j]);
+			REQUIRE(data[i] <= data[j]);
+			REQUIRE_FALSE(data[i] >= data[j]);
+		}
+	}
 
 }
