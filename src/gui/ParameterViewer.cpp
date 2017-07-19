@@ -180,6 +180,19 @@ ParameterNameValuePair ParameterViewer::GetParameterNameValue(QWidget *widget)
 	return ParameterNameValuePair(param_name,param_value);
 }
 
+ParameterNameValuePair ParameterViewer::GetParameterNameValue()
+{
+	ParameterNameValuePair param_namevalue;
+	if(m_current_subindex == INDEX_NONE) {
+		param_namevalue = ParameterNameValuePair(m_parameters[m_current_index].m_name,m_parameters[m_current_index].m_value);
+	}
+	else {
+		param_namevalue = ParameterNameValuePair(m_parameters[m_current_index].m_name,m_parameters[m_current_index].m_subparameters[m_current_subindex].m_value);
+	}
+
+	return param_namevalue;
+}
+
 bool ParameterViewer::viewportEvent(QEvent* event)
 {
 	switch(event->type()) {
@@ -409,17 +422,20 @@ void ParameterViewer::mousePressEvent(QMouseEvent *event)
 			break;
 		}
 		case HOVER_REGION_SELECTBUTTON:{
-			std::cerr << "SELECT BUTTON PRESSED" << std::endl;
+			std::cerr << "SELECT BUTTON PRESSED : index = " << m_current_index << " subindex = " << m_current_subindex << std::endl;
+			SelectShapes();
 			m_button_pressed = true;
 			break;
 		}
 		case HOVER_REGION_DESELECTBUTTON:{
-			std::cerr << "DESELECT BUTTON PRESSED" << std::endl;
+			std::cerr << "DESELECT BUTTON PRESSED : index = " << m_current_index << " subindex = " << m_current_subindex << std::endl;
+			DeselectShapes();
 			m_button_pressed = true;
 			break;
 		}
 		case HOVER_REGION_OVERRIDEBUTTON:{
-			std::cerr << "OVERRIDE BUTTON PRESSED" << std::endl;
+			std::cerr << "OVERRIDE BUTTON PRESSED : index = " << m_current_index << " subindex = " << m_current_subindex << std::endl;
+			OverrideShapes();
 			m_button_pressed = true;
 			break;
 		}
@@ -548,6 +564,82 @@ void ParameterViewer::UpdateLayout() {
 	}
 
 	viewport()->update();
+}
+
+void ParameterViewer::SelectShapes() {
+	ParameterNameValuePair param_namevalue = GetParameterNameValue();
+
+	const std::vector<Cow<ShapeInstance>>& shapes = m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->GetShapes();
+	std::vector<Cow<ShapeInstance>> new_shapes;
+
+	for(index_t i = 0 ; i < shapes.size(); ++i) {
+		const ShapeInstance &shapeinstance = shapes[i].Ref();
+		bool param_found = false;
+
+		if(shapeinstance.IsSelected()) {
+			const ShapePrototype &shapeprototype = shapeinstance.GetShapePrototype().Ref();
+
+			ShapeDefinition *shape_definition = NULL; //TODO// get this from LibraryManager
+			const EffectiveParameters &params = shapeprototype.GetEffectiveParameters(shape_definition);
+
+			for(index_t j = 0 ; j < params.size(); ++j) {
+				if(params[j].GetName() == param_namevalue.m_name && (params[j].GetValue() == param_namevalue.m_value || param_namevalue.m_value == VData("..."))) {
+					param_found = true;
+					new_shapes.emplace_back(shapes[i]);
+					break;
+				}
+			}
+		}
+		if(!param_found) { // if parameter changed is not in params --> copy shape
+			const Cow<ShapePrototype> &same_shapeprototype = shapeinstance.GetShapePrototype();
+			Cow<ShapeInstance> new_shapeinstance(std::make_shared<ShapeInstance>(std::move(same_shapeprototype),false));
+			new_shapes.emplace_back(std::move(new_shapeinstance));
+		}
+
+	}
+	m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->HistoryPush(std::move(new_shapes),false);
+	UpdateParameters();
+}
+
+void ParameterViewer::DeselectShapes()
+{
+	ParameterNameValuePair param_namevalue = GetParameterNameValue();
+
+	const std::vector<Cow<ShapeInstance>>& shapes = m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->GetShapes();
+	std::vector<Cow<ShapeInstance>> new_shapes;
+
+	for(index_t i = 0 ; i < shapes.size(); ++i) {
+		const ShapeInstance &shapeinstance = shapes[i].Ref();
+		bool param_found = false;
+
+		if(shapeinstance.IsSelected()) {
+			const ShapePrototype &shapeprototype = shapeinstance.GetShapePrototype().Ref();
+
+			ShapeDefinition *shape_definition = NULL; //TODO// get this from LibraryManager
+			const EffectiveParameters &params = shapeprototype.GetEffectiveParameters(shape_definition);
+
+			for(index_t j = 0 ; j < params.size(); ++j) {
+				if(params[j].GetName() == param_namevalue.m_name && (params[j].GetValue() == param_namevalue.m_value || param_namevalue.m_value == VData("..."))) {
+					param_found = true;
+					const Cow<ShapePrototype> &same_shapeprototype = shapeinstance.GetShapePrototype();
+					Cow<ShapeInstance> new_shapeinstance(std::make_shared<ShapeInstance>(std::move(same_shapeprototype),false));
+					new_shapes.emplace_back(std::move(new_shapeinstance));
+					break;
+				}
+			}
+		}
+		if(!param_found) { // if parameter changed is in params --> copy shape
+			new_shapes.emplace_back(shapes[i]);
+		}
+
+	}
+	m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->HistoryPush(std::move(new_shapes),false);
+	UpdateParameters();
+}
+
+void ParameterViewer::OverrideShapes()
+{
+
 }
 
 void ParameterViewer::positionToIndex(const QPoint &pos)
