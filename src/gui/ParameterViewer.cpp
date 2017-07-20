@@ -88,8 +88,9 @@ void ParameterViewer::UpdateParameters()
 					//		if Yes is it mergable or not
 					//			if No set bools + change widget text
 					// if No does the parameter already exist in m_parameters
-					//		if Yes copy widget pointer + expanded
 					//		if No make widget
+					//		if Yes copy widget pointer + expanded
+
 
 					std::pair<index_t, bool> added = new_parameters.TryEmplaceBack(
 								params[j].GetName(), params[j].GetName(), params[j].GetValue(), params[j].IsOverride(),
@@ -104,7 +105,7 @@ void ParameterViewer::UpdateParameters()
 					}
 					else {
 						index_t index = m_parameters.Find(params[j].GetName());
-						if(index == INDEX_NONE) {
+						if(index == INDEX_NONE) { // Param doesnt not exist in m_paramters
 							QLineEdit *valuebox = new QLineEdit(viewport());
 							connect(valuebox,SIGNAL(editingFinished()),this,SLOT(OnParameterChange()));
 							std::string str;
@@ -117,9 +118,13 @@ void ParameterViewer::UpdateParameters()
 							valuebox->show();
 							new_parameters[added.first].m_widget = valuebox;
 						}
-						else { // copy widget pointer
+						else { // Param exits in m_paramters copy widget pointer
 							new_parameters[added.first].m_widget = m_parameters[index].m_widget;
-							new_parameters[added.first].m_expanded = m_parameters[index].m_expanded;
+							std::string str;
+							Json::ToString(params[j].GetValue(),str);
+							static_cast<QLineEdit*>(new_parameters[added.first].m_widget)->setText(QString::fromStdString(str));
+							new_parameters[added.first].m_expanded = m_parameters[index].m_expanded; //TODO FIX THIS BETTER (crashed when undoing history
+							new_parameters[added.first].m_mergeable = true;
 							m_parameters[index].m_widget = NULL;
 						}
 					}
@@ -132,14 +137,25 @@ void ParameterViewer::UpdateParameters()
 	for(index_t i = 0 ; i < m_parameters.GetSize(); ++i) {
 		if(m_parameters[i].m_widget != NULL) {
 			m_parameters[i].m_widget->deleteLater();
-			for(index_t j = 0 ; j < m_parameters[i].m_subparameters.size(); ++j) {
-				m_parameters[i].m_subparameters[j].m_widget->deleteLater();
-			}
+		}
+		for(index_t j = 0 ; j < m_parameters[i].m_subparameters.size(); ++j) {
+			m_parameters[i].m_subparameters[j].m_widget->deleteLater();
 		}
 	}
 
+
+
+
 	// copy new parameters to m_parameter
 	m_parameters = std::move(new_parameters);
+
+	// expand the needed parameters
+	for(index_t i = 0; i < m_parameters.GetSize(); ++i)
+	{
+		if(!m_parameters[i].m_mergeable && m_parameters[i].m_expanded){
+			ExpandParameter(i);
+		}
+	}
 
 	UpdateFocusChain();
 	UpdateRange();
@@ -417,6 +433,9 @@ void ParameterViewer::mousePressEvent(QMouseEvent *event)
 				else{
 					ExpandParameter(m_current_index);
 				}
+				UpdateLayout();
+				UpdateFocusChain();
+				UpdateRange();
 			}
 			m_button_pressed = true;
 			break;
@@ -473,6 +492,9 @@ void ParameterViewer::mouseDoubleClickEvent(QMouseEvent *event)
 			ExpandParameter(m_current_index);
 		}
 	}
+	UpdateLayout();
+	UpdateFocusChain();
+	UpdateRange();
 
 }
 
@@ -592,13 +614,13 @@ void ParameterViewer::SelectShapes() {
 		}
 		if(!param_found) { // if parameter changed is not in params --> copy shape
 			const Cow<ShapePrototype> &same_shapeprototype = shapeinstance.GetShapePrototype();
-			Cow<ShapeInstance> new_shapeinstance(std::make_shared<ShapeInstance>(std::move(same_shapeprototype),false));
+			Cow<ShapeInstance> new_shapeinstance(std::make_shared<ShapeInstance>(std::move(same_shapeprototype),false)); //TODO copy shape transform
 			new_shapes.emplace_back(std::move(new_shapeinstance));
 		}
 
 	}
 	m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->HistoryPush(std::move(new_shapes),false);
-	UpdateParameters();
+	UpdateParameters(); //TODO FIgure out where this update should go
 }
 
 void ParameterViewer::DeselectShapes()
@@ -622,7 +644,7 @@ void ParameterViewer::DeselectShapes()
 				if(params[j].GetName() == param_namevalue.m_name && (params[j].GetValue() == param_namevalue.m_value || param_namevalue.m_value == VData("..."))) {
 					param_found = true;
 					const Cow<ShapePrototype> &same_shapeprototype = shapeinstance.GetShapePrototype();
-					Cow<ShapeInstance> new_shapeinstance(std::make_shared<ShapeInstance>(std::move(same_shapeprototype),false));
+					Cow<ShapeInstance> new_shapeinstance(std::make_shared<ShapeInstance>(std::move(same_shapeprototype),false)); //TODO copy shape transform
 					new_shapes.emplace_back(std::move(new_shapeinstance));
 					break;
 				}
@@ -634,7 +656,7 @@ void ParameterViewer::DeselectShapes()
 
 	}
 	m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->HistoryPush(std::move(new_shapes),false);
-	UpdateParameters();
+	UpdateParameters(); //TODO FIgure out where this update should go
 }
 
 void ParameterViewer::OverrideShapes()
@@ -717,10 +739,6 @@ void ParameterViewer::ExpandParameter(index_t index)
 			widget->show();
 			m_parameters[index].m_subparameters.emplace_back(ent.second,ent.first,widget);
 		}
-
-		UpdateLayout();
-		UpdateFocusChain();
-		UpdateRange();
 	}
 }
 
@@ -733,10 +751,6 @@ void ParameterViewer::UnexpandParameter(index_t index)
 			m_parameters[index].m_subparameters[i].m_widget->deleteLater();
 		}
 		m_parameters[index].m_subparameters.clear();
-
-		UpdateLayout();
-		UpdateFocusChain();
-		UpdateRange();
 	}
 }
 
@@ -866,6 +880,7 @@ void ParameterViewer::OnParameterChange()
 		}
 		m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->HistoryPush(std::move(new_shapes),false);
 		emitter->setModified(false);
+		UpdateParameters(); //TODO FIgure out where this update should go
 		//TODO focus on drawing viewer...
 	}
 }

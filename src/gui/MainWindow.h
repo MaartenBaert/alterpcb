@@ -67,4 +67,8 @@ public slots:
 	void OpenLayerConfigDialog();
 	void CloseLayerConfigDialog();
 
+	//menu actions
+	void Undo();
+	void Redo();
+
 };

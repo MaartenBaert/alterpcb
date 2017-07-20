@@ -50,16 +50,20 @@ void Drawing::HistoryPush(std::vector<Cow<ShapeInstance>> &&shapes, bool soft) {
 		}
 		m_history_position = m_history.size() - 1;
 	}
+
+	std::cerr << "HISTORY PUSH: current pos " << std::to_string(m_history_position) << std::endl;
 }
 
 void Drawing::HistoryUndo() {
 	if(m_history_position > 0) {
 		--m_history_position;
 	}
+	std::cerr << "HISTORY UNDO: current pos " << std::to_string(m_history_position) << std::endl;
 }
 
 void Drawing::HistoryRedo() {
 	if(m_history_position < m_history.size() - 1) {
 		++m_history_position;
 	}
+	std::cerr << "HISTORY REDO: current pos " << std::to_string(m_history_position) << std::endl;
 }

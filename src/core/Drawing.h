@@ -88,6 +88,7 @@ public:
 	void HistoryPush(std::vector<Cow<ShapeInstance>> &&shapes, bool soft = false);
 	void HistoryUndo();
 	void HistoryRedo();
+	inline bool Changed() {if(m_history_position > 0) {return true;} else {return false;}}; // poll to see if document has changed
 
 	inline Library* GetParent() const { return m_parent; }
 	inline void SetParentInternal(Library *parent) { m_parent = parent; }

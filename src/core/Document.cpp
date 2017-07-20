@@ -18,3 +18,5 @@ LayerStack *Document::GetLayerStack()
 {
 	return m_drawing->GetParent()->GetLayerStack(m_drawing->GetLayerStack());
 }
+
+
