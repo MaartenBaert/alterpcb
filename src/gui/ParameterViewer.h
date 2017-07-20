@@ -101,7 +101,7 @@ private:
 	static const int LAYOUT_VSPACING = 4; // best keep even number
 	static const int LAYOUT_HSPACING = 3;
 	static const int LAYOUT_OVERRIDEBUTTONWIDTH = 16;
-	int LAYOUT_LABELWIDTH = 70;
+	int LAYOUT_LABELWIDTH = 120;
 
 public:
 	ParameterViewer(QWidget *parent, MainWindow *mainwindow);

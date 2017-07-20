@@ -73,7 +73,7 @@ private:
 	stringtag_t m_layerstack;
 
 	std::vector<DrawingHistory> m_history;
-	size_t m_history_position;
+	index_t m_history_position;
 
 	static constexpr size_t HISTORY_SIZE = 20; // TODO: make this a user preference
 

@@ -40,6 +40,7 @@ HEADERS += \
 	common/Cow.h \
 	common/Decimal.h \
 	common/EnumTranslator.h \
+	common/File_IO.h \
 	common/HashTable.h \
 	common/Json.h \
 	common/LinkedList.h \
@@ -84,6 +85,7 @@ HEADERS += \
 SOURCES += \
 	common/Color.cpp \
 	common/Decimal.cpp \
+	common/File_IO.cpp \
 	common/Json.cpp \
 	common/StringRegistry.cpp \
 	common/VData.cpp \

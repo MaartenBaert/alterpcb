@@ -28,8 +28,7 @@ Drawing::Drawing(Library *parent, stringtag_t name, DrawingType type, stringtag_
 	m_type = type;
 	m_layerstack = layerstack;
 
-	m_history.emplace_back(false);
-	m_history_position = 0;
+	m_history_position = -1;
 
 }
 
@@ -52,7 +51,7 @@ void Drawing::HistoryPush(std::vector<Cow<ShapeInstance>> &&shapes, bool soft) {
 	}
 
 	std::cerr << "HISTORY PUSH: current pos " << std::to_string(m_history_position) << std::endl;
-}
+} //TODO what te doen bij het initieel in lezen van een file ==> history word direct 1 ipv 0 te blijven...
 
 void Drawing::HistoryUndo() {
 	if(m_history_position > 0) {

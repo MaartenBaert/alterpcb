@@ -26,6 +26,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "Drawing.h"
 #include "Icons.h"
 #include "Json.h"
+#include "File_IO.h"
 #include "LayerManager.h"
 #include "LayerStack.h"
 #include "Library.h"
@@ -225,6 +226,7 @@ int main(int argc, char *argv[]) {
 
 	LibraryManager library_manager;
 	{
+		/*
 		Library *lib1 = library_manager.NewLibrary("Basic", "basic.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib2 = library_manager.NewLibrary("My PCB", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib3 = library_manager.NewLibrary("My Scripts", "myscripts.alterlib.py", LIBRARYTYPE_PYTHON);
@@ -298,7 +300,8 @@ int main(int argc, char *argv[]) {
 		shapes.emplace_back(std::make_shared<ShapeInstance>(std::move(proto3), transform3, true));
 
 		lib1->GetLayout(0)->HistoryPush(std::move(shapes),false);
-
+		*/
+		File_IO::ImportFileAlterPCB_AlterpcbPythonFormat(library_manager,"data/alterpcb_old_files-testsuite/BIAS_PCB.alterlib.json");
 	}
 
 	LoadIcons();

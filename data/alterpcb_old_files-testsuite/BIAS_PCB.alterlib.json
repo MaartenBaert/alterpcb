@@ -1,0 +1,1362 @@
+[
+ {
+  "name": "banana_connector",
+  "view_y": 1.6103070670694626,
+  "view_scale": 25.118864315095845,
+  "shapes": [
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "courtyard-top",
+    "width": 20.85,
+    "height": 10.5,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 0.0,
+    "x": 10.425,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 30.0,
+    "height": 5.0,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 0.0,
+    "x": 15.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "drill-plated",
+    "order": 0,
+    "radius": 1.0,
+    "type": "circle",
+    "y": 0.0,
+    "x": 2.15,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "drill-plated",
+    "order": 0,
+    "radius": 1.0,
+    "type": "circle",
+    "y": 0.0,
+    "x": 17.45,
+    "pad": false
+   }
+  ],
+  "grid_step_x": 0.1,
+  "grid_step_y": 0.1,
+  "view_x": 3.9092354109497425
+ },
+ {
+  "name": "PCB",
+  "view_y": 94.18502245608946,
+  "view_scale": 79.43282347243422,
+  "shapes": [
+   {
+    "x": 61.0,
+    "mirror": false,
+    "angle": 0.0,
+    "type": "voltage_prob",
+    "y": 14.249999999999993,
+    "flip": false
+   },
+   {
+    "x": 7.0,
+    "mirror": false,
+    "angle": 0.0,
+    "type": "banana_connector",
+    "y": 28.0,
+    "flip": false
+   },
+   {
+    "x": 7.0,
+    "mirror": false,
+    "angle": 0.0,
+    "type": "banana_connector",
+    "y": 17.0,
+    "flip": false
+   },
+   {
+    "x": 7.0,
+    "mirror": false,
+    "angle": 0.0,
+    "type": "banana_connector",
+    "y": 6.0,
+    "flip": false
+   },
+   {
+    "x": 61.0,
+    "mirror": false,
+    "angle": 0.0,
+    "type": "voltage_prob",
+    "y": 25.25,
+    "flip": false
+   },
+   {
+    "steps": 8,
+    "halign": "left",
+    "mirror": false,
+    "text": "BIAS",
+    "spacing": 0.0,
+    "order": 0,
+    "type": "text",
+    "x": 32.0,
+    "hole": false,
+    "layer": "copper1-top",
+    "valign": "baseline",
+    "angle": 0.0,
+    "font": "DejaVuSans",
+    "y": 3.5,
+    "size": 7.0
+   },
+   {
+    "steps": 8,
+    "halign": "left",
+    "mirror": false,
+    "text": "VDD3",
+    "spacing": 0.0,
+    "order": 0,
+    "type": "text",
+    "x": 32.0,
+    "hole": false,
+    "layer": "copper1-top",
+    "valign": "baseline",
+    "angle": 0.0,
+    "font": "DejaVuSans",
+    "y": 14.5,
+    "size": 7.0
+   },
+   {
+    "steps": 8,
+    "halign": "left",
+    "mirror": false,
+    "text": "VDDA",
+    "spacing": 0.0,
+    "order": 0,
+    "type": "text",
+    "x": 32.0,
+    "hole": false,
+    "layer": "copper1-top",
+    "valign": "baseline",
+    "angle": 0.0,
+    "font": "DejaVuSans",
+    "y": 25.5,
+    "size": 7.0
+   },
+   {
+    "x": 7.0,
+    "mirror": false,
+    "angle": 0.0,
+    "type": "banana_connector",
+    "y": 50.0,
+    "flip": false
+   },
+   {
+    "steps": 8,
+    "halign": "left",
+    "mirror": false,
+    "text": "VDD2",
+    "spacing": 0.0,
+    "order": 0,
+    "type": "text",
+    "x": 32.0,
+    "hole": false,
+    "layer": "copper1-top",
+    "valign": "baseline",
+    "angle": 0.0,
+    "font": "DejaVuSans",
+    "y": 47.5,
+    "size": 7.0
+   },
+   {
+    "x": 7.0,
+    "mirror": false,
+    "angle": 0.0,
+    "type": "banana_connector",
+    "y": 94.0,
+    "flip": false
+   },
+   {
+    "x": 7.0,
+    "mirror": false,
+    "angle": 0.0,
+    "type": "banana_connector",
+    "y": 72.0,
+    "flip": false
+   },
+   {
+    "steps": 8,
+    "halign": "left",
+    "mirror": false,
+    "text": "VDD1",
+    "spacing": 0.0,
+    "order": 0,
+    "type": "text",
+    "x": 32.0,
+    "hole": false,
+    "layer": "copper1-top",
+    "valign": "baseline",
+    "angle": 0.0,
+    "font": "DejaVuSans",
+    "y": 69.5,
+    "size": 7.0
+   },
+   {
+    "steps": 8,
+    "halign": "left",
+    "mirror": false,
+    "text": "GND",
+    "spacing": 0.0,
+    "order": 0,
+    "type": "text",
+    "x": 32.0,
+    "hole": false,
+    "layer": "copper1-top",
+    "valign": "baseline",
+    "angle": 0.0,
+    "font": "DejaVuSans",
+    "y": 91.5,
+    "size": 7.0
+   },
+   {
+    "closed": true,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "order": 0,
+    "type": "polygon",
+    "y": [
+     45.959999999999994,
+     45.959999999999994,
+     47.7,
+     47.7,
+     45.959999999999994
+    ],
+    "x": [
+     91.0,
+     96.0,
+     96.0,
+     91.0,
+     91.0
+    ],
+    "pad": true
+   },
+   {
+    "closed": true,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "order": 0,
+    "type": "polygon",
+    "y": [
+     43.42,
+     43.42,
+     45.16,
+     45.16,
+     43.42
+    ],
+    "x": [
+     91.0,
+     96.0,
+     96.0,
+     91.0,
+     91.0
+    ],
+    "pad": true
+   },
+   {
+    "closed": true,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "order": 0,
+    "type": "polygon",
+    "y": [
+     40.879999999999995,
+     40.879999999999995,
+     42.620000000000005,
+     42.620000000000005,
+     40.879999999999995
+    ],
+    "x": [
+     91.0,
+     96.0,
+     96.0,
+     91.0,
+     91.0
+    ],
+    "pad": true
+   },
+   {
+    "closed": true,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "order": 0,
+    "type": "polygon",
+    "y": [
+     38.34,
+     38.34,
+     40.08,
+     40.08,
+     38.34
+    ],
+    "x": [
+     91.0,
+     96.0,
+     96.0,
+     91.0,
+     91.0
+    ],
+    "pad": true
+   },
+   {
+    "closed": true,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "order": 0,
+    "type": "polygon",
+    "y": [
+     35.8,
+     35.8,
+     37.53999999999999,
+     37.53999999999999,
+     35.8
+    ],
+    "x": [
+     91.0,
+     96.0,
+     96.0,
+     91.0,
+     91.0
+    ],
+    "pad": true
+   },
+   {
+    "closed": true,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "order": 0,
+    "type": "polygon",
+    "y": [
+     33.25999999999999,
+     33.25999999999999,
+     35.0,
+     35.0,
+     33.25999999999999
+    ],
+    "x": [
+     91.0,
+     96.0,
+     96.0,
+     91.0,
+     91.0
+    ],
+    "pad": true
+   },
+   {
+    "closed": true,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "order": 0,
+    "type": "polygon",
+    "y": [
+     30.72,
+     30.72,
+     32.459999999999994,
+     32.459999999999994,
+     30.72
+    ],
+    "x": [
+     91.0,
+     96.0,
+     96.0,
+     91.0,
+     91.0
+    ],
+    "pad": true
+   },
+   {
+    "closed": true,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "order": 0,
+    "type": "polygon",
+    "y": [
+     28.18,
+     28.18,
+     29.92,
+     29.92,
+     28.18
+    ],
+    "x": [
+     91.0,
+     96.0,
+     96.0,
+     91.0,
+     91.0
+    ],
+    "pad": true
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 6.0,
+    "height": 1.7399999999999984,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 44.290000000000006,
+    "x": 88.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 6.0,
+    "height": 1.7399999999999984,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 39.21,
+    "x": 88.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 6.0,
+    "height": 1.7399999999999984,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 31.590000000000003,
+    "x": 88.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 33.7,
+    "height": 5.0,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 17.0,
+    "x": 53.85,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 23.19999999999999,
+    "height": 1.7399999999999984,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 29.049999999999997,
+    "x": 79.4,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 2.9000000000000337,
+    "height": 8.68,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 23.840000000000003,
+    "x": 69.25,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 30.0,
+    "height": 5.0,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 28.0,
+    "x": 52.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 26.899999999999977,
+    "height": 1.7399999999999984,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 34.129999999999995,
+    "x": 77.55000000000001,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 2.9000000000000337,
+    "height": 2.76,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 31.879999999999995,
+    "x": 65.55000000000001,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 44.0,
+    "height": 5.0,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 6.0,
+    "x": 59.0,
+    "pad": false
+   },
+   {
+    "x": 61.0,
+    "mirror": false,
+    "angle": 0.0,
+    "type": "voltage_prob",
+    "y": 3.249999999999993,
+    "flip": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 30.0,
+    "height": 5.0,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 50.0,
+    "x": 52.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 33.7,
+    "height": 5.0,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 72.0,
+    "x": 53.85,
+    "pad": false
+   },
+   {
+    "height": 5.0,
+    "order": 0,
+    "type": "rectangle",
+    "x": 59.0,
+    "pad": false,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 44.0,
+    "angle": 0.0,
+    "y": 94.0
+   },
+   {
+    "x": 61.0,
+    "mirror": false,
+    "angle": 0.0,
+    "type": "voltage_prob",
+    "y": 47.24999999999999,
+    "flip": false
+   },
+   {
+    "x": 61.0,
+    "mirror": false,
+    "angle": 0.0,
+    "type": "voltage_prob",
+    "y": 69.25,
+    "flip": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 26.900000000000006,
+    "height": 1.7399999999999984,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 36.67,
+    "x": 77.55,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 23.19999999999999,
+    "height": 1.7399999999999984,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 41.75,
+    "x": 79.4,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 2.9000000000000337,
+    "height": 9.960000000000004,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 42.52,
+    "x": 65.55000000000001,
+    "pad": false
+   },
+   {
+    "layers_pad": [
+     "copper1-top",
+     "copper1-bot"
+    ],
+    "inner_diameter": 1.0,
+    "drill_diameter": 1.0,
+    "x": 86.0,
+    "mirror": true,
+    "outer_diameter": 1.0,
+    "angle": 0.0,
+    "hole_diameter": 1.0,
+    "type": "via",
+    "y": 31.6,
+    "flip": false
+   },
+   {
+    "height": 24.28,
+    "order": 0,
+    "type": "rectangle",
+    "x": 87.55000000000001,
+    "y": 42.86,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-top",
+    "width": 5.100000000000023,
+    "angle": 0.0,
+    "pad": false
+   },
+   {
+    "layers_pad": [
+     "copper1-top",
+     "copper1-bot"
+    ],
+    "inner_diameter": 1.0,
+    "drill_diameter": 1.0,
+    "x": 86.0,
+    "mirror": true,
+    "outer_diameter": 1.0,
+    "angle": 0.0,
+    "hole_diameter": 1.0,
+    "type": "via",
+    "y": 39.2,
+    "flip": false
+   },
+   {
+    "layers_pad": [
+     "copper1-top",
+     "copper1-bot"
+    ],
+    "inner_diameter": 1.0,
+    "drill_diameter": 1.0,
+    "x": 86.0,
+    "mirror": true,
+    "outer_diameter": 1.0,
+    "angle": 0.0,
+    "hole_diameter": 1.0,
+    "type": "via",
+    "y": 44.3,
+    "flip": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 2.9000000000000057,
+    "height": 5.000000000000001,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 94.0,
+    "x": 5.549999999999997,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 56.90000000000002,
+    "height": 2.0,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 2.0,
+    "x": 32.55000000000001,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 2.9000000000000057,
+    "height": 95.5,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 48.75,
+    "x": 2.6499999999999986,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 56.90000000000002,
+    "height": 2.0,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 13.0,
+    "x": 32.55000000000001,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 56.90000000000002,
+    "height": 2.0,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 24.0,
+    "x": 32.55000000000001,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 56.90000000000002,
+    "height": 2.0,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 46.0,
+    "x": 32.55000000000001,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 56.90000000000002,
+    "height": 2.0,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 68.0,
+    "x": 32.55000000000001,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 2.9000000000000337,
+    "height": 26.880000000000003,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 56.06,
+    "x": 69.25,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "width": 15.099999999999994,
+    "height": 1.7399999999999984,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 46.830000000000005,
+    "x": 83.45,
+    "pad": false
+   },
+   {
+    "height": 44.2,
+    "order": 0,
+    "type": "rectangle",
+    "x": 78.45000000000002,
+    "y": 25.6,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-top",
+    "width": 5.100000000000023,
+    "angle": 0.0,
+    "pad": false
+   },
+   {
+    "layers_pad": [
+     "copper1-top",
+     "copper1-bot"
+    ],
+    "inner_diameter": 1.0,
+    "drill_diameter": 1.0,
+    "x": 77.0,
+    "mirror": true,
+    "outer_diameter": 1.0,
+    "angle": 0.0,
+    "hole_diameter": 1.0,
+    "type": "via",
+    "y": 46.8,
+    "flip": false
+   },
+   {
+    "layers_pad": [
+     "copper1-top",
+     "copper1-bot"
+    ],
+    "inner_diameter": 1.0,
+    "drill_diameter": 1.0,
+    "x": 77.0,
+    "mirror": true,
+    "outer_diameter": 1.0,
+    "angle": 0.0,
+    "hole_diameter": 1.0,
+    "type": "via",
+    "y": 5.799999999999997,
+    "flip": false
+   },
+   {
+    "closed": true,
+    "order": 0,
+    "type": "polygon",
+    "x": [
+     0.0,
+     96.5,
+     96.5,
+     0.0
+    ],
+    "pad": false,
+    "hole": false,
+    "outline": 0.1,
+    "layer": "copper1-bot",
+    "y": [
+     0.0,
+     0.0,
+     100.0,
+     100.0
+    ]
+   },
+   {
+    "layers_pad": [
+     "copper1-top",
+     "copper1-bot"
+    ],
+    "inner_diameter": 1.0,
+    "drill_diameter": 1.0,
+    "x": 79.80000000000001,
+    "mirror": true,
+    "outer_diameter": 1.0,
+    "angle": 0.0,
+    "hole_diameter": 1.0,
+    "type": "via",
+    "y": 46.8,
+    "flip": false
+   },
+   {
+    "layers_pad": [
+     "copper1-top",
+     "copper1-bot"
+    ],
+    "inner_diameter": 1.0,
+    "drill_diameter": 1.0,
+    "x": 79.80000000000001,
+    "mirror": true,
+    "outer_diameter": 1.0,
+    "angle": 0.0,
+    "hole_diameter": 1.0,
+    "type": "via",
+    "y": 5.799999999999997,
+    "flip": false
+   },
+   {
+    "layers_pad": [
+     "copper1-top",
+     "copper1-bot"
+    ],
+    "inner_diameter": 1.0,
+    "drill_diameter": 1.0,
+    "x": 89.0,
+    "mirror": true,
+    "outer_diameter": 1.0,
+    "angle": 0.0,
+    "hole_diameter": 1.0,
+    "type": "via",
+    "y": 31.6,
+    "flip": false
+   },
+   {
+    "layers_pad": [
+     "copper1-top",
+     "copper1-bot"
+    ],
+    "inner_diameter": 1.0,
+    "drill_diameter": 1.0,
+    "x": 89.0,
+    "mirror": true,
+    "outer_diameter": 1.0,
+    "angle": 0.0,
+    "hole_diameter": 1.0,
+    "type": "via",
+    "y": 39.2,
+    "flip": false
+   },
+   {
+    "layers_pad": [
+     "copper1-top",
+     "copper1-bot"
+    ],
+    "inner_diameter": 1.0,
+    "drill_diameter": 1.0,
+    "x": 89.0,
+    "mirror": true,
+    "outer_diameter": 1.0,
+    "angle": 0.0,
+    "hole_diameter": 1.0,
+    "type": "via",
+    "y": 44.3,
+    "flip": false
+   },
+   {
+    "type": "via",
+    "mirror": true,
+    "inner_diameter": 1.0,
+    "drill_diameter": 1.0,
+    "x": 76.9,
+    "layers_pad": [
+     "copper1-top",
+     "copper1-bot"
+    ],
+    "outer_diameter": 1.0,
+    "angle": 0.0,
+    "hole_diameter": 1.0,
+    "y": 94.0,
+    "flip": false
+   },
+   {
+    "type": "via",
+    "mirror": true,
+    "inner_diameter": 1.0,
+    "drill_diameter": 1.0,
+    "x": 79.9,
+    "layers_pad": [
+     "copper1-top",
+     "copper1-bot"
+    ],
+    "outer_diameter": 1.0,
+    "angle": 0.0,
+    "hole_diameter": 1.0,
+    "y": 94.0,
+    "flip": false
+   },
+   {
+    "closed": true,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-top",
+    "order": 0,
+    "type": "polygon",
+    "y": [
+     53.0,
+     53.0,
+     49.900000000000006
+    ],
+    "x": [
+     95.9,
+     93.7,
+     93.7
+    ],
+    "pad": false
+   },
+   {
+    "closed": true,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-top",
+    "order": 0,
+    "type": "polygon",
+    "y": [
+     53.0,
+     53.0,
+     49.900000000000006
+    ],
+    "x": [
+     91.49999999999999,
+     93.69999999999999,
+     93.69999999999999
+    ],
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-top",
+    "width": 1.5,
+    "height": 8.0,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": 57.0,
+    "x": 93.7,
+    "pad": false
+   },
+   {
+    "x": 39.0,
+    "mirror": false,
+    "angle": 0.0,
+    "type": "thorlabs_holes",
+    "y": 12.0,
+    "flip": false
+   },
+   {
+    "height": 45.50000000000003,
+    "order": 0,
+    "type": "rectangle",
+    "x": 78.45000000000002,
+    "y": 73.75000000000001,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-top",
+    "width": 5.100000000000023,
+    "angle": 0.0,
+    "pad": false
+   },
+   {
+    "height": 4.0,
+    "order": 0,
+    "type": "rectangle",
+    "x": 83.0,
+    "y": 53.0,
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-top",
+    "width": 4.0,
+    "angle": 0.0,
+    "pad": false
+   },
+   {
+    "closed": true,
+    "order": 0,
+    "type": "polygon",
+    "x": [
+     0.0,
+     96.50000000000001,
+     96.50000000000001,
+     0.0
+    ],
+    "pad": false,
+    "hole": false,
+    "outline": 0.1,
+    "layer": "copper1-top",
+    "y": [
+     0.0,
+     0.0,
+     100.0,
+     100.0
+    ]
+   }
+  ],
+  "grid_step_x": 0.0001,
+  "grid_step_y": 0.0001,
+  "view_x": 3.462350647464885
+ },
+ {
+  "name": "voltage_prob",
+  "view_y": -2.0703155808938414,
+  "view_scale": 125.89254117941705,
+  "shapes": [
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-top",
+    "order": 0,
+    "radius": 1.0,
+    "type": "circle",
+    "y": -1.25,
+    "x": 0.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-top",
+    "order": 0,
+    "radius": 1.0,
+    "type": "circle",
+    "y": -1.25,
+    "x": 6.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-top",
+    "width": 6.0,
+    "height": 2.0,
+    "angle": 0.0,
+    "order": 0,
+    "type": "rectangle",
+    "y": -1.25,
+    "x": 3.0,
+    "pad": false
+   },
+   {
+    "steps": 8,
+    "halign": "left",
+    "mirror": false,
+    "text": "GND",
+    "spacing": 0.0,
+    "order": 0,
+    "type": "text",
+    "x": 2.0,
+    "hole": true,
+    "layer": "copper1-top",
+    "valign": "center",
+    "angle": 0.0,
+    "font": "DejaVuSans",
+    "y": -1.25,
+    "size": 2.0
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "order": 0,
+    "radius": 1.0,
+    "type": "circle",
+    "y": -1.25,
+    "x": 0.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "copper1-bot",
+    "order": 0,
+    "radius": 1.0,
+    "type": "circle",
+    "y": 1.25,
+    "x": 0.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "drill-plated",
+    "order": 0,
+    "radius": 0.5,
+    "type": "circle",
+    "y": 1.25,
+    "x": 0.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "drill-plated",
+    "order": 0,
+    "radius": 0.5,
+    "type": "circle",
+    "y": -1.25,
+    "x": 0.0,
+    "pad": false
+   }
+  ],
+  "grid_step_x": 0.1,
+  "grid_step_y": 0.1,
+  "view_x": 1.8850822118655117
+ },
+ {
+  "name": "thorlabs_holes",
+  "view_y": 81.6716192742753,
+  "view_scale": 3.1622776601683826,
+  "shapes": [
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "drill-plated",
+    "order": 0,
+    "radius": 3.0,
+    "type": "circle",
+    "y": 25.0,
+    "x": 0.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "drill-plated",
+    "order": 0,
+    "radius": 3.0,
+    "type": "circle",
+    "y": 50.0,
+    "x": 0.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "drill-plated",
+    "order": 0,
+    "radius": 3.0,
+    "type": "circle",
+    "y": 75.0,
+    "x": 0.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "courtyard-top",
+    "order": 0,
+    "radius": 6.0,
+    "type": "circle",
+    "y": 25.0,
+    "x": 0.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "courtyard-top",
+    "order": 0,
+    "radius": 6.0,
+    "type": "circle",
+    "y": 50.0,
+    "x": 0.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "courtyard-top",
+    "order": 0,
+    "radius": 6.0,
+    "type": "circle",
+    "y": 75.0,
+    "x": 0.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "drill-plated",
+    "order": 0,
+    "radius": 3.0,
+    "type": "circle",
+    "y": 75.0,
+    "x": 25.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "courtyard-top",
+    "order": 0,
+    "radius": 6.0,
+    "type": "circle",
+    "y": 75.0,
+    "x": 25.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "drill-plated",
+    "order": 0,
+    "radius": 3.0,
+    "type": "circle",
+    "y": 0.0,
+    "x": 50.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "courtyard-top",
+    "order": 0,
+    "radius": 6.0,
+    "type": "circle",
+    "y": 0.0,
+    "x": 50.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "drill-plated",
+    "order": 0,
+    "radius": 3.0,
+    "type": "circle",
+    "y": 75.0,
+    "x": 50.0,
+    "pad": false
+   },
+   {
+    "hole": false,
+    "outline": 0.0,
+    "layer": "courtyard-top",
+    "order": 0,
+    "radius": 6.0,
+    "type": "circle",
+    "y": 75.0,
+    "x": 50.0,
+    "pad": false
+   }
+  ],
+  "grid_step_x": 0.1,
+  "grid_step_y": 0.1,
+  "view_x": -96.23791180295633
+ }
+]

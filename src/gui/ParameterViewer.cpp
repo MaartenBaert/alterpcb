@@ -710,22 +710,26 @@ void ParameterViewer::ExpandParameter(index_t index)
 
 		for(index_t i = 0 ; i < shapes.size(); ++i) {
 			const ShapeInstance &shaperef = shapes[i].Ref();
-			const ShapePrototype &shaperef2 = shaperef.GetShapePrototype().Ref();
+			if(shaperef.IsSelected()){
+				const ShapePrototype &shaperef2 = shaperef.GetShapePrototype().Ref();
 
-			ShapeDefinition *shape_definition = NULL; //TODO// get this from LibraryManager
-			const EffectiveParameters &params = shaperef2.GetEffectiveParameters(shape_definition);
+				ShapeDefinition *shape_definition = NULL; //TODO// get this from LibraryManager
+				const EffectiveParameters &params = shaperef2.GetEffectiveParameters(shape_definition);
 
-			for(index_t j = 0 ; j < params.size(); ++j) {
-				if(params[j].GetName() == m_parameters[index].m_name) {
-					VData value = params[j].GetValue();
-					if(!values.emplace(value,1).second) {
-						values[value] = values[value] + 1;
+				for(index_t j = 0 ; j < params.size(); ++j) {
+					if(params[j].GetName() == m_parameters[index].m_name) {
+						VData value = params[j].GetValue();
+						if(!values.emplace(value,1).second) {
+							values[value] = values[value] + 1;
+						}
 					}
 				}
 			}
 
 		}
 
+
+		m_parameters[index].m_subparameters.clear();
 		for(auto const &ent : values) {
 			QLineEdit *widget = new QLineEdit(viewport());
 			connect(widget,SIGNAL(editingFinished()),this,SLOT(OnParameterChange()));
