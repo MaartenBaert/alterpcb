@@ -29,6 +29,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "DrawingViewer.h"
 #include "dialogs/LibraryConfigDialog.h"
 #include "dialogs/LayerConfigDialog.h"
+#include "dialogs/GerberImportDialog.h"
 
 const QString MainWindow::WINDOW_TITLE = "AlterPCB";
 
@@ -36,8 +37,10 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 	setWindowTitle(WINDOW_TITLE);
 	m_library_manager = library_manager;
 	m_layer_manager = new LayerManager(this);
+
 	m_library_config_dialog = NULL;
 	m_layer_config_dialog = NULL;
+	m_import_gerber_dialog = NULL;
 
 	QMenuBar *menubar = new QMenuBar(this);
 	{
@@ -46,7 +49,19 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 		menu_file->addAction(tr("&Save"));
 		menu_file->addAction(tr("S&ave as"));
 		menu_file->addSeparator();
-		menu_file->addAction(tr("E&xport"));
+		QMenu *export_menu = menu_file->addMenu(tr("&Export"));
+		{ // Import menu
+			QAction *act_export_gerber = export_menu->addAction(tr("Gerber"));
+			QAction *act_export_dxf = export_menu->addAction(tr("DXF"));
+			QAction *act_export_svg = export_menu->addAction(tr("SVG"));
+		}
+		QMenu *import_menu = menu_file->addMenu(tr("&Import"));
+		{ // Import menu
+			QAction *act_import_gerber = import_menu->addAction(tr("Gerber"));
+			connect(act_import_gerber, SIGNAL (triggered(bool)), this, SLOT (OpenImportGerberDialog()));
+			QAction *act_import_gds = import_menu->addAction(tr("GDSII"));
+			QAction *act_import_svg = import_menu->addAction(tr("SVG"));
+		}
 		menu_file->addSeparator();
 		menu_file->addAction(tr("&Close"));
 		menu_file->addAction(tr("C&lose all"));
@@ -59,7 +74,6 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 		connect(act_open_library_manager, SIGNAL (triggered(bool)), this, SLOT (OpenLibraryConfigDialog()));
 		QAction *act_open_layer_manager = menu_edit->addAction(tr("Layer Manager"));
 		connect(act_open_layer_manager, SIGNAL (triggered(bool)), this, SLOT (OpenLayerConfigDialog()));
-		menu_edit->addAction("Test");
 	}
 
 	QMenu *menu_view = menubar->addMenu(tr("&View"));
@@ -183,6 +197,24 @@ void MainWindow::CloseLayerConfigDialog()
 	if(m_layer_config_dialog != NULL) {
 		m_layer_config_dialog->deleteLater();
 		m_layer_config_dialog = NULL;
+	}
+}
+
+void MainWindow::OpenImportGerberDialog()
+{
+	if(m_import_gerber_dialog == NULL) {
+		m_import_gerber_dialog = new GerberImportDialog(this);
+		m_import_gerber_dialog->show();
+	} else {
+		m_import_gerber_dialog->raise();
+	}
+}
+
+void MainWindow::CloseImportGerberDialog()
+{
+	if(m_import_gerber_dialog != NULL) {
+		//m_import_gerber_dialog->deleteLater();
+		m_import_gerber_dialog = NULL;
 	}
 }
 

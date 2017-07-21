@@ -106,7 +106,9 @@ private:
 
 public:
 	inline Library* GetLibrary(size_t index) const { assert(index < m_libraries.size()); return m_libraries[index].Get(); }
+	Library* GetLibrary(std::string name);
 	inline size_t GetLibraryCount() const { return m_libraries.size(); }
 	inline LayerStack* GetEmplyLayerStack() {return m_empty_layerstack;}
+	std::vector<std::string> GetLibraryNames();
 
 };

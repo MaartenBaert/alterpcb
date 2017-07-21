@@ -20,21 +20,31 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include <string>
-#include "LibraryManager.h"
+#include "Qt.h"
 
-namespace File_IO {
+class MainWindow;
 
-void ImportFileAlterPCB_AlterpcbPythonFormat(LibraryManager &library_manager, const std::string &filename);
-//void ExportFileAlterPCB(const std::string &filename);
+class GerberImportDialog : public QDialog {
+	Q_OBJECT
 
-//void ImportFileSVG(const std::string &filename);
-//void ExportFileSVG(const std::string &filename);
+private:
+	MainWindow *m_parent;
 
-void ImportFileGerber(const std::string &filename,Drawing *drawing, stringtag_t layer);
-//void ExportFileGerber(const std::string &filename);
+	QTableWidget *m_TableWidget;
+	QLineEdit *m_lineedit;
+	QComboBox* m_combo_libs;
 
-//void ImportFileGDS(const std::string &filename);
-//void ExportFileGDS(const std::string &filename);
+	QStringList m_files;
+	QStringList m_availablelayers;
 
-}
+
+public:
+	GerberImportDialog(MainWindow *parent);
+	virtual void closeEvent(QCloseEvent *event) override;
+
+public slots:
+	void OnCancel();
+	void OnBrowse();
+	void OnImport();
+
+};

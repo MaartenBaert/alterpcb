@@ -79,6 +79,7 @@ HEADERS += \
 	gui/components/FilepathEditor.h \
 	gui/components/LayerWidget.h \
 	gui/components/TabbedDocumentViewer.h \
+	gui/dialogs/GerberImportDialog.h \
 	gui/dialogs/LayerConfigDialog.h \
 	gui/dialogs/LibraryConfigDialog.h
 
@@ -112,5 +113,6 @@ SOURCES += \
 	gui/components/FilepathEditor.cpp \
 	gui/components/LayerWidget.cpp \
 	gui/components/TabbedDocumentViewer.cpp \
+	gui/dialogs/GerberImportDialog.cpp \
 	gui/dialogs/LayerConfigDialog.cpp \
 	gui/dialogs/LibraryConfigDialog.cpp

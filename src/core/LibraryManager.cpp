@@ -441,3 +441,24 @@ void LibraryManager::UpdatePersistentModelIndices() {
 	changePersistentIndexList(oldlist, newlist);
 
 }
+
+Library *LibraryManager::GetLibrary(std::string name)
+{
+	Library *lib = NULL;
+	for(int i = 0; i < m_libraries.size(); ++i) {
+		if(m_libraries[i].Get()->GetName() == name){
+			lib = m_libraries[i].Get();
+		}
+
+	}
+	return lib;
+}
+
+std::vector<std::string> LibraryManager::GetLibraryNames()
+{
+	std::vector<std::string> names;
+	for(int i = 0; i < m_libraries.size(); ++i) {
+		names.emplace_back(m_libraries[i].Get()->GetName());
+	}
+	return names;
+}
