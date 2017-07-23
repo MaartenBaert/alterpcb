@@ -23,6 +23,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Drawing.h"
 #include "LayerStack.h"
+#include "StringRegistry.h"
 
 Library::Library(LibraryManager *parent,const std::string &name, const std::string &filename, LibraryType type) : LibraryTreeItem(LIBRARYTREEITEMTYPE_LIBRARY) {
 	m_parent = parent;
@@ -85,5 +86,14 @@ LayerStack *Library::GetLayerStack(stringtag_t layerstack_name)
 	// should not be reached
 	assert(false);
 	return 0;
+}
+
+std::vector<std::__cxx11::string> Library::GetLayerStackNames()
+{
+	std::vector<std::string> names;
+	for(int i = 0; i < m_layerstacks.size(); ++i) {
+		names.emplace_back(SRGetString(m_layerstacks[i]->GetName()));
+	}
+	return names;
 }
 

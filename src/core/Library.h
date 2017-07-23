@@ -70,6 +70,7 @@ public:
 	inline size_t GetLayoutCount() { return m_layouts.size(); }
 	LayerStack* GetLayerStack(stringtag_t layerstack_name);
 	inline size_t GetLayerStackCount() { return m_layerstacks.size(); }
+	std::vector<std::string> GetLayerStackNames();
 
 	inline void SetName(const std::string &name) {m_name = name;}
 	inline void SetFilePath(const std::string &filename) {m_file_name = filename;}

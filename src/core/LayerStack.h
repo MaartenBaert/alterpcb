@@ -60,6 +60,7 @@ public:
 	LayerStack& operator=(const LayerStack&) = delete;
 
 	inline stringtag_t GetName() const { return m_name; }
+	std::vector<std::string> GetLayerNames();
 	inline size_t GetLogicalLayerSize() const { return m_logical_layers.size(); }
 	inline LogicalLayer* GetLogicalLayer(size_t index) { return &m_logical_layers[index]; }
 

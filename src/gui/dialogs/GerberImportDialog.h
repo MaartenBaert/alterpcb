@@ -33,18 +33,25 @@ private:
 	QTableWidget *m_TableWidget;
 	QLineEdit *m_lineedit;
 	QComboBox* m_combo_libs;
+	QComboBox* m_combo_layerstacks;
+	QPushButton* m_button_import;
 
 	QStringList m_files;
 	QStringList m_availablelayers;
-
 
 public:
 	GerberImportDialog(MainWindow *parent);
 	virtual void closeEvent(QCloseEvent *event) override;
 
+private:
+	void AllowImport();
+
 public slots:
 	void OnCancel();
 	void OnBrowse();
 	void OnImport();
+	void OnLibChange(const QString text);
+	void OnLayerstackChange(const QString text);
+	void OnLineEditChange(const QString text);
 
 };

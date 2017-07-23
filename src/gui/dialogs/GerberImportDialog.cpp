@@ -20,27 +20,38 @@ GerberImportDialog::GerberImportDialog(MainWindow *parent) : QDialog(parent)
 	layout2->setSpacing(10);
 
 	QLabel *label1 = new QLabel(tr("Target library :"));
-	std::vector<std::string> names = m_parent->GetLibraryManager()->GetLibraryNames();
+	std::vector<std::string> lib_names = m_parent->GetLibraryManager()->GetLibraryNames();
 	QStringList libs;
-	for(int i = 0; i < names.size(); ++i) {
-		libs.append(QString::fromStdString(names[i]));
+	for(int i = 0; i < lib_names.size(); ++i) {
+		libs.append(QString::fromStdString(lib_names[i]));
 	}
 	m_combo_libs = new QComboBox(this);
 	m_combo_libs->addItems(libs);
+	connect(m_combo_libs, SIGNAL (currentIndexChanged(const QString)), this, SLOT (OnLibChange(const QString)));
 	layout2->addRow(label1,m_combo_libs);
 
 
 	QLabel *label2 = new QLabel(tr("LayerStack :"));
-	QLabel *aa = new QLabel(tr("aa"));
-	layout2->addRow(label2,aa);
+	QStringList layerstacks;
+	Library *lib = m_parent->GetLibraryManager()->GetLibrary(m_combo_libs->currentText().toStdString());
+	if(lib != NULL){
+		std::vector<std::string> layerstack_names = lib->GetLayerStackNames();
+
+		for(int i = 0; i < layerstack_names.size(); ++i) {
+			layerstacks.append(QString::fromStdString(layerstack_names[i]));
+		}
+	}
+	m_combo_layerstacks = new QComboBox(this);
+	m_combo_layerstacks->addItems(layerstacks);
+	connect(m_combo_layerstacks, SIGNAL (currentIndexChanged(const QString)), this, SLOT (OnLayerstackChange(const QString)));
+	layout2->addRow(label2,m_combo_layerstacks);
+
 
 	QLabel *label3 = new QLabel(tr("Layout name :"));
 	m_lineedit = new QLineEdit();
 	layout2->addRow(label3,m_lineedit);
-
+	connect(m_lineedit, SIGNAL (textChanged(const QString)), this, SLOT (OnLineEditChange(const QString)));
 	layout1->addItem(layout2);
-
-
 
 
 	m_TableWidget = new QTableWidget(this);
@@ -65,21 +76,21 @@ GerberImportDialog::GerberImportDialog(MainWindow *parent) : QDialog(parent)
 	layout3->setSpacing(10);
 
 	QPushButton *button_browse = new QPushButton(tr("&Browse..."));
-	QPushButton *button_import = new QPushButton(tr("&Import"));
+	m_button_import = new QPushButton(tr("&Import"));
 	QPushButton *button_cancel = new QPushButton(tr("&Cancel"));
 	button_browse->setFixedWidth(70);
-	button_import->setFixedWidth(70);
+	m_button_import->setFixedWidth(70);
 	button_cancel->setFixedWidth(70);
-	//button_import->setEnabled(0);
+	m_button_import->setEnabled(0);
 	connect(button_browse, SIGNAL (clicked(bool)), this, SLOT (OnBrowse()));
-	connect(button_import, SIGNAL (clicked(bool)), this, SLOT (OnImport()));
+	connect(m_button_import, SIGNAL (clicked(bool)), this, SLOT (OnImport()));
 	connect(button_cancel, SIGNAL (clicked(bool)), this, SLOT (OnCancel()));
 
 	QSpacerItem *spacer = new QSpacerItem(10, 10, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
 	layout3->addWidget(button_browse);
 	layout3->addSpacerItem(spacer);
-	layout3->addWidget(button_import);
+	layout3->addWidget(m_button_import);
 	layout3->addWidget(button_cancel);
 	layout1->addItem(layout3);
 
@@ -87,15 +98,45 @@ GerberImportDialog::GerberImportDialog(MainWindow *parent) : QDialog(parent)
 	setLayout(layout1);
 	setMinimumSize(500,500);
 
-	m_availablelayers.append("Copper-top");
-	m_availablelayers.append("Copper-bot");
-	m_availablelayers.append("Mask-top");
+	LayerStack *layerstack = lib->GetLayerStack(SRFindTag(m_combo_layerstacks->currentText().toStdString()));
+
+	std::vector<std::string> layers_names = layerstack->GetLayerNames();
+	m_availablelayers.clear();
+	for(int i = 0; i < layers_names.size(); ++i) {
+		m_availablelayers.append(QString::fromStdString(layers_names[i]));
+	}
 }
 
 void GerberImportDialog::closeEvent(QCloseEvent *event)
 {
 	m_parent->CloseImportGerberDialog();
 	event->accept();
+}
+
+void GerberImportDialog::AllowImport()
+{
+	// CHeck that:
+	// 1) the lib is selected
+	// 2) the layerstack is selected
+	// 3) the drawing name is not empty
+	// 4) there are file enabled and have layer selected
+
+	bool allowimport = true;
+
+	Library *lib = m_parent->GetLibraryManager()->GetLibrary(m_combo_libs->currentText().toStdString());
+	if(lib == NULL){ allowimport = false;}
+
+	if(m_lineedit->text() == "") { allowimport = false;}
+
+	if(m_files.size() == 0) { allowimport = false;}
+
+
+	if(allowimport) {
+		m_button_import->setEnabled(true);
+	}
+	else {
+		m_button_import->setEnabled(false);
+	}
 }
 
 void GerberImportDialog::OnCancel()
@@ -106,7 +147,7 @@ void GerberImportDialog::OnCancel()
 
 void GerberImportDialog::OnBrowse()
 {
-	QStringList filenames = QFileDialog::getOpenFileNames(this,tr("Select Gerber Files"),QDir::homePath(),tr("Gerber files (*.gbr)") ,0,QFileDialog::DontUseNativeDialog);
+	QStringList filenames = QFileDialog::getOpenFileNames(this,tr("Select Gerber Files"),QDir::homePath(),tr("Gerber files (*.gbr *.gtl *.gbl *.gts *.gbs *.gto *.gbo *.drl *.cmp *.sol *.stc *.sts *.plc *.pls *.drd *.top *.bot *.smt *.smb *.sst *.ssb)") ,0,QFileDialog::DontUseNativeDialog);
 	if( !filenames.isEmpty() )
 	{
 		int pos = m_TableWidget->rowCount();
@@ -131,6 +172,7 @@ void GerberImportDialog::OnBrowse()
 		}
 	}
 
+	AllowImport();
 }
 
 void GerberImportDialog::OnImport()
@@ -141,11 +183,57 @@ void GerberImportDialog::OnImport()
 
 		for (int i =0;i<m_files.count();i++){
 			QComboBox* combo_layers = static_cast<QComboBox*>(m_TableWidget->cellWidget(i,1));
-			std::cerr<< combo_layers->currentText().toStdString() << std::endl;
 			File_IO::ImportFileGerber(m_files.at(i).toStdString(),drawing,StringRegistry::NewTag(combo_layers->currentText().toStdString()));
 		}
 	}
 
 	m_parent->CloseImportGerberDialog();
 	accept();
+}
+
+void GerberImportDialog::OnLibChange(const QString text)
+{
+	// TODO check the available layerstacks and reset all the layers of the files...
+	QStringList layerstacks;
+	Library *lib = m_parent->GetLibraryManager()->GetLibrary(m_combo_libs->currentText().toStdString());
+	if(lib != NULL){
+		std::vector<std::string> layerstack_names = lib->GetLayerStackNames();
+
+		for(int i = 0; i < layerstack_names.size(); ++i) {
+			layerstacks.append(QString::fromStdString(layerstack_names[i]));
+		}
+	}
+	m_combo_layerstacks->clear();
+	m_combo_layerstacks->addItems(layerstacks);
+
+	AllowImport();
+}
+
+void GerberImportDialog::OnLayerstackChange(const QString text)
+{
+	Library *lib = m_parent->GetLibraryManager()->GetLibrary(m_combo_libs->currentText().toStdString());
+	if(lib != NULL){
+		LayerStack *layerstack = lib->GetLayerStack(SRFindTag(m_combo_layerstacks->currentText().toStdString()));
+
+		std::vector<std::string> layers_names = layerstack->GetLayerNames();
+		m_availablelayers.clear();
+		for(int i = 0; i < layers_names.size(); ++i) {
+			m_availablelayers.append(QString::fromStdString(layers_names[i]));
+		}
+
+		for(int i = 0; i < m_files.size(); ++i) {
+			if(m_availablelayers.size() > 0){
+				QComboBox* combo_layers = new QComboBox();
+				combo_layers->addItems(m_availablelayers);
+
+				m_TableWidget->setCellWidget(i,1,combo_layers);
+			}
+		}
+	}
+	AllowImport();
+}
+
+void GerberImportDialog::OnLineEditChange(const QString text)
+{
+	AllowImport();
 }
