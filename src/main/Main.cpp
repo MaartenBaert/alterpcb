@@ -301,10 +301,10 @@ int main(int argc, char *argv[]) {
 
 		lib1->GetLayout(0)->HistoryPush(std::move(shapes),false);
 		*/
-		File_IO::ImportFileAlterPCB_AlterpcbPythonFormat(library_manager,"../data/alterpcb_old_files-testsuite/BIAS_PCB.alterlib.json");
-		File_IO::ImportFileAlterPCB_AlterpcbPythonFormat(library_manager,"../data/alterpcb_old_files-testsuite/bias_adaptor.alterlib.json");
+		File_IO::ImportFileAlterPCB_AlterpcbPythonFormat(library_manager,"data/alterpcb_old_files-testsuite/BIAS_PCB.alterlib.json");
+		File_IO::ImportFileAlterPCB_AlterpcbPythonFormat(library_manager,"data/alterpcb_old_files-testsuite/bias_adaptor.alterlib.json");
 
-		Library *lib1 = library_manager.GetLibrary(0);
+		Library *lib1 = library_manager.GetLibrary(static_cast<size_t>(0));
 		LayerStack *layerstack1 = lib1->NewLayerStack(StringRegistry::NewTag("4layerpcb"));
 		layerstack1->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top1"),QColor(0,255,0),LAYERTEXTURE_SOLID));
 		layerstack1->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top2"),QColor(255,255,0),LAYERTEXTURE_VSTRIPE_LIGHT));
@@ -314,7 +314,7 @@ int main(int argc, char *argv[]) {
 		layerstack2->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top1"),QColor(0,100,0),LAYERTEXTURE_SOLID));
 		layerstack2->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top2"),QColor(0,255,50),LAYERTEXTURE_SOLID));
 
-		Library *lib2 = library_manager.GetLibrary(1);
+		Library *lib2 = library_manager.GetLibrary(static_cast<size_t>(1));
 		LayerStack *layerstack3 = lib2->NewLayerStack(StringRegistry::NewTag("4layerpcb"));
 		layerstack3->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top1"),QColor(0,255,0),LAYERTEXTURE_SOLID));
 		layerstack3->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top2"),QColor(255,255,0),LAYERTEXTURE_VSTRIPE_LIGHT));

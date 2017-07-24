@@ -32,6 +32,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "ShapeInstance.h"
 #include "Drawing.h"
 
+
 namespace File_IO {
 
 //***********************************************************************************************************
@@ -76,7 +77,6 @@ void ImportFileGerber(const std::string &filename,Drawing *drawing, stringtag_t 
 	std::ifstream file(filename);
 
 	// TODO read header to see were the decimal point should be
-	bool region = false;
 	float mx, my;
 	std::vector<Cow<ShapeInstance>> new_shapes;
 	if(drawing->Changed()){
@@ -96,7 +96,6 @@ void ImportFileGerber(const std::string &filename,Drawing *drawing, stringtag_t 
 
 		if(line == ""){ break; }
 		if(line == "G36*" ){
-			region = true;
 
 			//flush polygon
 			if(polygon_x.size() > 1) {
@@ -117,7 +116,6 @@ void ImportFileGerber(const std::string &filename,Drawing *drawing, stringtag_t 
 			polygon_y.clear();
 		}
 		else if(line == "G37*" ){
-			region = false;
 
 			//flush polygon
 			if(polygon_x.size() > 1) {
@@ -139,13 +137,13 @@ void ImportFileGerber(const std::string &filename,Drawing *drawing, stringtag_t 
 		}
 		else{
 			if((line != "") && (line.at(0) == 'X')){
-				int pos = 1;
+				unsigned int pos = 1;
 				while(pos < line.length() && isdigit(line.at(pos))){ pos++; }
 				mx = std::stof(line.substr(1,pos-1)) / 10000;
 				line = line.substr(pos,line.length()-pos);
 			}
 			if((line != "") && (line.at(0) == 'Y')){
-				int pos = 1;
+				unsigned int pos = 1;
 				while(pos < line.length() && isdigit(line.at(pos))){ pos++; }
 				my = std::stof(line.substr(1,pos-1)) / 10000;
 				line = line.substr(pos,line.length()-pos);
@@ -198,6 +196,129 @@ void ImportFileGerber(const std::string &filename,Drawing *drawing, stringtag_t 
 	}
 	polygon_x.clear();
 	polygon_y.clear();
+
+	drawing->HistoryPush(std::move(new_shapes),false);
+}
+
+void ImportFileDrill(const std::__cxx11::string &filename, Drawing *drawing, stringtag_t layer)
+{
+	std::ifstream file(filename);
+
+
+	float mx, my;
+
+	std::vector<Cow<ShapeInstance>> new_shapes;
+	if(drawing->Changed()){
+		const std::vector<Cow<ShapeInstance>>& shapes = drawing->GetShapes();
+		for(index_t i = 0 ; i < shapes.size(); ++i) {
+			new_shapes.emplace_back(shapes[i]);
+		}
+	}
+
+	int tool = 0; // Tools cant have number 0 so tool = 0 is equal no tool
+	std::vector<int> tools;
+	float diameter;
+	std::vector<float> diameters;
+
+
+	while(true)
+	{
+		std::string line;
+		getline( file, line );
+		bool flash = false;
+
+		if(line == ""){ break; }
+		if((line != "") && (line.at(0) == 'T')) {
+			unsigned int pos = 1;
+			while(pos < line.length() && isdigit(line.at(pos))){ pos++; }
+
+			tool = std::stoi(line.substr(1,pos-1));
+			bool tool_found = false;
+			for (unsigned int i =0;i<tools.size();i++){
+				if(tools.at(i) ==  tool){
+					pos = i;
+					tool_found = true;
+					break;
+				}
+			}
+
+			if(!tool_found){
+				tools.emplace_back(tool);
+			}
+			line = line.substr(pos,line.length()-pos);
+
+		}
+		if((line != "") && (line.at(0) == 'C')) {
+			unsigned int pos = 1;
+			while(pos < line.length() && (isdigit(line.at(pos)) || line.at(pos) == '.')){ pos++; }
+
+			unsigned int pos2;
+			diameter = std::stof(line.substr(1,pos-1));
+			bool tool_found = false;
+			for (unsigned int i =0;i<tools.size();i++){
+				if(tools.at(i) ==  tool){
+					pos2 = i;
+					tool_found = true;
+					break;
+				}
+			}
+
+			if(tool_found){
+				while(diameters.size() <= pos2){diameters.emplace_back(0);}
+				diameters.at(pos2) = diameter;
+			}
+
+			line = line.substr(pos,line.length()-pos);
+		}
+		if((line != "") && (line.at(0) == 'X')) {
+			unsigned int pos = 1;
+			while(pos < line.length() && isdigit(line.at(pos))){ pos++; }
+			mx = std::stof(line.substr(1,pos-1)) / 10000; // TODO check if this is correct (python code says mx = int(line[1:pos]) / 10**(pos-4))
+			line = line.substr(pos,line.length()-pos);
+
+			flash = true;
+		}
+		if((line != "") && (line.at(0) == 'Y')) {
+			unsigned int pos = 1;
+			while(pos < line.length() && isdigit(line.at(pos))){ pos++; }
+			my = std::stof(line.substr(1,pos-1)) / 10000; // TODO check if this is correct (python code says mx = int(line[1:pos]) / 10**(pos-4))
+			line = line.substr(pos,line.length()-pos);
+
+			flash = true;
+		}
+		else if(line != ""){
+			std::cerr << "ImportFileDrill: Ignoring : "<< line << std::endl;
+		}
+
+		if(flash) {
+			int pos = 0;
+			bool tool_found = false;
+			for (unsigned int i =0;i<tools.size();i++){
+				if(tools.at(i) ==  tool){
+					pos = i;
+					tool_found = true;
+					break;
+				}
+			}
+			float diameter = 0;
+			if(tool_found){diameter = diameters.at(pos);}
+
+			VData::Dict params;
+			params.EmplaceBack(StringRegistry::NewTag("type"), "circle");
+			params.EmplaceBack(StringRegistry::NewTag("layer"), SRGetString(layer));
+			params.EmplaceBack(StringRegistry::NewTag("x"), mx);
+			params.EmplaceBack(StringRegistry::NewTag("y"), my);
+			params.EmplaceBack(StringRegistry::NewTag("radius"), diameter/2);
+
+			Cow<ShapePrototype> proto;
+			proto.New(SRNewTag("circle"), std::move(params));
+
+			ShapeTransform transform;
+
+			new_shapes.emplace_back(std::make_shared<ShapeInstance>(std::move(proto), transform, true)); // TODO dont make selected
+
+		}
+	}
 
 	drawing->HistoryPush(std::move(new_shapes),false);
 }

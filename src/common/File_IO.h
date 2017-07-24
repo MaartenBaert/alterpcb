@@ -32,6 +32,7 @@ void ImportFileAlterPCB_AlterpcbPythonFormat(LibraryManager &library_manager, co
 //void ExportFileSVG(const std::string &filename);
 
 void ImportFileGerber(const std::string &filename,Drawing *drawing, stringtag_t layer);
+void ImportFileDrill(const std::string &filename,Drawing *drawing, stringtag_t layer);
 //void ExportFileGerber(const std::string &filename);
 
 //void ImportFileGDS(const std::string &filename);

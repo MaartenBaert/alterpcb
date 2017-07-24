@@ -54,6 +54,9 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 			QAction *act_export_gerber = export_menu->addAction(tr("Gerber"));
 			QAction *act_export_dxf = export_menu->addAction(tr("DXF"));
 			QAction *act_export_svg = export_menu->addAction(tr("SVG"));
+			UNUSED(act_export_gerber);
+			UNUSED(act_export_dxf);
+			UNUSED(act_export_svg);
 		}
 		QMenu *import_menu = menu_file->addMenu(tr("&Import"));
 		{ // Import menu
@@ -61,6 +64,8 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 			connect(act_import_gerber, SIGNAL (triggered(bool)), this, SLOT (OpenImportGerberDialog()));
 			QAction *act_import_gds = import_menu->addAction(tr("GDSII"));
 			QAction *act_import_svg = import_menu->addAction(tr("SVG"));
+			UNUSED(act_import_gds);
+			UNUSED(act_import_svg);
 		}
 		menu_file->addSeparator();
 		menu_file->addAction(tr("&Close"));

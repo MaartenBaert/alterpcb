@@ -22,7 +22,7 @@ GerberImportDialog::GerberImportDialog(MainWindow *parent) : QDialog(parent)
 	QLabel *label1 = new QLabel(tr("Target library :"));
 	std::vector<std::string> lib_names = m_parent->GetLibraryManager()->GetLibraryNames();
 	QStringList libs;
-	for(int i = 0; i < lib_names.size(); ++i) {
+	for(std::size_t i = 0; i < lib_names.size(); ++i) {
 		libs.append(QString::fromStdString(lib_names[i]));
 	}
 	m_combo_libs = new QComboBox(this);
@@ -37,7 +37,7 @@ GerberImportDialog::GerberImportDialog(MainWindow *parent) : QDialog(parent)
 	if(lib != NULL){
 		std::vector<std::string> layerstack_names = lib->GetLayerStackNames();
 
-		for(int i = 0; i < layerstack_names.size(); ++i) {
+		for(std::size_t i = 0; i < layerstack_names.size(); ++i) {
 			layerstacks.append(QString::fromStdString(layerstack_names[i]));
 		}
 	}
@@ -102,7 +102,7 @@ GerberImportDialog::GerberImportDialog(MainWindow *parent) : QDialog(parent)
 
 	std::vector<std::string> layers_names = layerstack->GetLayerNames();
 	m_availablelayers.clear();
-	for(int i = 0; i < layers_names.size(); ++i) {
+	for(std::size_t i = 0; i < layers_names.size(); ++i) {
 		m_availablelayers.append(QString::fromStdString(layers_names[i]));
 	}
 }
@@ -179,11 +179,20 @@ void GerberImportDialog::OnImport()
 {
 	Library *lib = m_parent->GetLibraryManager()->GetLibrary(m_combo_libs->currentText().toStdString());
 	if(lib != NULL){
-		Drawing *drawing = lib->NewDrawing(StringRegistry::NewTag(m_lineedit->text().toStdString()), DRAWINGTYPE_LAYOUT,StringRegistry::NewTag("4layerpcb"));
+		Drawing *drawing = lib->NewDrawing(StringRegistry::NewTag(m_lineedit->text().toStdString()), DRAWINGTYPE_LAYOUT,SRFindTag(m_combo_layerstacks->currentText().toStdString()));
 
 		for (int i =0;i<m_files.count();i++){
 			QComboBox* combo_layers = static_cast<QComboBox*>(m_TableWidget->cellWidget(i,1));
-			File_IO::ImportFileGerber(m_files.at(i).toStdString(),drawing,StringRegistry::NewTag(combo_layers->currentText().toStdString()));
+
+
+			std::cerr << "A : " <<  m_files.at(i).toStdString().substr(m_files.at(i).toStdString().find_last_of(".") + 1) << std::endl;
+			if(m_files.at(i).toStdString().substr(m_files.at(i).toStdString().find_last_of(".") + 1) == "drl"){
+				std::cerr << "DD" << std::endl;
+				File_IO::ImportFileDrill(m_files.at(i).toStdString(),drawing,SRFindTag(combo_layers->currentText().toStdString()));
+			}
+			else {
+				File_IO::ImportFileGerber(m_files.at(i).toStdString(),drawing,SRFindTag(combo_layers->currentText().toStdString()));
+			}
 		}
 	}
 
@@ -193,13 +202,14 @@ void GerberImportDialog::OnImport()
 
 void GerberImportDialog::OnLibChange(const QString text)
 {
+	UNUSED(text);
 	// TODO check the available layerstacks and reset all the layers of the files...
 	QStringList layerstacks;
 	Library *lib = m_parent->GetLibraryManager()->GetLibrary(m_combo_libs->currentText().toStdString());
 	if(lib != NULL){
 		std::vector<std::string> layerstack_names = lib->GetLayerStackNames();
 
-		for(int i = 0; i < layerstack_names.size(); ++i) {
+		for(std::size_t i = 0; i < layerstack_names.size(); ++i) {
 			layerstacks.append(QString::fromStdString(layerstack_names[i]));
 		}
 	}
@@ -211,17 +221,18 @@ void GerberImportDialog::OnLibChange(const QString text)
 
 void GerberImportDialog::OnLayerstackChange(const QString text)
 {
+	UNUSED(text);
 	Library *lib = m_parent->GetLibraryManager()->GetLibrary(m_combo_libs->currentText().toStdString());
 	if(lib != NULL){
 		LayerStack *layerstack = lib->GetLayerStack(SRFindTag(m_combo_layerstacks->currentText().toStdString()));
 
 		std::vector<std::string> layers_names = layerstack->GetLayerNames();
 		m_availablelayers.clear();
-		for(int i = 0; i < layers_names.size(); ++i) {
+		for(std::size_t i = 0; i < layers_names.size(); ++i) {
 			m_availablelayers.append(QString::fromStdString(layers_names[i]));
 		}
 
-		for(int i = 0; i < m_files.size(); ++i) {
+		for(std::size_t i = 0; i < m_files.size(); ++i) {
 			if(m_availablelayers.size() > 0){
 				QComboBox* combo_layers = new QComboBox();
 				combo_layers->addItems(m_availablelayers);
@@ -235,5 +246,6 @@ void GerberImportDialog::OnLayerstackChange(const QString text)
 
 void GerberImportDialog::OnLineEditChange(const QString text)
 {
+	UNUSED(text);
 	AllowImport();
 }
