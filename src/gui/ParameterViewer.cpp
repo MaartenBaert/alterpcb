@@ -123,7 +123,7 @@ void ParameterViewer::UpdateParameters()
 							std::string str;
 							Json::ToString(params[j].GetValue(),str);
 							static_cast<QLineEdit*>(new_parameters[added.first].m_widget)->setText(QString::fromStdString(str));
-							new_parameters[added.first].m_expanded = m_parameters[index].m_expanded; //TODO FIX THIS BETTER (crashed when undoing history
+							new_parameters[added.first].m_expanded = m_parameters[index].m_expanded;
 							new_parameters[added.first].m_mergeable = true;
 							m_parameters[index].m_widget = NULL;
 						}

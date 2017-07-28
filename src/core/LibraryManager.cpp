@@ -36,7 +36,7 @@ LibraryManager::LibraryManager() {
 }
 
 LibraryManager::~LibraryManager() {
-	// nothing
+	delete m_empty_layerstack;
 }
 
 Library *LibraryManager::NewLibrary(const std::string &name, const std::string &filename, LibraryType type) {
@@ -44,12 +44,14 @@ Library *LibraryManager::NewLibrary(const std::string &name, const std::string &
 	Library *ptr = library.Get();
 	m_libraries.emplace_back(std::move(library));
 	m_empty_layerstack = new LayerStack(STRINGTAG_NONE);
+
+	emit layoutChanged();
 	return ptr;
 }
 
 void LibraryManager::DeleteLibrary(Library *library) {
 	DeleteFromVector(m_libraries, library);
-	delete m_empty_layerstack;
+	emit layoutChanged();
 }
 
 void LibraryManager::AddShapeDefinition(stringtag_t name, ShapeDefinition *shape_definition) {
@@ -121,7 +123,6 @@ QModelIndex LibraryManager::parent(const QModelIndex &index) const {
 	}
 
 	// this should never be reached
-	assert(false);
 	return QModelIndex();
 
 }
@@ -242,26 +243,46 @@ bool LibraryManager::setData(const QModelIndex &index, const QVariant &value, in
 					case LIBRARYTREEITEMTYPE_LIBRARY: {
 						Library *library = static_cast<Library*>(item_ptr);
 						library->SetName((value.toString()).toStdString());
-						layoutChanged();
+						emit layoutChanged();
 						return true;
 					}
 					case LIBRARYTREEITEMTYPE_DRAWING: {
 						Drawing *drawing = static_cast<Drawing*>(item_ptr);
 						drawing->SetName(StringRegistry::NewTag((value.toString()).toStdString()));
-						layoutChanged();
+						emit layoutChanged();
 						return true;
 					}}
 			}
 			else if (index.column() == 1) {
 				Library *library = static_cast<Library*>(item_ptr);
 				library->SetFilePath((value.toString()).toStdString());
-				layoutChanged();
+				emit layoutChanged();
 				return true;
 			}
 		}
 	}
 
 	return false;
+}
+
+bool LibraryManager::removeRow(int row, const QModelIndex &parent)
+{
+	LibraryTreeItem *item_ptr = (LibraryTreeItem*) index(row,0,parent).internalPointer();
+	switch(item_ptr->GetTreeItemType()) {
+			case LIBRARYTREEITEMTYPE_LIBRARY: {
+				Library *library = static_cast<Library*>(item_ptr);
+				DeleteLibrary(library);
+				break;
+			}
+			case LIBRARYTREEITEMTYPE_DRAWING: {
+				Drawing *drawing = static_cast<Drawing*>(item_ptr);
+				drawing->GetParent()->DeleteDrawing(drawing);
+				break;
+			}
+	}
+	UpdatePersistentModelIndices();
+	emit layoutChanged();
+	return true;
 }
 
 Qt::DropActions LibraryManager::supportedDropActions() const {
@@ -385,7 +406,7 @@ bool LibraryManager::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 		BulkInsertIntoVector(m_libraries, libraries, target_index);
 
 		UpdatePersistentModelIndices();
-		layoutChanged();
+		emit layoutChanged();
 
 		return true;
 	}

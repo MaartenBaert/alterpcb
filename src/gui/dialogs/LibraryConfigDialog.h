@@ -31,10 +31,15 @@ class LibraryConfigDialog : public QDialog {
 
 private:
 	FilepathDelegate m_delegate;
+	QTreeView *m_library_viewer;
 	MainWindow *m_parent;
 
 public:
 	LibraryConfigDialog(MainWindow *parent, LibraryManager* library_manager);
 	virtual void closeEvent(QCloseEvent *event) override;
+
+public slots:
+	void OnAddLibrary();
+	void OnRemoveLibrary();
 
 };

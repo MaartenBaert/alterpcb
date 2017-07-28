@@ -94,6 +94,9 @@ public: // QAbstractItemModel interface
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 	bool setData(const QModelIndex &index, const QVariant &value, int role);
 
+	bool removeRow(int row, const QModelIndex &parent);
+
+
 	// drag and drop
 	Qt::DropActions supportedDropActions() const override;
 	QStringList mimeTypes() const override;

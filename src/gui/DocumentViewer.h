@@ -49,8 +49,7 @@ public:
 	DocumentViewer(QWidget *parent, MainWindow *main_window);
 
 	void OpenDrawing(Drawing *drawing);
-
-public:
+	void CloseDrawing(Drawing *drawing); // close drawing if open
 	inline bool HasActiveDocument() {if(m_active_document == NULL){return false;} else{return true;}}
 	inline Document* GetActiveDocument() { return m_active_document; }
 

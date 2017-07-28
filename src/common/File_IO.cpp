@@ -100,7 +100,6 @@ void ImportFileGerber(const std::string &filename,Drawing *drawing, stringtag_t 
 			//flush polygon
 			if(polygon_x.size() > 1) {
 				VData::Dict params;
-				params.EmplaceBack(StringRegistry::NewTag("type"), "polygon");
 				params.EmplaceBack(StringRegistry::NewTag("layer"), SRGetString(layer));
 				params.EmplaceBack(StringRegistry::NewTag("x"), polygon_x);
 				params.EmplaceBack(StringRegistry::NewTag("y"), polygon_y);
@@ -120,7 +119,6 @@ void ImportFileGerber(const std::string &filename,Drawing *drawing, stringtag_t 
 			//flush polygon
 			if(polygon_x.size() > 1) {
 				VData::Dict params;
-				params.EmplaceBack(StringRegistry::NewTag("type"), "polygon");
 				params.EmplaceBack(StringRegistry::NewTag("layer"), SRGetString(layer));
 				params.EmplaceBack(StringRegistry::NewTag("x"), polygon_x);
 				params.EmplaceBack(StringRegistry::NewTag("y"), polygon_y);
@@ -152,7 +150,6 @@ void ImportFileGerber(const std::string &filename,Drawing *drawing, stringtag_t 
 				//flush polygon
 				if(polygon_x.size() > 1) {
 					VData::Dict params;
-					params.EmplaceBack(StringRegistry::NewTag("type"), "polygon");
 					params.EmplaceBack(StringRegistry::NewTag("layer"), SRGetString(layer));
 					params.EmplaceBack(StringRegistry::NewTag("x"), polygon_x);
 					params.EmplaceBack(StringRegistry::NewTag("y"), polygon_y);
@@ -182,7 +179,6 @@ void ImportFileGerber(const std::string &filename,Drawing *drawing, stringtag_t 
 	//flush polygon
 	if(polygon_x.size() > 1) {
 		VData::Dict params;
-		params.EmplaceBack(StringRegistry::NewTag("type"), "polygon");
 		params.EmplaceBack(StringRegistry::NewTag("layer"), SRGetString(layer));
 		params.EmplaceBack(StringRegistry::NewTag("x"), polygon_x);
 		params.EmplaceBack(StringRegistry::NewTag("y"), polygon_y);
@@ -304,7 +300,6 @@ void ImportFileDrill(const std::__cxx11::string &filename, Drawing *drawing, str
 			if(tool_found){diameter = diameters.at(pos);}
 
 			VData::Dict params;
-			params.EmplaceBack(StringRegistry::NewTag("type"), "circle");
 			params.EmplaceBack(StringRegistry::NewTag("layer"), SRGetString(layer));
 			params.EmplaceBack(StringRegistry::NewTag("x"), mx);
 			params.EmplaceBack(StringRegistry::NewTag("y"), my);

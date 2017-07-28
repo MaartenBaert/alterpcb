@@ -50,4 +50,10 @@ private slots:
 	void OnDoubleClick(const QModelIndex &index);
 	void OnRightClick(const QPoint &point);
 
+	void OnDrawingOpen();
+	void OnDrawingRename();
+	void OnDrawingCut();
+	void OnDrawingCopy();
+	void OnDrawingDelete();
+
 };
