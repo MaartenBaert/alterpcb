@@ -14,9 +14,12 @@ sourcetypes = {
 	".c": "sources",
 	".cpp": "sources",
 }
-configs = {
+configs = [
+	"tests"
+]
+dirconfigs = {
 	"tests": "tests",
-	"main": "notests",
+	"main": "!tests",
 }
 
 files = {}
@@ -28,7 +31,7 @@ for (dirpath, dirnames, filenames) in os.walk("."):
 		sourcetype = sourcetypes.get(os.path.splitext(fn)[1])
 		if sourcetype is None:
 			continue
-		config = configs.get(dirpath.split("/")[1], "default")
+		config = dirconfigs.get(dirpath.partition("/")[2], "default")
 		if config not in files:
 			files[config] = {}
 		if sourcetype not in files[config]:
@@ -49,11 +52,18 @@ def writefiles(tabs, config):
 
 (before, _, after) = text.partition(marker)
 text = before + marker
-text += "\ntests {\n"
-text += writefiles("\t", "tests")
-text += "\n} else {\n"
-text += writefiles("\t", "notests")
-text += "\n}\n"
+for config in configs:
+	if config in files:
+		text += "\n" + config + " {\n"
+		text += writefiles("\t", config)
+		if "!" + config in files:
+			text += "\n} else {\n"
+			text += writefiles("\t", "!" + config)
+		text += "\n}\n"
+	elif "!" + config in files:
+		text += "\n!" + config + " {\n"
+		text += writefiles("\t", "!" + config)
+		text += "\n}\n"
 text += writefiles("", "default")
 
 with open(project_file, "w") as f:
