@@ -103,7 +103,7 @@ TEST_CASE("Decimal round-trip", "[decimal]") {
 	std::mt19937_64 rng(963258741);
 	std::uniform_int_distribution<uint64_t> dist(0x0000000000000000, 0x7fefffffffffffff);
 
-	for(size_t i = 0; i < 100000; ++i) {
+	for(size_t i = 0; i < 1000000; ++i) {
 		uint64_t val0 = dist(rng) | ((rng() & 1) << 63);
 		double val1 = MemCast<double>(val0);
 		Decimal temp = ToDecimal(val1, 17);
@@ -113,9 +113,9 @@ TEST_CASE("Decimal round-trip", "[decimal]") {
 		}
 	}
 
-	for(size_t i = 0; i < 100000; ++i) {
+	for(size_t i = 0; i < 1000000; ++i) {
 		uint64_t val0 = dist(rng) | ((rng() & 1) << 63);
-		val0 |= UINT64_C(0x0000ffffffffff00); // this greatly increases the probability of hitting edge cases
+		val0 |= UINT64_C(0x0000fffffffffff0); // this greatly increases the probability of hitting edge cases
 		double val1 = MemCast<double>(val0);
 		Decimal temp = ToDecimal(val1, 17);
 		double val2 = FromDecimal(temp);
@@ -124,9 +124,9 @@ TEST_CASE("Decimal round-trip", "[decimal]") {
 		}
 	}
 
-	for(size_t i = 0; i < 100000; ++i) {
+	for(size_t i = 0; i < 1000000; ++i) {
 		uint64_t val0 = dist(rng) | ((rng() & 1) << 63);
-		val0 &= UINT64_C(0xffff0000000000ff); // this greatly increases the probability of hitting edge cases
+		val0 &= UINT64_C(0xffff00000000000f); // this greatly increases the probability of hitting edge cases
 		double val1 = MemCast<double>(val0);
 		Decimal temp = ToDecimal(val1, 17);
 		double val2 = FromDecimal(temp);
