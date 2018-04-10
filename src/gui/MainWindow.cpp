@@ -24,10 +24,12 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "ParameterViewer.h"
 #include "LayerManager.h"
 #include "LayerViewer.h"
+#include "Drawing.h"
 
 #include "DrawingViewer.h"
 #include "dialogs/LibraryConfigDialog.h"
 #include "dialogs/LayerConfigDialog.h"
+#include "dialogs/GerberImportDialog.h"
 
 const QString MainWindow::WINDOW_TITLE = "AlterPCB";
 
@@ -35,8 +37,10 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 	setWindowTitle(WINDOW_TITLE);
 	m_library_manager = library_manager;
 	m_layer_manager = new LayerManager(this);
+
 	m_library_config_dialog = NULL;
 	m_layer_config_dialog = NULL;
+	m_import_gerber_dialog = NULL;
 
 	QMenuBar *menubar = new QMenuBar(this);
 	{
@@ -45,7 +49,24 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 		menu_file->addAction(tr("&Save"));
 		menu_file->addAction(tr("S&ave as"));
 		menu_file->addSeparator();
-		menu_file->addAction(tr("E&xport"));
+		QMenu *export_menu = menu_file->addMenu(tr("&Export"));
+		{ // Import menu
+			QAction *act_export_gerber = export_menu->addAction(tr("Gerber"));
+			QAction *act_export_dxf = export_menu->addAction(tr("DXF"));
+			QAction *act_export_svg = export_menu->addAction(tr("SVG"));
+			UNUSED(act_export_gerber);
+			UNUSED(act_export_dxf);
+			UNUSED(act_export_svg);
+		}
+		QMenu *import_menu = menu_file->addMenu(tr("&Import"));
+		{ // Import menu
+			QAction *act_import_gerber = import_menu->addAction(tr("Gerber"));
+			connect(act_import_gerber, SIGNAL (triggered(bool)), this, SLOT (OpenImportGerberDialog()));
+			QAction *act_import_gds = import_menu->addAction(tr("GDSII"));
+			QAction *act_import_svg = import_menu->addAction(tr("SVG"));
+			UNUSED(act_import_gds);
+			UNUSED(act_import_svg);
+		}
 		menu_file->addSeparator();
 		menu_file->addAction(tr("&Close"));
 		menu_file->addAction(tr("C&lose all"));
@@ -58,7 +79,6 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 		connect(act_open_library_manager, SIGNAL (triggered(bool)), this, SLOT (OpenLibraryConfigDialog()));
 		QAction *act_open_layer_manager = menu_edit->addAction(tr("Layer Manager"));
 		connect(act_open_layer_manager, SIGNAL (triggered(bool)), this, SLOT (OpenLayerConfigDialog()));
-		menu_edit->addAction("Test");
 	}
 
 	QMenu *menu_view = menubar->addMenu(tr("&View"));
@@ -118,8 +138,22 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 	toolbar->addAction(QIcon::fromTheme("edit-select-all"), tr("Select all"));
 
 	toolbar->addSeparator();
-	toolbar->addAction(QIcon::fromTheme("edit-undo"), tr("Undo"));
-	toolbar->addAction(QIcon::fromTheme("edit-redo"), tr("Redo"));
+	{ // UNDO
+		QAction *undoAct;
+		undoAct = new QAction(QIcon::fromTheme("edit-undo"), tr("Undo"), this);
+		undoAct->setShortcuts(QKeySequence::Undo);
+		undoAct->setStatusTip(tr("Undo"));
+		connect(undoAct, SIGNAL(triggered()), this, SLOT(Undo()));
+		toolbar->addAction(undoAct);
+	}
+	{ // REDO
+		QAction *redoAct;
+		redoAct = new QAction(QIcon::fromTheme("edit-redo"), tr("Redo"), this);
+		redoAct->setShortcuts(QKeySequence::Redo);
+		redoAct->setStatusTip(tr("Redo"));
+		connect(redoAct, SIGNAL(triggered()), this, SLOT(Redo()));
+		toolbar->addAction(redoAct);
+	}
 
 	toolbar->addSeparator();
 	toolbar->addAction(QIcon::fromTheme("zoom-fit-best"), tr("Zoom fit"));
@@ -170,3 +204,38 @@ void MainWindow::CloseLayerConfigDialog()
 		m_layer_config_dialog = NULL;
 	}
 }
+
+void MainWindow::OpenImportGerberDialog()
+{
+	if(m_import_gerber_dialog == NULL) {
+		m_import_gerber_dialog = new GerberImportDialog(this);
+		m_import_gerber_dialog->show();
+	} else {
+		m_import_gerber_dialog->raise();
+	}
+}
+
+void MainWindow::CloseImportGerberDialog()
+{
+	if(m_import_gerber_dialog != NULL) {
+		//m_import_gerber_dialog->deleteLater();
+		m_import_gerber_dialog = NULL;
+	}
+}
+
+void MainWindow::Undo()
+{
+	if(m_document_viewer->HasActiveDocument()) {
+		m_document_viewer->GetActiveDocument()->GetDrawing()->HistoryUndo();
+	}
+	m_parameter_viewer->UpdateParameters(); //TODO FIgure out where this update should go
+}
+
+void MainWindow::Redo()
+{
+	if(m_document_viewer->HasActiveDocument()) {
+		m_document_viewer->GetActiveDocument()->GetDrawing()->HistoryRedo();
+	}
+	m_parameter_viewer->UpdateParameters(); //TODO FIgure out where this update should go
+}
+

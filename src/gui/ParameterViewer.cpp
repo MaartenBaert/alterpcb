@@ -88,8 +88,9 @@ void ParameterViewer::UpdateParameters()
 					//		if Yes is it mergable or not
 					//			if No set bools + change widget text
 					// if No does the parameter already exist in m_parameters
-					//		if Yes copy widget pointer + expanded
 					//		if No make widget
+					//		if Yes copy widget pointer + expanded
+
 
 					std::pair<index_t, bool> added = new_parameters.TryEmplaceBack(
 								params[j].GetName(), params[j].GetName(), params[j].GetValue(), params[j].IsOverride(),
@@ -104,7 +105,7 @@ void ParameterViewer::UpdateParameters()
 					}
 					else {
 						index_t index = m_parameters.Find(params[j].GetName());
-						if(index == INDEX_NONE) {
+						if(index == INDEX_NONE) { // Param doesnt not exist in m_paramters
 							QLineEdit *valuebox = new QLineEdit(viewport());
 							connect(valuebox,SIGNAL(editingFinished()),this,SLOT(OnParameterChange()));
 							std::string str;
@@ -117,9 +118,13 @@ void ParameterViewer::UpdateParameters()
 							valuebox->show();
 							new_parameters[added.first].m_widget = valuebox;
 						}
-						else { // copy widget pointer
+						else { // Param exits in m_paramters copy widget pointer
 							new_parameters[added.first].m_widget = m_parameters[index].m_widget;
+							std::string str;
+							Json::ToString(params[j].GetValue(),str);
+							static_cast<QLineEdit*>(new_parameters[added.first].m_widget)->setText(QString::fromStdString(str));
 							new_parameters[added.first].m_expanded = m_parameters[index].m_expanded;
+							new_parameters[added.first].m_mergeable = true;
 							m_parameters[index].m_widget = NULL;
 						}
 					}
@@ -132,14 +137,25 @@ void ParameterViewer::UpdateParameters()
 	for(index_t i = 0 ; i < m_parameters.GetSize(); ++i) {
 		if(m_parameters[i].m_widget != NULL) {
 			m_parameters[i].m_widget->deleteLater();
-			for(index_t j = 0 ; j < m_parameters[i].m_subparameters.size(); ++j) {
-				m_parameters[i].m_subparameters[j].m_widget->deleteLater();
-			}
+		}
+		for(index_t j = 0 ; j < m_parameters[i].m_subparameters.size(); ++j) {
+			m_parameters[i].m_subparameters[j].m_widget->deleteLater();
 		}
 	}
 
+
+
+
 	// copy new parameters to m_parameter
 	m_parameters = std::move(new_parameters);
+
+	// expand the needed parameters
+	for(index_t i = 0; i < m_parameters.GetSize(); ++i)
+	{
+		if(!m_parameters[i].m_mergeable && m_parameters[i].m_expanded){
+			ExpandParameter(i);
+		}
+	}
 
 	UpdateFocusChain();
 	UpdateRange();
@@ -178,6 +194,19 @@ ParameterNameValuePair ParameterViewer::GetParameterNameValue(QWidget *widget)
 	}
 
 	return ParameterNameValuePair(param_name,param_value);
+}
+
+ParameterNameValuePair ParameterViewer::GetParameterNameValue()
+{
+	ParameterNameValuePair param_namevalue;
+	if(m_current_subindex == INDEX_NONE) {
+		param_namevalue = ParameterNameValuePair(m_parameters[m_current_index].m_name,m_parameters[m_current_index].m_value);
+	}
+	else {
+		param_namevalue = ParameterNameValuePair(m_parameters[m_current_index].m_name,m_parameters[m_current_index].m_subparameters[m_current_subindex].m_value);
+	}
+
+	return param_namevalue;
 }
 
 bool ParameterViewer::viewportEvent(QEvent* event)
@@ -404,22 +433,28 @@ void ParameterViewer::mousePressEvent(QMouseEvent *event)
 				else{
 					ExpandParameter(m_current_index);
 				}
+				UpdateLayout();
+				UpdateFocusChain();
+				UpdateRange();
 			}
 			m_button_pressed = true;
 			break;
 		}
 		case HOVER_REGION_SELECTBUTTON:{
-			std::cerr << "SELECT BUTTON PRESSED" << std::endl;
+			std::cerr << "SELECT BUTTON PRESSED : index = " << m_current_index << " subindex = " << m_current_subindex << std::endl;
+			SelectShapes();
 			m_button_pressed = true;
 			break;
 		}
 		case HOVER_REGION_DESELECTBUTTON:{
-			std::cerr << "DESELECT BUTTON PRESSED" << std::endl;
+			std::cerr << "DESELECT BUTTON PRESSED : index = " << m_current_index << " subindex = " << m_current_subindex << std::endl;
+			DeselectShapes();
 			m_button_pressed = true;
 			break;
 		}
 		case HOVER_REGION_OVERRIDEBUTTON:{
-			std::cerr << "OVERRIDE BUTTON PRESSED" << std::endl;
+			std::cerr << "OVERRIDE BUTTON PRESSED : index = " << m_current_index << " subindex = " << m_current_subindex << std::endl;
+			OverrideShapes();
 			m_button_pressed = true;
 			break;
 		}
@@ -457,6 +492,9 @@ void ParameterViewer::mouseDoubleClickEvent(QMouseEvent *event)
 			ExpandParameter(m_current_index);
 		}
 	}
+	UpdateLayout();
+	UpdateFocusChain();
+	UpdateRange();
 
 }
 
@@ -550,6 +588,82 @@ void ParameterViewer::UpdateLayout() {
 	viewport()->update();
 }
 
+void ParameterViewer::SelectShapes() {
+	ParameterNameValuePair param_namevalue = GetParameterNameValue();
+
+	const std::vector<Cow<ShapeInstance>>& shapes = m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->GetShapes();
+	std::vector<Cow<ShapeInstance>> new_shapes;
+
+	for(index_t i = 0 ; i < shapes.size(); ++i) {
+		const ShapeInstance &shapeinstance = shapes[i].Ref();
+		bool param_found = false;
+
+		if(shapeinstance.IsSelected()) {
+			const ShapePrototype &shapeprototype = shapeinstance.GetShapePrototype().Ref();
+
+			ShapeDefinition *shape_definition = NULL; //TODO// get this from LibraryManager
+			const EffectiveParameters &params = shapeprototype.GetEffectiveParameters(shape_definition);
+
+			for(index_t j = 0 ; j < params.size(); ++j) {
+				if(params[j].GetName() == param_namevalue.m_name && (params[j].GetValue() == param_namevalue.m_value || param_namevalue.m_value == VData("..."))) {
+					param_found = true;
+					new_shapes.emplace_back(shapes[i]);
+					break;
+				}
+			}
+		}
+		if(!param_found) { // if parameter changed is not in params --> copy shape
+			const Cow<ShapePrototype> &same_shapeprototype = shapeinstance.GetShapePrototype();
+			Cow<ShapeInstance> new_shapeinstance(std::make_shared<ShapeInstance>(std::move(same_shapeprototype),false)); //TODO copy shape transform
+			new_shapes.emplace_back(std::move(new_shapeinstance));
+		}
+
+	}
+	m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->HistoryPush(std::move(new_shapes),false);
+	UpdateParameters(); //TODO FIgure out where this update should go
+}
+
+void ParameterViewer::DeselectShapes()
+{
+	ParameterNameValuePair param_namevalue = GetParameterNameValue();
+
+	const std::vector<Cow<ShapeInstance>>& shapes = m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->GetShapes();
+	std::vector<Cow<ShapeInstance>> new_shapes;
+
+	for(index_t i = 0 ; i < shapes.size(); ++i) {
+		const ShapeInstance &shapeinstance = shapes[i].Ref();
+		bool param_found = false;
+
+		if(shapeinstance.IsSelected()) {
+			const ShapePrototype &shapeprototype = shapeinstance.GetShapePrototype().Ref();
+
+			ShapeDefinition *shape_definition = NULL; //TODO// get this from LibraryManager
+			const EffectiveParameters &params = shapeprototype.GetEffectiveParameters(shape_definition);
+
+			for(index_t j = 0 ; j < params.size(); ++j) {
+				if(params[j].GetName() == param_namevalue.m_name && (params[j].GetValue() == param_namevalue.m_value || param_namevalue.m_value == VData("..."))) {
+					param_found = true;
+					const Cow<ShapePrototype> &same_shapeprototype = shapeinstance.GetShapePrototype();
+					Cow<ShapeInstance> new_shapeinstance(std::make_shared<ShapeInstance>(std::move(same_shapeprototype),false)); //TODO copy shape transform
+					new_shapes.emplace_back(std::move(new_shapeinstance));
+					break;
+				}
+			}
+		}
+		if(!param_found) { // if parameter changed is in params --> copy shape
+			new_shapes.emplace_back(shapes[i]);
+		}
+
+	}
+	m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->HistoryPush(std::move(new_shapes),false);
+	UpdateParameters(); //TODO FIgure out where this update should go
+}
+
+void ParameterViewer::OverrideShapes()
+{
+
+}
+
 void ParameterViewer::positionToIndex(const QPoint &pos)
 {
 	m_current_index = INDEX_NONE;
@@ -596,22 +710,26 @@ void ParameterViewer::ExpandParameter(index_t index)
 
 		for(index_t i = 0 ; i < shapes.size(); ++i) {
 			const ShapeInstance &shaperef = shapes[i].Ref();
-			const ShapePrototype &shaperef2 = shaperef.GetShapePrototype().Ref();
+			if(shaperef.IsSelected()){
+				const ShapePrototype &shaperef2 = shaperef.GetShapePrototype().Ref();
 
-			ShapeDefinition *shape_definition = NULL; //TODO// get this from LibraryManager
-			const EffectiveParameters &params = shaperef2.GetEffectiveParameters(shape_definition);
+				ShapeDefinition *shape_definition = NULL; //TODO// get this from LibraryManager
+				const EffectiveParameters &params = shaperef2.GetEffectiveParameters(shape_definition);
 
-			for(index_t j = 0 ; j < params.size(); ++j) {
-				if(params[j].GetName() == m_parameters[index].m_name) {
-					VData value = params[j].GetValue();
-					if(!values.emplace(value,1).second) {
-						values[value] = values[value] + 1;
+				for(index_t j = 0 ; j < params.size(); ++j) {
+					if(params[j].GetName() == m_parameters[index].m_name) {
+						VData value = params[j].GetValue();
+						if(!values.emplace(value,1).second) {
+							values[value] = values[value] + 1;
+						}
 					}
 				}
 			}
 
 		}
 
+
+		m_parameters[index].m_subparameters.clear();
 		for(auto const &ent : values) {
 			QLineEdit *widget = new QLineEdit(viewport());
 			connect(widget,SIGNAL(editingFinished()),this,SLOT(OnParameterChange()));
@@ -625,10 +743,6 @@ void ParameterViewer::ExpandParameter(index_t index)
 			widget->show();
 			m_parameters[index].m_subparameters.emplace_back(ent.second,ent.first,widget);
 		}
-
-		UpdateLayout();
-		UpdateFocusChain();
-		UpdateRange();
 	}
 }
 
@@ -641,10 +755,6 @@ void ParameterViewer::UnexpandParameter(index_t index)
 			m_parameters[index].m_subparameters[i].m_widget->deleteLater();
 		}
 		m_parameters[index].m_subparameters.clear();
-
-		UpdateLayout();
-		UpdateFocusChain();
-		UpdateRange();
 	}
 }
 
@@ -774,6 +884,7 @@ void ParameterViewer::OnParameterChange()
 		}
 		m_mainwindow->GetDocumentViewer()->GetActiveDocument()->GetDrawing()->HistoryPush(std::move(new_shapes),false);
 		emitter->setModified(false);
+		UpdateParameters(); //TODO FIgure out where this update should go
 		//TODO focus on drawing viewer...
 	}
 }

@@ -64,6 +64,7 @@ struct ParameterEntry {
 struct ParameterNameValuePair {
 	stringtag_t m_name;
 	VData m_value;
+	inline ParameterNameValuePair(){}
 	inline ParameterNameValuePair(stringtag_t name, VData value) : m_name(name), m_value(value) {}
 };
 
@@ -100,7 +101,7 @@ private:
 	static const int LAYOUT_VSPACING = 4; // best keep even number
 	static const int LAYOUT_HSPACING = 3;
 	static const int LAYOUT_OVERRIDEBUTTONWIDTH = 16;
-	int LAYOUT_LABELWIDTH = 70;
+	int LAYOUT_LABELWIDTH = 120;
 
 public:
 	ParameterViewer(QWidget *parent, MainWindow *mainwindow);
@@ -110,7 +111,6 @@ public:
 	QWidget* GetWidget(index_t index);
 
 	void UpdateParameters();
-	ParameterNameValuePair GetParameterNameValue(QWidget *widget);
 
 protected:
 	virtual bool viewportEvent(QEvent* event) override;
@@ -128,6 +128,13 @@ private:
 	void UpdateFocusChain();
 	void UpdateRange();
 	void UpdateLayout();
+
+	void SelectShapes();
+	void DeselectShapes();
+	void OverrideShapes();
+
+	ParameterNameValuePair GetParameterNameValue(QWidget *widget);
+	ParameterNameValuePair GetParameterNameValue();
 
 	void positionToIndex(const QPoint &pos);
 	void ExpandParameter(index_t index);

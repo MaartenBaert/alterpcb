@@ -40,6 +40,7 @@ HEADERS += \
 	common/Cow.h \
 	common/Decimal.h \
 	common/EnumTranslator.h \
+	common/File_IO.h \
 	common/HashTable.h \
 	common/Json.h \
 	common/LinkedList.h \
@@ -78,12 +79,14 @@ HEADERS += \
 	gui/components/FilepathEditor.h \
 	gui/components/LayerWidget.h \
 	gui/components/TabbedDocumentViewer.h \
+	gui/dialogs/GerberImportDialog.h \
 	gui/dialogs/LayerConfigDialog.h \
 	gui/dialogs/LibraryConfigDialog.h
 
 SOURCES += \
 	common/Color.cpp \
 	common/Decimal.cpp \
+	common/File_IO.cpp \
 	common/Json.cpp \
 	common/StringRegistry.cpp \
 	common/VData.cpp \
@@ -110,5 +113,6 @@ SOURCES += \
 	gui/components/FilepathEditor.cpp \
 	gui/components/LayerWidget.cpp \
 	gui/components/TabbedDocumentViewer.cpp \
+	gui/dialogs/GerberImportDialog.cpp \
 	gui/dialogs/LayerConfigDialog.cpp \
 	gui/dialogs/LibraryConfigDialog.cpp

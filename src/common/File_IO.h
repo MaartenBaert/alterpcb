@@ -20,26 +20,22 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "FilepathDelegate.h"
+#include <string>
 #include "LibraryManager.h"
-#include "Qt.h"
 
-class MainWindow;
+namespace File_IO {
 
-class LibraryConfigDialog : public QDialog {
-	Q_OBJECT
+void ImportFileAlterPCB_AlterpcbPythonFormat(LibraryManager &library_manager, const std::string &filename);
+//void ExportFileAlterPCB(const std::string &filename);
 
-private:
-	FilepathDelegate m_delegate;
-	QTreeView *m_library_viewer;
-	MainWindow *m_parent;
+//void ImportFileSVG(const std::string &filename);
+//void ExportFileSVG(const std::string &filename);
 
-public:
-	LibraryConfigDialog(MainWindow *parent, LibraryManager* library_manager);
-	virtual void closeEvent(QCloseEvent *event) override;
+void ImportFileGerber(const std::string &filename,Drawing *drawing, stringtag_t layer);
+void ImportFileDrill(const std::string &filename,Drawing *drawing, stringtag_t layer);
+//void ExportFileGerber(const std::string &filename);
 
-public slots:
-	void OnAddLibrary();
-	void OnRemoveLibrary();
+//void ImportFileGDS(const std::string &filename);
+//void ExportFileGDS(const std::string &filename);
 
-};
+}

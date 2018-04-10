@@ -31,6 +31,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 class LibraryConfigDialog;
 class LayerConfigDialog;
+class GerberImportDialog;
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -47,6 +48,7 @@ private:
 
 	LibraryConfigDialog *m_library_config_dialog;
 	LayerConfigDialog *m_layer_config_dialog;
+	GerberImportDialog *m_import_gerber_dialog;
 
 
 private:
@@ -66,5 +68,11 @@ public slots:
 	void CloseLibraryConfigDialog();
 	void OpenLayerConfigDialog();
 	void CloseLayerConfigDialog();
+	void OpenImportGerberDialog();
+	void CloseImportGerberDialog();
+
+	//menu actions
+	void Undo();
+	void Redo();
 
 };

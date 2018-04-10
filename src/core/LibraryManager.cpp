@@ -21,6 +21,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "LibraryManager.h"
 
 #include "Library.h"
+#include "LayerStack.h"
 #include "Drawing.h"
 #include "ShapeDefinition.h"
 #include "ShapeInstance.h"
@@ -35,19 +36,22 @@ LibraryManager::LibraryManager() {
 }
 
 LibraryManager::~LibraryManager() {
-	// nothing
+	delete m_empty_layerstack;
 }
 
 Library *LibraryManager::NewLibrary(const std::string &name, const std::string &filename, LibraryType type) {
 	TrackingPointer<Library> library(new Library(this, name, filename, type));
 	Library *ptr = library.Get();
 	m_libraries.emplace_back(std::move(library));
+	m_empty_layerstack = new LayerStack(STRINGTAG_NONE);
 
+	emit layoutChanged();
 	return ptr;
 }
 
 void LibraryManager::DeleteLibrary(Library *library) {
 	DeleteFromVector(m_libraries, library);
+	emit layoutChanged();
 }
 
 void LibraryManager::AddShapeDefinition(stringtag_t name, ShapeDefinition *shape_definition) {
@@ -119,7 +123,6 @@ QModelIndex LibraryManager::parent(const QModelIndex &index) const {
 	}
 
 	// this should never be reached
-	assert(false);
 	return QModelIndex();
 
 }
@@ -240,26 +243,46 @@ bool LibraryManager::setData(const QModelIndex &index, const QVariant &value, in
 					case LIBRARYTREEITEMTYPE_LIBRARY: {
 						Library *library = static_cast<Library*>(item_ptr);
 						library->SetName((value.toString()).toStdString());
-						layoutChanged();
+						emit layoutChanged();
 						return true;
 					}
 					case LIBRARYTREEITEMTYPE_DRAWING: {
 						Drawing *drawing = static_cast<Drawing*>(item_ptr);
 						drawing->SetName(StringRegistry::NewTag((value.toString()).toStdString()));
-						layoutChanged();
+						emit layoutChanged();
 						return true;
 					}}
 			}
 			else if (index.column() == 1) {
 				Library *library = static_cast<Library*>(item_ptr);
 				library->SetFilePath((value.toString()).toStdString());
-				layoutChanged();
+				emit layoutChanged();
 				return true;
 			}
 		}
 	}
 
 	return false;
+}
+
+bool LibraryManager::removeRow(int row, const QModelIndex &parent)
+{
+	LibraryTreeItem *item_ptr = (LibraryTreeItem*) index(row,0,parent).internalPointer();
+	switch(item_ptr->GetTreeItemType()) {
+			case LIBRARYTREEITEMTYPE_LIBRARY: {
+				Library *library = static_cast<Library*>(item_ptr);
+				DeleteLibrary(library);
+				break;
+			}
+			case LIBRARYTREEITEMTYPE_DRAWING: {
+				Drawing *drawing = static_cast<Drawing*>(item_ptr);
+				drawing->GetParent()->DeleteDrawing(drawing);
+				break;
+			}
+	}
+	UpdatePersistentModelIndices();
+	emit layoutChanged();
+	return true;
 }
 
 Qt::DropActions LibraryManager::supportedDropActions() const {
@@ -383,7 +406,7 @@ bool LibraryManager::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 		BulkInsertIntoVector(m_libraries, libraries, target_index);
 
 		UpdatePersistentModelIndices();
-		layoutChanged();
+		emit layoutChanged();
 
 		return true;
 	}
@@ -438,4 +461,25 @@ void LibraryManager::UpdatePersistentModelIndices() {
 	// presumably Qt optimizes this internally
 	changePersistentIndexList(oldlist, newlist);
 
+}
+
+Library *LibraryManager::GetLibrary(std::string name)
+{
+	Library *lib = NULL;
+	for(unsigned int i = 0; i < m_libraries.size(); ++i) {
+		if(m_libraries[i].Get()->GetName() == name){
+			lib = m_libraries[i].Get();
+		}
+
+	}
+	return lib;
+}
+
+std::vector<std::string> LibraryManager::GetLibraryNames()
+{
+	std::vector<std::string> names;
+	for(unsigned int i = 0; i < m_libraries.size(); ++i) {
+		names.emplace_back(m_libraries[i].Get()->GetName());
+	}
+	return names;
 }

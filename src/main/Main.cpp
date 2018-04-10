@@ -26,6 +26,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "Drawing.h"
 #include "Icons.h"
 #include "Json.h"
+#include "File_IO.h"
 #include "LayerManager.h"
 #include "LayerStack.h"
 #include "Library.h"
@@ -225,6 +226,7 @@ int main(int argc, char *argv[]) {
 
 	LibraryManager library_manager;
 	{
+		/*
 		Library *lib1 = library_manager.NewLibrary("Basic", "basic.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib2 = library_manager.NewLibrary("My PCB", "mypcb.alterlib.json", LIBRARYTYPE_JSON);
 		Library *lib3 = library_manager.NewLibrary("My Scripts", "myscripts.alterlib.py", LIBRARYTYPE_PYTHON);
@@ -298,7 +300,26 @@ int main(int argc, char *argv[]) {
 		shapes.emplace_back(std::make_shared<ShapeInstance>(std::move(proto3), transform3, true));
 
 		lib1->GetLayout(0)->HistoryPush(std::move(shapes),false);
+		*/
+		File_IO::ImportFileAlterPCB_AlterpcbPythonFormat(library_manager,"data/alterpcb_old_files-testsuite/BIAS_PCB.alterlib.json");
+		File_IO::ImportFileAlterPCB_AlterpcbPythonFormat(library_manager,"data/alterpcb_old_files-testsuite/bias_adaptor.alterlib.json");
 
+		Library *lib1 = library_manager.GetLibrary(static_cast<size_t>(0));
+		LayerStack *layerstack1 = lib1->NewLayerStack(StringRegistry::NewTag("4layerpcb"));
+		layerstack1->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top1"),QColor(0,255,0),LAYERTEXTURE_SOLID));
+		layerstack1->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top2"),QColor(255,255,0),LAYERTEXTURE_VSTRIPE_LIGHT));
+		layerstack1->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-bottom2"),QColor(0,255,255),LAYERTEXTURE_SOLID));
+		layerstack1->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-bottom1"),QColor(255,0,100),LAYERTEXTURE_VSTRIPE_LIGHT));
+		LayerStack *layerstack2 = lib1->NewLayerStack(StringRegistry::NewTag("2layerpcb"));
+		layerstack2->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top1"),QColor(0,100,0),LAYERTEXTURE_SOLID));
+		layerstack2->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top2"),QColor(0,255,50),LAYERTEXTURE_SOLID));
+
+		Library *lib2 = library_manager.GetLibrary(static_cast<size_t>(1));
+		LayerStack *layerstack3 = lib2->NewLayerStack(StringRegistry::NewTag("4layerpcb"));
+		layerstack3->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top1"),QColor(0,255,0),LAYERTEXTURE_SOLID));
+		layerstack3->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-top2"),QColor(255,255,0),LAYERTEXTURE_VSTRIPE_LIGHT));
+		layerstack3->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-bottom2"),QColor(0,255,255),LAYERTEXTURE_SOLID));
+		layerstack3->AddLayer(LogicalLayer(StringRegistry::NewTag("copper-bottom1"),QColor(255,0,100),LAYERTEXTURE_VSTRIPE_LIGHT));
 	}
 
 	LoadIcons();

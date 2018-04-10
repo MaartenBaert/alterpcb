@@ -26,6 +26,7 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #include "LinkedList.h"
 #include "Qt.h"
 #include "TrackingPointer.h"
+#include "LayerStack.h"
 
 #include <vector>
 
@@ -64,6 +65,7 @@ class LibraryManager : public QAbstractItemModel {
 private:
 	std::vector<TrackingPointer<Library>> m_libraries;
 	HashTable<ShapeTrackerEntry, ShapeTrackerHasher> m_shape_trackers;
+	LayerStack *m_empty_layerstack;
 
 public:
 	LibraryManager();
@@ -92,6 +94,9 @@ public: // QAbstractItemModel interface
 	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 	bool setData(const QModelIndex &index, const QVariant &value, int role);
 
+	bool removeRow(int row, const QModelIndex &parent);
+
+
 	// drag and drop
 	Qt::DropActions supportedDropActions() const override;
 	QStringList mimeTypes() const override;
@@ -104,6 +109,9 @@ private:
 
 public:
 	inline Library* GetLibrary(size_t index) const { assert(index < m_libraries.size()); return m_libraries[index].Get(); }
+	Library* GetLibrary(std::string name);
 	inline size_t GetLibraryCount() const { return m_libraries.size(); }
+	inline LayerStack* GetEmplyLayerStack() {return m_empty_layerstack;}
+	std::vector<std::string> GetLibraryNames();
 
 };

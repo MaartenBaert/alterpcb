@@ -5,6 +5,7 @@
 #include "core/CoreBasics.h"
 #include "MainWindow.h"
 #include "Drawing.h"
+#include "Library.h"
 
 LibraryViewer::LibraryViewer(QWidget *parent, MainWindow *main_window) : QTreeView(parent) {
 	m_main_window = main_window;
@@ -62,12 +63,17 @@ void LibraryViewer::OnRightClick(const QPoint &point)
 			break;
 		}
 		case LIBRARYTREEITEMTYPE_DRAWING : {
-			std::cerr << "LIBVIEWER: TODO RightCLick on drawing" << std::endl;
-			menu->addAction(tr("Open"));
-			menu->addAction(tr("Rename"));
-			menu->addAction(tr("Cut"));
-			menu->addAction(tr("Copy"));
-			menu->addAction(tr("Delete"));
+			QAction *act_drawing_open = menu->addAction(tr("Open"));
+			QAction *act_drawing_rename = menu->addAction(tr("Rename"));
+			QAction *act_drawing_cut = menu->addAction(tr("Cut"));
+			QAction *act_drawing_copy = menu->addAction(tr("Copy"));
+			QAction *act_drawing_delete = menu->addAction(tr("Delete"));
+
+			connect(act_drawing_open, SIGNAL (triggered()), this, SLOT (OnDrawingOpen()));
+			connect(act_drawing_rename, SIGNAL (triggered()), this, SLOT (OnDrawingRename()));
+			connect(act_drawing_cut, SIGNAL (triggered()), this, SLOT (OnDrawingCut()));
+			connect(act_drawing_copy, SIGNAL (triggered()), this, SLOT (OnDrawingCopy()));
+			connect(act_drawing_delete, SIGNAL (triggered()), this, SLOT (OnDrawingDelete()));
 			break;
 		}
 		default : {
@@ -75,7 +81,44 @@ void LibraryViewer::OnRightClick(const QPoint &point)
 		}
 	}
 	menu->exec(QCursor::pos());
+}
 
+void LibraryViewer::OnDrawingOpen()
+{
+	QModelIndex index = this->currentIndex();
+	LibraryTreeItem *Item = (LibraryTreeItem*) index.internalPointer();
+	if(Item->GetTreeItemType() == LIBRARYTREEITEMTYPE_DRAWING){
+		m_main_window->GetDocumentViewer()->OpenDrawing(static_cast<Drawing*>(Item));
+	}
+}
+
+void LibraryViewer::OnDrawingRename()
+{
+
+}
+
+void LibraryViewer::OnDrawingCut()
+{
+	std::cerr << "LIBVIEWER: TODO RightCLick on drawing" << std::endl;
+}
+
+void LibraryViewer::OnDrawingCopy()
+{
+	std::cerr << "LIBVIEWER: TODO RightCLick on drawing" << std::endl;
+}
+
+void LibraryViewer::OnDrawingDelete()
+{
+	// TODO have confimation popup
+	QModelIndex index = this->currentIndex();
+	LibraryTreeItem *Item = (LibraryTreeItem*) index.internalPointer();
+	if(Item->GetTreeItemType() == LIBRARYTREEITEMTYPE_DRAWING){
+		Drawing *drawing = static_cast<Drawing*>(Item);
+		m_main_window->GetDocumentViewer()->CloseDrawing(drawing);
+		m_main_window->GetLibraryManager()->removeRow(index.row(),index.parent());
+
+		this->setCurrentIndex(m_main_window->GetLibraryManager()->index(0,0));
+	}
 }
 
 DropLocation LibraryViewer::getDropLocation(QRect &index_rect, QPoint pos) {

@@ -20,40 +20,38 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "Basics.h"
-#include "CoreBasics.h"
 #include "Qt.h"
 
 class MainWindow;
 
-class LibraryViewer : public QTreeView {
+class GerberImportDialog : public QDialog {
 	Q_OBJECT
 
 private:
-	MainWindow *m_main_window;
-	QRect m_drop_indicator_rect;
+	MainWindow *m_parent;
+
+	QTableWidget *m_TableWidget;
+	QLineEdit *m_lineedit;
+	QComboBox* m_combo_libs;
+	QComboBox* m_combo_layerstacks;
+	QPushButton* m_button_import;
+
+	QStringList m_files;
+	QStringList m_availablelayers;
 
 public:
-	LibraryViewer(QWidget *parent, MainWindow *main_window);
-	~LibraryViewer();
-
-	void dragEnterEvent(QDragEnterEvent *event);
-	void dragMoveEvent(QDragMoveEvent *event);
-	void dragLeaveEvent(QDragLeaveEvent *event);
-	void dropEvent(QDropEvent *event);
-	void paintEvent(QPaintEvent *event);
+	GerberImportDialog(MainWindow *parent);
+	virtual void closeEvent(QCloseEvent *event) override;
 
 private:
-	DropLocation getDropLocation(QRect &index_rect, QPoint pos);
+	void AllowImport();
 
-private slots:
-	void OnDoubleClick(const QModelIndex &index);
-	void OnRightClick(const QPoint &point);
-
-	void OnDrawingOpen();
-	void OnDrawingRename();
-	void OnDrawingCut();
-	void OnDrawingCopy();
-	void OnDrawingDelete();
+public slots:
+	void OnCancel();
+	void OnBrowse();
+	void OnImport();
+	void OnLibChange(const QString text);
+	void OnLayerstackChange(const QString text);
+	void OnLineEditChange(const QString text);
 
 };

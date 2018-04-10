@@ -73,7 +73,7 @@ private:
 	stringtag_t m_layerstack;
 
 	std::vector<DrawingHistory> m_history;
-	size_t m_history_position;
+	index_t m_history_position;
 
 	static constexpr size_t HISTORY_SIZE = 20; // TODO: make this a user preference
 
@@ -88,6 +88,7 @@ public:
 	void HistoryPush(std::vector<Cow<ShapeInstance>> &&shapes, bool soft = false);
 	void HistoryUndo();
 	void HistoryRedo();
+	inline bool Changed() {if((signed int)m_history_position != -1) {return true;} else {return false;}}; // poll to see if document has changed
 
 	inline Library* GetParent() const { return m_parent; }
 	inline void SetParentInternal(Library *parent) { m_parent = parent; }

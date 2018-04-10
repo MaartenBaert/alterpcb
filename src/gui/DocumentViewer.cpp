@@ -63,6 +63,24 @@ void DocumentViewer::OpenDrawing(Drawing *drawing) {
 	}
 }
 
+void DocumentViewer::CloseDrawing(Drawing *drawing)
+{
+	unsigned int pos = 0;
+	bool found = false;
+	for(unsigned int i = 0; i < m_documents.size(); ++i) {
+		Drawing *d = m_documents.at(i).Get()->GetDrawing();
+		if(d == drawing){
+			found = true;
+			break;
+		}
+		else {
+			pos++;
+		}
+	}
+
+	if(found){OnRemoveDocument(pos);}
+}
+
 
 
 void DocumentViewer::addTab(QIcon icon, QString name)
