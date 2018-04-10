@@ -40,14 +40,15 @@ class TrackingPointer;
 template<typename T>
 class TrackingTarget {
 
+	friend class TrackingPointer<T>;
+
 private:
-	TrackingPointer<T> *m_ptr;
+	TrackingPointer<T> *m_backptr;
 
 public:
-	inline TrackingTarget() : m_ptr(NULL) {}
+	inline TrackingTarget() : m_backptr(NULL) {}
 
-	inline TrackingPointer<T>* GetTrackingTarget() const noexcept { return m_ptr; }
-	inline void SetTrackingTargetInternal(TrackingPointer<T> *ptr) noexcept { m_ptr = ptr; }
+	inline TrackingPointer<T>* GetBackPointer() const noexcept { return m_backptr; }
 
 	// noncopyable
 	TrackingTarget(const TrackingTarget&) = delete;
@@ -68,15 +69,15 @@ public:
 	// only for construction
 	inline explicit TrackingPointer(T *ptr) noexcept : m_ptr(ptr) {
 		if(m_ptr)
-			m_ptr->SetTrackingTargetInternal(this);
+			m_ptr->m_backptr = this;
 	}
 
 	inline TrackingPointer(TrackingPointer &&other) noexcept {
 		if(other.m_ptr)
-			other.m_ptr->SetTrackingTargetInternal(NULL);
+			other.m_ptr->m_backptr = NULL;
 		m_ptr = std::move(other.m_ptr);
 		if(m_ptr)
-			m_ptr->SetTrackingTargetInternal(this);
+			m_ptr->m_backptr = this;
 	}
 
 	// noncopyable (move only)
@@ -85,22 +86,22 @@ public:
 
 	inline ~TrackingPointer() {
 		if(m_ptr)
-			m_ptr->SetTrackingTargetInternal(NULL);
+			m_ptr->m_backptr = NULL;
 	}
 
 	inline TrackingPointer& operator=(TrackingPointer &&other) noexcept {
 		// self-assignment ok
 		if(m_ptr)
-			m_ptr->SetTrackingTargetInternal(NULL);
+			m_ptr->m_backptr = NULL;
 		m_ptr = std::move(other.m_ptr);
 		if(m_ptr)
-			m_ptr->SetTrackingTargetInternal(this);
+			m_ptr->m_backptr = this;
 		return *this;
 	}
 
 	inline TrackingPointer& operator=(std::nullptr_t) noexcept {
 		if(m_ptr)
-			m_ptr->SetTrackingTargetInternal(NULL);
+			m_ptr->m_backptr = NULL;
 		m_ptr = nullptr;
 		return *this;
 	}
@@ -115,29 +116,29 @@ public:
 
 	inline T* Release() noexcept {
 		if(m_ptr)
-			m_ptr->SetTrackingTargetInternal(NULL);
+			m_ptr->m_backptr = NULL;
 		return m_ptr.release();
 	}
 
 	inline void Reset(T* ptr = NULL) noexcept {
 		if(m_ptr)
-			m_ptr->SetTrackingTargetInternal(NULL);
+			m_ptr->m_backptr = NULL;
 		m_ptr.reset(ptr);
 		if(m_ptr)
-			m_ptr->SetTrackingTargetInternal(this);
+			m_ptr->m_backptr = this;
 	}
 
 	inline void Swap(TrackingPointer& other) noexcept {
 		// self-assignment ok
 		if(m_ptr)
-			m_ptr->SetTrackingTargetInternal(NULL);
+			m_ptr->m_backptr = NULL;
 		if(other.m_ptr)
-			other.m_ptr->SetTrackingTargetInternal(NULL);
+			other.m_ptr->m_backptr = NULL;
 		m_ptr.swap(other.m_ptr);
 		if(m_ptr)
-			m_ptr->SetTrackingTargetInternal(this);
+			m_ptr->m_backptr = this;
 		if(other.m_ptr)
-			other.m_ptr->SetTrackingTargetInternal(std::addressof(other));
+			other.m_ptr->m_backptr = std::addressof(other);
 	}
 
 	inline T& operator*() const {
@@ -149,23 +150,23 @@ public:
 	}
 
 	friend inline bool operator==(const TrackingPointer<T> &a, const TrackingPointer<T> &b) noexcept { return a.m_ptr == b.m_ptr; }
-	friend inline bool operator==(const TrackingPointer<T> &a, std::nullptr_t            ) noexcept { return a.m_ptr == nullptr; }
-	friend inline bool operator==(std::nullptr_t            , const TrackingPointer<T> &b) noexcept { return nullptr == b.m_ptr; }
+	friend inline bool operator==(const TrackingPointer<T> &a, std::nullptr_t             ) noexcept { return a.m_ptr == nullptr; }
+	friend inline bool operator==(std::nullptr_t             , const TrackingPointer<T> &b) noexcept { return nullptr == b.m_ptr; }
 	friend inline bool operator!=(const TrackingPointer<T> &a, const TrackingPointer<T> &b) noexcept { return a.m_ptr != b.m_ptr; }
-	friend inline bool operator!=(const TrackingPointer<T> &a, std::nullptr_t            ) noexcept { return a.m_ptr != nullptr; }
-	friend inline bool operator!=(std::nullptr_t            , const TrackingPointer<T> &b) noexcept { return nullptr != b.m_ptr; }
+	friend inline bool operator!=(const TrackingPointer<T> &a, std::nullptr_t             ) noexcept { return a.m_ptr != nullptr; }
+	friend inline bool operator!=(std::nullptr_t             , const TrackingPointer<T> &b) noexcept { return nullptr != b.m_ptr; }
 	friend inline bool operator< (const TrackingPointer<T> &a, const TrackingPointer<T> &b) noexcept { return a.m_ptr <  b.m_ptr; }
-	friend inline bool operator< (const TrackingPointer<T> &a, std::nullptr_t            ) noexcept { return a.m_ptr <  nullptr; }
-	friend inline bool operator< (std::nullptr_t            , const TrackingPointer<T> &b) noexcept { return nullptr <  b.m_ptr; }
+	friend inline bool operator< (const TrackingPointer<T> &a, std::nullptr_t             ) noexcept { return a.m_ptr <  nullptr; }
+	friend inline bool operator< (std::nullptr_t             , const TrackingPointer<T> &b) noexcept { return nullptr <  b.m_ptr; }
 	friend inline bool operator<=(const TrackingPointer<T> &a, const TrackingPointer<T> &b) noexcept { return a.m_ptr <= b.m_ptr; }
-	friend inline bool operator<=(const TrackingPointer<T> &a, std::nullptr_t            ) noexcept { return a.m_ptr <= nullptr; }
-	friend inline bool operator<=(std::nullptr_t            , const TrackingPointer<T> &b) noexcept { return nullptr <= b.m_ptr; }
+	friend inline bool operator<=(const TrackingPointer<T> &a, std::nullptr_t             ) noexcept { return a.m_ptr <= nullptr; }
+	friend inline bool operator<=(std::nullptr_t             , const TrackingPointer<T> &b) noexcept { return nullptr <= b.m_ptr; }
 	friend inline bool operator> (const TrackingPointer<T> &a, const TrackingPointer<T> &b) noexcept { return a.m_ptr >  b.m_ptr; }
-	friend inline bool operator> (const TrackingPointer<T> &a, std::nullptr_t            ) noexcept { return a.m_ptr >  nullptr; }
-	friend inline bool operator> (std::nullptr_t            , const TrackingPointer<T> &b) noexcept { return nullptr >  b.m_ptr; }
+	friend inline bool operator> (const TrackingPointer<T> &a, std::nullptr_t             ) noexcept { return a.m_ptr >  nullptr; }
+	friend inline bool operator> (std::nullptr_t             , const TrackingPointer<T> &b) noexcept { return nullptr >  b.m_ptr; }
 	friend inline bool operator>=(const TrackingPointer<T> &a, const TrackingPointer<T> &b) noexcept { return a.m_ptr >= b.m_ptr; }
-	friend inline bool operator>=(const TrackingPointer<T> &a, std::nullptr_t            ) noexcept { return a.m_ptr >= nullptr; }
-	friend inline bool operator>=(std::nullptr_t            , const TrackingPointer<T> &b) noexcept { return nullptr >= b.m_ptr; }
+	friend inline bool operator>=(const TrackingPointer<T> &a, std::nullptr_t             ) noexcept { return a.m_ptr >= nullptr; }
+	friend inline bool operator>=(std::nullptr_t             , const TrackingPointer<T> &b) noexcept { return nullptr >= b.m_ptr; }
 
 };
 
@@ -178,13 +179,13 @@ void swap(TrackingPointer<T> &a, TrackingPointer<T> &b) noexcept {
 
 template<typename T>
 bool IsInVector(const std::vector<TrackingPointer<T>> &vec, T *ptr) {
-	size_t index = ptr->GetTrackingTarget() - vec.data();
+	size_t index = ptr->GetBackPointer() - vec.data();
 	return index < vec.size();
 }
 
 template<typename T>
 size_t IndexInVector(const std::vector<TrackingPointer<T>> &vec, T *ptr) {
-	size_t index = ptr->GetTrackingTarget() - vec.data();
+	size_t index = ptr->GetBackPointer() - vec.data();
 	assert(index < vec.size()); // if this fails, it means that the object is not in this vector
 	return index;
 }

@@ -33,20 +33,19 @@ class SafePointer;
 template<typename T>
 class SafeTarget {
 
+	friend class SafePointer<T>;
+
 private:
-	SafePointer<T> *m_ptr;
+	SafePointer<T> *m_safepointer;
 
 public:
 	inline SafeTarget() {
-		m_ptr = NULL;
+		m_safepointer = NULL;
 	}
 	inline ~SafeTarget() {
-		while(m_ptr != NULL)
-			m_ptr->Reset();
+		while(m_safepointer != NULL)
+			m_safepointer->Reset();
 	}
-
-	inline SafePointer<T>* GetSafePointerInternal() const noexcept { return m_ptr; }
-	inline void SetSafePointerInternal(SafePointer<T> *ptr) noexcept { m_ptr = ptr; }
 
 	// noncopyable
 	SafeTarget(const SafeTarget&) = delete;
@@ -146,11 +145,11 @@ private:
 	inline void AddSelf() {
 		if(m_ptr == NULL)
 			return;
-		SafePointer *head = m_ptr->GetSafePointerInternal();
+		SafePointer *head = m_ptr->m_safepointer;
 		if(head == NULL) {
 			m_prev = this;
 			m_next = this;
-			m_ptr->SetSafePointerInternal(this);
+			m_ptr->m_safepointer = this;
 		} else {
 			m_prev = head->m_prev;
 			m_next = head;
@@ -162,12 +161,12 @@ private:
 		if(m_ptr == NULL)
 			return;
 		if(m_next == this) {
-			m_ptr->SetSafePointerInternal(NULL);
+			m_ptr->m_safepointer = NULL;
 		} else {
 			m_prev->m_next = m_next;
 			m_next->m_prev = m_prev;
-			if(m_ptr->GetSafePointerInternal() == this)
-				m_ptr->SetSafePointerInternal(m_next);
+			if(m_ptr->m_safepointer == this)
+				m_ptr->m_safepointer = m_next;
 		}
 		m_prev = NULL;
 		m_next = NULL;
