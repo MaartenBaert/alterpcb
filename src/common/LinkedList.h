@@ -28,12 +28,21 @@ Elements which are not part of any list are linked to themselves.
 */
 
 template<typename T>
-struct LinkedListHook {
-	LinkedListHook *m_prev, *m_next;
-};
+class LinkedList;
 
 template<typename T>
 class LinkedListElement;
+
+template<typename T>
+class LinkedListHook {
+
+	friend class LinkedList<T>;
+	friend class LinkedListElement<T>;
+
+private:
+	LinkedListHook *m_prev, *m_next;
+
+};
 
 template<typename T>
 class LinkedList : private LinkedListHook<T> {
