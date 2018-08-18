@@ -28,7 +28,7 @@ Drawing::Drawing(Library *parent, stringtag_t name, DrawingType type, stringtag_
 	m_type = type;
 	m_layerstack = layerstack;
 
-	m_history_position = -1;
+	m_history_position = INDEX_NONE;
 
 }
 

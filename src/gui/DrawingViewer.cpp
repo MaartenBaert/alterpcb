@@ -1,7 +1,6 @@
 #include "DrawingViewer.h"
 
 #include "MiscMath.h"
-#include "Vector.h"
 
 #include <chrono>
 #include <iostream>
@@ -57,10 +56,6 @@ static const char* SOURCE_FS_DOTGRID = R"(
 	}
 )";
 
-//TODO// this is just for testing
-Vertex grid_origin = {10.0, 5.0};
-real_t grid_angle = 0.0;
-
 Vertex TransformCoordinate(const Vertex &v, const Vertex &origin, real_t angle) {
 	real_t angle_sin = sin(ToRadians(angle)), angle_cos = cos(ToRadians(angle));
 	return Vertex(
@@ -77,33 +72,40 @@ Vertex InvTransformCoordinate(const Vertex &v, const Vertex &origin, real_t angl
 	);
 }
 
-Vertex TransformGrid(const Vertex &v) {
-	return TransformCoordinate(v, grid_origin, grid_angle);
-}
-
-Vertex InvTransformGrid(const Vertex &v) {
-	return InvTransformCoordinate(v, grid_origin, grid_angle);
-}
-
 struct Vertex_DotGrid {
 	GLvec2 position, gridposition;
 };
 
-static QGLFormat MakeGLFormat() {
-	QGLFormat f;
-	f.setAlpha(true);
-	f.setDepth(false);
-	f.setStencil(false);
-	f.setDoubleBuffer(true);
-	f.setSwapInterval(0);
-	return f;
-}
-
 DrawingViewer::DrawingViewer(QWidget *parent)
-	: QGLWidget(MakeGLFormat(), parent) {
+	: QOpenGLWidget(parent) {
 
+	m_mouse_position = {0.0, 0.0};
+
+	m_grid_origin = {10.0, 5.0};
+	m_grid_angle = 0.0;
 	m_dark = false;
 
+	QSurfaceFormat format;
+
+	// set OpenGL version
+	format.setRenderableType(QSurfaceFormat::OpenGL);
+	format.setMajorVersion(3);
+	format.setMinorVersion(2);
+	format.setProfile(QSurfaceFormat::CoreProfile);
+
+	// set framebuffer format
+	format.setRedBufferSize(8);
+	format.setGreenBufferSize(8);
+	format.setBlueBufferSize(8);
+	format.setAlphaBufferSize(8);
+	format.setDepthBufferSize(0);
+	format.setStencilBufferSize(0);
+	format.setSwapInterval(0);
+
+	// apply format
+	setFormat(format);
+
+	// set other properties
 	setAttribute(Qt::WA_OpaquePaintEvent);
 	setAutoFillBackground(false);
 	setFocusPolicy(Qt::ClickFocus);
@@ -111,6 +113,7 @@ DrawingViewer::DrawingViewer(QWidget *parent)
 	setMouseTracking(true);
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
+	// define keyboard shortcuts
 	new QShortcut(QKeySequence("Ctrl+D"), this, SLOT(OnDark()));
 
 }
@@ -125,31 +128,35 @@ QSize DrawingViewer::sizeHint() const {
 
 void DrawingViewer::initializeGL() {
 
+	QOpenGLFunctions_3_2_Core *glf = QOpenGLContext::currentContext()->versionFunctions<QOpenGLFunctions_3_2_Core>();
+	assert(glf != NULL);
+
 	// initialize OpenGL
 	GLInit();
 	GLRegisterDebugCallback();
 
+	// create shared VBO
+	m_gl_vbo.New();
+
 	// create basic VAO and VBO
 	m_gl_vao_basic.New();
-	m_gl_vbo_basic.New();
-	glBindVertexArray(m_gl_vao_basic);
-	glBindBuffer(GL_ARRAY_BUFFER, m_gl_vbo_basic);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	glf->glBindVertexArray(m_gl_vao_basic);
+	glf->glBindBuffer(GL_ARRAY_BUFFER, m_gl_vbo);
+	glf->glEnableVertexAttribArray(0);
+	glf->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glf->glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glf->glBindVertexArray(0);
 
 	// create dotgrid VAO and VBO
 	m_gl_vao_dotgrid.New();
-	m_gl_vbo_dotgrid.New();
-	glBindVertexArray(m_gl_vao_dotgrid);
-	glBindBuffer(GL_ARRAY_BUFFER, m_gl_vbo_dotgrid);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_DotGrid), (void*) offsetof(Vertex_DotGrid, position));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_DotGrid), (void*) offsetof(Vertex_DotGrid, gridposition));
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+	glf->glBindVertexArray(m_gl_vao_dotgrid);
+	glf->glBindBuffer(GL_ARRAY_BUFFER, m_gl_vbo);
+	glf->glEnableVertexAttribArray(0);
+	glf->glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_DotGrid), (void*) offsetof(Vertex_DotGrid, position));
+	glf->glEnableVertexAttribArray(1);
+	glf->glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex_DotGrid), (void*) offsetof(Vertex_DotGrid, gridposition));
+	glf->glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glf->glBindVertexArray(0);
 
 	// compile basic shader
 	CompileVS(m_gl_vs_basic, SOURCE_VS_BASIC);
@@ -172,16 +179,16 @@ void DrawingViewer::initializeGL() {
 	// generate dotgrid kernel texture
 	{
 		uint32_t n = DOTGRID_KERNEL_SIZE;
-		float s = 2.0f / (float) (n - 1);
+		float s = 2.0f / float(n - 1);
 		std::vector<float> kernel(n * n);
 		for(uint32_t j = 0; j < n; ++j) {
-			float y = (float) j * s - 1.0f;
+			float y = float(j) * s - 1.0f;
 			float *row = kernel.data() + j * n;
 			for(uint32_t i = 0; i < n; ++i) {
-				float x = (float) i * s - 1.0f;
-				float r = hypot(x, y);
-				row[i] = fmax(0.0f, 1.0f - r); // circular dots
-				//row[i] = fmax(1.0f - fabs(x), 1.0f - fabs(y)); // grid lines
+				float x = float(i) * s - 1.0f;
+				float r = std::hypot(x, y);
+				row[i] = std::fmax(0.0f, 1.0f - r); // circular dots
+				//row[i] = std::fmax(1.0f - fabs(x), 1.0f - fabs(y)); // grid lines
 			}
 		}
 		m_gl_tex_dotgrid_kernel.New();
@@ -202,9 +209,10 @@ void DrawingViewer::resizeGL(int width, int height) {
 	UNUSED(height);
 }
 
-void DrawingViewer::paintEvent(QPaintEvent *event) {
-	Q_UNUSED(event);
-	makeCurrent();
+void DrawingViewer::paintGL() {
+
+	QOpenGLFunctions_3_2_Core *glf = QOpenGLContext::currentContext()->versionFunctions<QOpenGLFunctions_3_2_Core>();
+	assert(glf != NULL);
 
 	// prepare colors
 	Color color_background = LumaInvert(Color(1.0f, 1.0f, 1.0f, 1.0f), m_dark); // glClear takes sRGB values
@@ -230,10 +238,10 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 	real_t effective_grid_step_x = 1.0; //self.effective_grid_step_x()
 	real_t effective_grid_step_y = 1.0; //self.effective_grid_step_y()
 	Vertex gridbox[4] = {
-		InvTransformGrid(Vertex(view_xmin, view_ymin)),
-		InvTransformGrid(Vertex(view_xmax, view_ymin)),
-		InvTransformGrid(Vertex(view_xmin, view_ymax)),
-		InvTransformGrid(Vertex(view_xmax, view_ymax)),
+		InvTransformCoordinate(Vertex(view_xmin, view_ymin), m_grid_origin, m_grid_angle),
+		InvTransformCoordinate(Vertex(view_xmax, view_ymin), m_grid_origin, m_grid_angle),
+		InvTransformCoordinate(Vertex(view_xmin, view_ymax), m_grid_origin, m_grid_angle),
+		InvTransformCoordinate(Vertex(view_xmax, view_ymax), m_grid_origin, m_grid_angle),
 	};
 	real_t gridbox_xmin = fmin(fmin(gridbox[0].x, gridbox[1].x), fmin(gridbox[2].x, gridbox[3].x));
 	real_t gridbox_xmax = fmax(fmax(gridbox[0].x, gridbox[1].x), fmax(gridbox[2].x, gridbox[3].x));
@@ -241,7 +249,7 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 	real_t gridbox_ymax = fmax(fmax(gridbox[0].y, gridbox[1].y), fmax(gridbox[2].y, gridbox[3].y));
 
 	// synchronize to GPU to avoid high latency (at the cost of some FPS)
-	glFinish();
+	glf->glFinish();
 
 	// draw background
 	glViewport(0, 0, width(), height());
@@ -262,14 +270,15 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 	if(linegrid) {
 
 		// enable basic shader
-		glUseProgram(m_gl_sp_basic);
-		glUniform2fv(m_gl_uni_basic_center, 1, GLvec2(0.0f, 0.0f));
-		glUniform2fv(m_gl_uni_basic_scale, 1, GLvec2((float) (view_scale * 2.0 / (real_t) width()), (float) (view_scale * 2.0 / (real_t) height())));
+		glf->glUseProgram(m_gl_sp_basic);
+		glf->glUniform2fv(m_gl_uni_basic_center, 1, GLvec2(0.0f, 0.0f));
+		glf->glUniform2fv(m_gl_uni_basic_scale, 1, GLvec2((float) (view_scale * 2.0 / (real_t) width()), (float) (view_scale * 2.0 / (real_t) height())));
 
 		// bind VAO and VBO
-		glBindVertexArray(m_gl_vao_basic);
-		glBindBuffer(GL_ARRAY_BUFFER, m_gl_vbo_basic);
+		glf->glBindVertexArray(m_gl_vao_basic);
+		glf->glBindBuffer(GL_ARRAY_BUFFER, m_gl_vbo);
 
+		// generate vertices
 		int32_t xi_min = (int32_t) lrint(gridbox_xmin / effective_grid_step_x + 0.4);
 		int32_t xi_max = (int32_t) lrint(gridbox_xmax / effective_grid_step_x - 0.4);
 		int32_t yi_min = (int32_t) lrint(gridbox_ymin / effective_grid_step_y + 0.4);
@@ -277,13 +286,13 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 		index_t num = 2 * (std::max(0, xi_max - xi_min + 1) + std::max(0, yi_max - yi_min + 1));
 		if(num != 0) {
 			index_t ind1 = 0, ind2 = num;
-			glBufferData(GL_ARRAY_BUFFER, num * sizeof(GLvec2), NULL, GL_STREAM_DRAW);
-			GLvec2 *data = (GLvec2*) glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-			if(data != NULL) {
+			glf->glBufferData(GL_ARRAY_BUFFER, num * sizeof(GLvec2), nullptr, GL_STREAM_DRAW);
+			GLvec2 *data = (GLvec2*) glf->glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+			if(data != nullptr) {
 				for(int32_t xi = xi_min; xi <= xi_max; ++xi) {
-					real_t xx = (real_t) xi * effective_grid_step_x;
-					Vertex p1 = TransformGrid(Vertex(xx, gridbox_ymin)); //self.grid_transform(xx, gridbox_ymin)
-					Vertex p2 = TransformGrid(Vertex(xx, gridbox_ymax)); //self.grid_transform(xx, gridbox_ymax)
+					real_t xx = real_t(xi) * effective_grid_step_x;
+					Vertex p1 = TransformCoordinate(Vertex(xx, gridbox_ymin), m_grid_origin, m_grid_angle);
+					Vertex p2 = TransformCoordinate(Vertex(xx, gridbox_ymax), m_grid_origin, m_grid_angle);
 					if(xi % 10 == 0) {
 						data[--ind2] = GLvec2(p1);
 						data[--ind2] = GLvec2(p2);
@@ -293,9 +302,9 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 					}
 				}
 				for(int32_t yi = yi_min; yi <= yi_max; ++yi) {
-					real_t yy = (real_t) yi * effective_grid_step_y;
-					Vertex p1 = TransformGrid(Vertex(gridbox_xmin, yy)); //self.grid_transform(gridbox_xmin, yy)
-					Vertex p2 = TransformGrid(Vertex(gridbox_xmax, yy)); //self.grid_transform(gridbox_xmax, yy)
+					real_t yy = real_t(yi) * effective_grid_step_y;
+					Vertex p1 = TransformCoordinate(Vertex(gridbox_xmin, yy), m_grid_origin, m_grid_angle);
+					Vertex p2 = TransformCoordinate(Vertex(gridbox_xmax, yy), m_grid_origin, m_grid_angle);
 					if(yi % 10 == 0) {
 						data[--ind2] = GLvec2(p1);
 						data[--ind2] = GLvec2(p2);
@@ -305,78 +314,82 @@ void DrawingViewer::paintEvent(QPaintEvent *event) {
 					}
 				}
 				assert(ind1 == ind2);
-				glUnmapBuffer(GL_ARRAY_BUFFER);
+				glf->glUnmapBuffer(GL_ARRAY_BUFFER);
 			}
-			glUniform4fv(m_gl_uni_basic_color, 1, color_grid1);
-			glDrawArrays(GL_LINES, 0, ind1);
-			glUniform4fv(m_gl_uni_basic_color, 1, color_grid2);
-			glDrawArrays(GL_LINES, ind1, num - ind1);
+			glf->glUniform4fv(m_gl_uni_basic_color, 1, color_grid1);
+			glf->glDrawArrays(GL_LINES, 0, ind1);
+			glf->glUniform4fv(m_gl_uni_basic_color, 1, color_grid2);
+			glf->glDrawArrays(GL_LINES, ind1, num - ind1);
 		}
 
 		// unbind VAO and VBO
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
+		glf->glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glf->glBindVertexArray(0);
 
 		// disable basic shader
-		glUseProgram(0);
+		glf->glUseProgram(0);
 
 	} else {
 
-		// bind phosphor kernel texture
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_gl_tex_dotgrid_kernel);
+		// bind dotgrid kernel texture
+		glf->glActiveTexture(GL_TEXTURE0);
+		glf->glBindTexture(GL_TEXTURE_2D, m_gl_tex_dotgrid_kernel);
 
 		// enable dotgrid shader
-		glUseProgram(m_gl_sp_dotgrid);
-		glUniform2fv(m_gl_uni_dotgrid_linescale, 1, GLvec2((float) (effective_grid_step_x * view_scale), (float) (effective_grid_step_y * view_scale)));
-		glUniform4fv(m_gl_uni_dotgrid_color, 1, color_grid3);
-		glUniform1i(m_gl_uni_dotgrid_kernel, 0);
+		glf->glUseProgram(m_gl_sp_dotgrid);
+		glf->glUniform2fv(m_gl_uni_dotgrid_linescale, 1, GLvec2(float(effective_grid_step_x * view_scale), float(effective_grid_step_y * view_scale)));
+		glf->glUniform4fv(m_gl_uni_dotgrid_color, 1, color_grid3);
+		glf->glUniform1i(m_gl_uni_dotgrid_kernel, 0);
 
 		// bind VAO and VBO
-		glBindVertexArray(m_gl_vao_dotgrid);
-		glBindBuffer(GL_ARRAY_BUFFER, m_gl_vbo_dotgrid);
+		glf->glBindVertexArray(m_gl_vao_dotgrid);
+		glf->glBindBuffer(GL_ARRAY_BUFFER, m_gl_vbo);
 
-		glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(Vertex_DotGrid), NULL, GL_STREAM_DRAW);
-		Vertex_DotGrid *data = (Vertex_DotGrid*) glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-		if(data != NULL) {
-			data[0].position = GLvec2(-1.0f, -1.0f);
-			data[0].gridposition = gridbox[0];
-			data[1].position = GLvec2(1.0f, -1.0f);
-			data[1].gridposition = gridbox[1];
-			data[2].position = GLvec2(1.0f, 1.0f);
-			data[2].gridposition = gridbox[3];
-			data[3].position = GLvec2(1.0f, 1.0f);
-			data[3].gridposition = gridbox[3];
-			data[4].position = GLvec2(-1.0f, 1.0f);
-			data[4].gridposition = gridbox[2];
-			data[5].position = GLvec2(-1.0f, -1.0f);
-			data[5].gridposition = gridbox[0];
-			glUnmapBuffer(GL_ARRAY_BUFFER);
+		glf->glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(Vertex_DotGrid), nullptr, GL_STREAM_DRAW);
+		Vertex_DotGrid *data = (Vertex_DotGrid*) glf->glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+		if(data != nullptr) {
+				data[0].position = GLvec2(-1.0f, -1.0f);
+				data[0].gridposition = gridbox[0];
+				data[1].position = GLvec2(1.0f, -1.0f);
+				data[1].gridposition = gridbox[1];
+				data[2].position = GLvec2(1.0f, 1.0f);
+				data[2].gridposition = gridbox[3];
+				data[3].position = GLvec2(1.0f, 1.0f);
+				data[3].gridposition = gridbox[3];
+				data[4].position = GLvec2(-1.0f, 1.0f);
+				data[4].gridposition = gridbox[2];
+				data[5].position = GLvec2(-1.0f, -1.0f);
+				data[5].gridposition = gridbox[0];
+			glf->glUnmapBuffer(GL_ARRAY_BUFFER);
 		}
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glf->glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		// unbind VAO and VBO
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindVertexArray(0);
+		glf->glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glf->glBindVertexArray(0);
 
 		// disable basic shader
-		glUseProgram(0);
+		glf->glUseProgram(0);
 
 	}
 	//auto t2 = std::chrono::high_resolution_clock::now();
 	//std::cerr << "[Draw] grid = " << std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count() << " µs" << std::endl;
 
 	// switch to QPainter-based painting
-	QPainter painter(this);
-	painter.setFont(QFont("Monospace", 10));
-	painter.setPen(QColor(255, 0, 0));
-	painter.drawText(QRect(5, 5, 100, 20), Qt::AlignLeft | Qt::AlignVCenter, "Test");
+	/*{
+		QPainter painter(this);
+		painter.setFont(QFont("Monospace", 10));
+		painter.setPen(QColor(255, 0, 0));
+		painter.drawText(QRect(5, 5, 100, 20), Qt::AlignLeft | Qt::AlignVCenter, "Test");
+		painter.drawLine(QPointF(0.0, m_mouse_position.y), QPointF(width(), m_mouse_position.y));
+		painter.drawLine(QPointF(m_mouse_position.x, 0.0), QPointF(m_mouse_position.x, height()));
+	}*/
 
 }
 
 void DrawingViewer::mouseMoveEvent(QMouseEvent *event) {
-	UNUSED(event);
-	grid_angle += 0.2;
+	m_mouse_position = Vertex(event->x(), event->y());
+	m_grid_angle += 0.2;
 	update();
 }
 

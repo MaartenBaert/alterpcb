@@ -29,11 +29,14 @@ class MainWindow;
 class LayerViewer : public QTreeView {
 	Q_OBJECT
 
+private:
+	MainWindow *m_main_window;
+
 public:
-	LayerViewer(QWidget *parent, MainWindow *main_window);
+	LayerViewer(MainWindow *main_window, QWidget *parent);
+	~LayerViewer() override;
 
 private slots:
-	void selectionChanged(const QItemSelection & selected, const QItemSelection & deselected) override;
+	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
+
 };
-
-

@@ -102,7 +102,7 @@ MainWindow::MainWindow(LibraryManager* library_manager) {
 	{
 		QDockWidget *dock = new QDockWidget(tr("Layers"), this);
 		dock->setObjectName("dock_layers");
-		m_layer_viewer = new LayerViewer(dock,this);
+		m_layer_viewer = new LayerViewer(this, dock);
 		dock->setWidget(m_layer_viewer);
 		dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 		addDockWidget(Qt::LeftDockWidgetArea, dock);

@@ -144,10 +144,10 @@ QVariant LayerManager::headerData(int section, Qt::Orientation orientation, int 
 				return QString(tr("Name"));
 				break;
 			case 1:
-				return QString(tr("S"));
+				return QString(tr("S", "'selectable' column"));
 				break;
 			case 2:
-				return QString(tr("V"));
+				return QString(tr("V", "'visible' column"));
 				break;
 		}
 	}

@@ -188,7 +188,7 @@ private:
 
 	inline void Rehash() {
 		m_buckets.clear();
-		m_buckets.resize(1 << m_bits);
+		m_buckets.resize(index_t(1) << m_bits);
 		for(index_t i = 0; i < m_data.size(); ++i) {
 			hash_t hash1 = Hash1(m_data[i]);
 			hash_t hash2 = Hash2(m_data[i]);
@@ -205,7 +205,7 @@ private:
 	template<typename K>
 	inline hash_t Hash2(const K &key) const {
 		hash_t hash = MurmurHash::HashFinish(m_hasher.Hash(HASH_SEED2, key));
-		return MurmurHash::HashTruncate(hash, m_bits - 1) | (1 << (m_bits - 1));
+		return MurmurHash::HashTruncate(hash, m_bits - 1) | (index_t(1) << (m_bits - 1));
 	}
 
 public:

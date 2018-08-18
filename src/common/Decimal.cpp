@@ -502,8 +502,8 @@ Decimal ToDecimal(double value, uint32_t precision) {
 	// split into sign, mantissa and exponent (still base 2)
 	uint64_t mem = MemCast<uint64_t>(value);
 	dec.negative = mem >> 63;
-	uint32_t expo2_raw = (mem >> 52) & (((uint64_t) 1 << 11) - 1);
-	uint64_t mant2_raw = mem & (((uint64_t) 1 << 52) - 1);
+	uint32_t expo2_raw = (mem >> 52) & ((uint64_t(1) << 11) - 1);
+	uint64_t mant2_raw = mem & ((uint64_t(1) << 52) - 1);
 
 	// check for special cases
 	uint32_t expo2_biased = expo2_raw;
@@ -527,7 +527,7 @@ Decimal ToDecimal(double value, uint32_t precision) {
 		}
 	} else {
 		dec.type = FLOATTYPE_NORMAL;
-		mant2_raw |= (uint64_t) 1 << 52; // add the implicit '1' bit
+		mant2_raw |= uint64_t(1) << 52; // add the implicit '1' bit
 	}
 
 	// Convert to base 10 using the lookup tables. The exponent is approximated and will be corrected later.
@@ -540,7 +540,7 @@ Decimal ToDecimal(double value, uint32_t precision) {
 	uint64_t mult = LUT_TODECIMAL_MULT[expo10_biased];
 	assert(shift != 0);
 	dec.mant = FixMul64F(mant2_raw << (12 - shift), mult);
-	dec.expo = (int32_t) expo10_biased - 308;
+	dec.expo = int32_t(expo10_biased) - 308;
 
 	// deal with subnormals
 	constexpr uint64_t MANT2_MAX = UINT64_C(7999999999999999999);
@@ -555,7 +555,7 @@ Decimal ToDecimal(double value, uint32_t precision) {
 
 	// convert to desired number of decimals
 	uint32_t decimals = precision - 1;
-	dec.expo -= (int32_t) decimals;
+	dec.expo -= int32_t(decimals);
 	uint64_t div = LUT_TODECIMAL_DIV[decimals];
 	if(dec.mant + div / 2 > MANT2_MAX) {
 		div = LUT_TODECIMAL_DIV[decimals - 1];
@@ -581,7 +581,7 @@ double FromDecimal(Decimal dec) {
 			// check if the exponent is too low
 			constexpr int32_t EXPO_MIN = -308 - 18, EXPO_MAX = 308 - 18;
 			if(dec.expo < EXPO_MIN) {
-				uint32_t shift = EXPO_MIN - dec.expo;
+				uint32_t shift = uint32_t(EXPO_MIN - dec.expo);
 				if(shift > 19) {
 					return (dec.negative)? DOUBLE_ZERO_NEG : DOUBLE_ZERO_POS;
 				}
@@ -602,20 +602,20 @@ double FromDecimal(Decimal dec) {
 
 			// Convert to base 2 using the lookup tables. The exponent is approximated and will be corrected later.
 			// We intentionally round down (floor) to compensate for the 0.5 LSB positive bias of the final division.
-			uint32_t expo10_biased = dec.expo - EXPO_MIN;
+			uint32_t expo10_biased = uint32_t(dec.expo - EXPO_MIN);
 			uint32_t expo2_biased = LUT_FROMDECIMAL_EXPO[expo10_biased];
 			uint64_t mult = LUT_FROMDECIMAL_MULT[expo10_biased];
 			uint64_t mant2 = FixMul64F(dec.mant, mult);
 
 			// normalize mantissa, limit shift to 4 to preserve subnormals
-			if(mant2 <= ((UINT64_MAX - ((uint64_t) 1 << 10)) >> 4)) {
+			if(mant2 <= ((UINT64_MAX - (uint64_t(1) << 10)) >> 4)) {
 				mant2 <<= 4; expo2_biased -= 4;
 			} else {
-				if(mant2 <= ((UINT64_MAX - ((uint64_t) 1 << 10)) >> 2)) { mant2 <<= 2; expo2_biased -= 2; }
-				if(mant2 <= ((UINT64_MAX - ((uint64_t) 1 << 10)) >> 1)) { mant2 <<= 1; expo2_biased -= 1; }
+				if(mant2 <= ((UINT64_MAX - (uint64_t(1) << 10)) >> 2)) { mant2 <<= 2; expo2_biased -= 2; }
+				if(mant2 <= ((UINT64_MAX - (uint64_t(1) << 10)) >> 1)) { mant2 <<= 1; expo2_biased -= 1; }
 			}
-			mant2 = (mant2 + ((uint64_t) 1 << 10)) >> 11;
-			assert(mant2 < ((uint64_t) 1 << 53));
+			mant2 = (mant2 + (uint64_t(1) << 10)) >> 11;
+			assert(mant2 < (uint64_t(1) << 53));
 			assert(expo2_biased >= 1);
 			if(expo2_biased > 2046) {
 				return (dec.negative)? DOUBLE_INF_NEG : DOUBLE_INF_POS;
@@ -623,16 +623,16 @@ double FromDecimal(Decimal dec) {
 
 			// convert to floating point
 			uint64_t mem;
-			if(mant2 < ((uint64_t) 1 << 52)) {
+			if(mant2 < (uint64_t(1) << 52)) {
 				assert(expo2_biased == 1);
 				mem = mant2;
 			} else {
 				assert(expo2_biased >= 1);
 				assert(expo2_biased <= 2046);
-				mem = ((uint64_t) expo2_biased << 52) | (mant2 & (((uint64_t) 1 << 52) - 1));
+				mem = (uint64_t(expo2_biased) << 52) | (mant2 & ((uint64_t(1) << 52) - 1));
 			}
 			if(dec.negative) {
-				mem |= (uint64_t) 1 << 63;
+				mem |= uint64_t(1) << 63;
 			}
 
 			return MemCast<double>(mem);

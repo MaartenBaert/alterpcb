@@ -66,8 +66,8 @@ inline hash_t HashData(hash_t hash, const void *data, size_t size) {
 	const uint8_t *remainder = (const uint8_t*) data + word_count * 4;
 	uint32_t value = 0;
 	switch(size & 3) {
-		case 3: value |= (uint32_t) remainder[2] << 16;
-		case 2: value |= (uint32_t) remainder[1] << 8;
+		case 3: value |= (uint32_t) remainder[2] << 16; // fallthrough
+		case 2: value |= (uint32_t) remainder[1] << 8; // fallthrough
 		case 1: value |= (uint32_t) remainder[0];
 		hash = HashData(hash, value);
 	}

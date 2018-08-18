@@ -23,15 +23,47 @@ along with this AlterPCB.  If not, see <http://www.gnu.org/licenses/>.
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 #pragma GCC diagnostic ignored "-Wfloat-conversion"
 #endif
 
-// GLEW must be included before Qt and OpenGL
-#include <GL/glew.h>
-
 #include <QtGui>
-#include <QtOpenGL/QGLFormat>
-#include <QtOpenGL/QGLWidget>
+
+#include <QAction>
+#include <QApplication>
+#include <QButtonGroup>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDockWidget>
+#include <QFileDialog>
+#include <QFormLayout>
+#include <QGridLayout>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QHeaderView>
+#include <QItemDelegate>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMainWindow>
+#include <QMenu>
+#include <QMenuBar>
+#include <QPlainTextEdit>
+#include <QProgressDialog>
+#include <QPushButton>
+#include <QRadioButton>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QShortcut>
+#include <QStatusBar>
+#include <QStylePainter>
+#include <QTableWidget>
+#include <QTextBrowser>
+#include <QToolBar>
+#include <QTreeView>
+#include <QVBoxLayout>
+
+#include <QOpenGLWidget>
+#include <QOpenGLFunctions_3_2_Core>
 
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop

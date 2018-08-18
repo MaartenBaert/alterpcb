@@ -3,16 +3,13 @@ QT += core gui opengl
 TARGET = alterpcb
 TEMPLATE = app
 
-LIBS += -lGL -lGLEW
-
 INCLUDEPATH += common core gui gui/components gui/dialogs
 DEPENDPATH += common core gui gui/components gui/dialogs
 
-QMAKE_CXXFLAGS += -std=c++11 -Wconversion
+QMAKE_CXXFLAGS += -std=c++11 -Wconversion -Wsign-conversion -Wfloat-conversion
 QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 
-RESOURCES += \
-		resources_icons.qrc
+RESOURCES +=
 
 ########## Warning: Everything below this line is auto-generated and will be overwritten! ##########
 
@@ -40,7 +37,6 @@ HEADERS += \
 	common/Cow.h \
 	common/Decimal.h \
 	common/EnumTranslator.h \
-	common/File_IO.h \
 	common/HashTable.h \
 	common/Json.h \
 	common/LinkedList.h \
@@ -56,6 +52,7 @@ HEADERS += \
 	core/CoreBasics.h \
 	core/Document.h \
 	core/Drawing.h \
+	core/File_IO.h \
 	core/LayerManager.h \
 	core/LayerStack.h \
 	core/Library.h \
@@ -86,12 +83,12 @@ HEADERS += \
 SOURCES += \
 	common/Color.cpp \
 	common/Decimal.cpp \
-	common/File_IO.cpp \
 	common/Json.cpp \
 	common/StringRegistry.cpp \
 	common/VData.cpp \
 	core/Document.cpp \
 	core/Drawing.cpp \
+	core/File_IO.cpp \
 	core/LayerManager.cpp \
 	core/LayerStack.cpp \
 	core/Library.cpp \

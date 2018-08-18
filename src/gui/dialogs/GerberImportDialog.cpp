@@ -9,13 +9,13 @@ GerberImportDialog::GerberImportDialog(MainWindow *parent) : QDialog(parent)
 	m_parent = parent;
 	setWindowTitle(tr("Import Gerber Files"));
 
-	QVBoxLayout *layout1 = new QVBoxLayout();
+	QVBoxLayout *layout1 = new QVBoxLayout(this);
 	layout1->setSpacing(0);
 	layout1->setContentsMargins(10,10,10,10);
 	layout1->setAlignment(Qt::AlignTop);
 	layout1->setSpacing(10);
 
-	QFormLayout *layout2 = new QFormLayout;
+	QFormLayout *layout2 = new QFormLayout(this);
 
 	layout2->setSpacing(10);
 
@@ -61,7 +61,7 @@ GerberImportDialog::GerberImportDialog(MainWindow *parent) : QDialog(parent)
 	m_TableHeader.append(QString("File"));
 	m_TableHeader.append(QString("Layer"));
 	m_TableWidget->setHorizontalHeaderLabels(m_TableHeader);
-	m_TableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+	m_TableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 	m_TableWidget->verticalHeader()->setVisible(false);
 	m_TableWidget->setShowGrid(false);
 

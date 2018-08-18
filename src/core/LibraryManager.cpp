@@ -192,7 +192,12 @@ QVariant LibraryManager::data(const QModelIndex &index, int role) const {
 					else {
 						return QString("");
 					}
-				}}}
+				}
+			}
+			// this should never be reached
+			assert(false);
+			return QVariant();
+		}
 		case Qt::DecorationRole: {
 			switch(item_ptr->GetTreeItemType()) {
 				case LIBRARYTREEITEMTYPE_LIBRARY: {
@@ -209,10 +214,17 @@ QVariant LibraryManager::data(const QModelIndex &index, int role) const {
 							return g_icon_librarymanager_layout;
 					}
 					return QVariant();
-				}}}
+				}
+			}
+			// this should never be reached
+			assert(false);
+			return QVariant();
+		}
 		case Qt::ForegroundRole: {
 			if (index.column() == 1) { // color of the text to indicate if filepath is valid or not
 				return QColor(Qt::blue);
+			} else {
+				return QVariant();
 			}
 		}
 		default: {
